@@ -30,14 +30,14 @@ public class Example1b
 		Img< T > image = ImgOpener.openLOCI( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// display it via ImgLib using ImageJ
-		ImageJFunctions.displayAsVirtualStack( image ).show();
+		ImageJFunctions.show( image );
 
 		// open with ImgOpener as Float using an ArrayContainer
 		Img< FloatType > imageFloat = ImgOpener.openLOCIFloatType( file.getAbsolutePath(), new CellContainerFactory( 10 ) );
 
 		// display it via ImgLib using ImageJ
 		imageFloat.getDisplay().setMinMax();
-		ImageJFunctions.displayAsVirtualStack( imageFloat ).show();
+		ImageJFunctions.show( imageFloat );
 	}
 
 	public static void main( String[] args )

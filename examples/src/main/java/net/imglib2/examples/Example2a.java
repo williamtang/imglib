@@ -33,7 +33,7 @@ public class Example2a
 
 		// display the copy
 		duplicate.getDisplay().setMinMax();
-		ImageJFunctions.displayAsVirtualStack( duplicate ).show();
+		ImageJFunctions.show( duplicate );
 	}
 
 	public < T extends Type< T >> Img< T > copyImage( final Img< T > input )
