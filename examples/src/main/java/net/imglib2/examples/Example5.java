@@ -21,7 +21,7 @@ import mpicbg.imglib.util.Util;
 /**
  * Illustrate what the outside strategies do
  *
- * @author Stephan Preibisch & Stephan Saalfeld
+ * @author Stephan Preibisch &amp; Stephan Saalfeld
  *
  */
 public class Example5
