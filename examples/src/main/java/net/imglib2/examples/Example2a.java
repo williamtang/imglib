@@ -5,7 +5,6 @@ import java.io.File;
 import net.imglib2.Cursor;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
@@ -30,7 +29,7 @@ public class Example2a< T extends RealType< T > & NativeType< T >>
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with ImgOpener using an ArrayImgFactory
-		Img< T > image = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< T >() );
+		Img< T > image = new ImgOpener().openImg( file.getAbsolutePath() );
 
 		// copy the image
 		Img< FloatType > duplicate = copyImage( image );
