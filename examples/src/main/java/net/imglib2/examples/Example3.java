@@ -29,7 +29,7 @@ public class Example3
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with ImgOpener using an ArrayImgFactory
-		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayImgFactory< T >() );
+		Img< FloatType > image = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< FloatType >(), new FloatType() );
 
 		// compute min and max of the Image
 		FloatType min = image.createType();

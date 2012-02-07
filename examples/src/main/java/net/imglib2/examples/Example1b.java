@@ -33,8 +33,8 @@ public class Example1b
 		// display it via ImgLib using ImageJ
 		ImageJFunctions.show( image );
 
-		// open with ImgOpener as Float using a CellImgFactory
-		Img< FloatType > imageFloat = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new CellImgFactory< FloatType >( 10 ) );
+		// open with ImgOpener as Float using a CellImgFactory, it will be opened as float independent of the type of the image
+		Img< FloatType > imageFloat = new ImgOpener().openImg( file.getAbsolutePath(), new CellImgFactory< FloatType >( 10 ), new FloatType() );
 
 		// display it via ImgLib using ImageJ
 		ImageJFunctions.show( imageFloat );

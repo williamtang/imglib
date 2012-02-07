@@ -33,7 +33,7 @@ public class Example5
 		File file = new File( "DrosophilaWingSmall.tif" );
 
 		// open with ImgOpener using an ArrayImgFactory
-		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayImgFactory< T >() );
+		Img< FloatType > image = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< FloatType >(), new FloatType() );
 
 		// test serveral out of bounds strategies
 		testCanvas( image, new OutOfBoundsStrategyValueFactory< FloatType >() );

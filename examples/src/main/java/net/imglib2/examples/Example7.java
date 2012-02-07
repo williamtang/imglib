@@ -27,7 +27,7 @@ public class Example7
 		File file = new File( "street_bw.tif" );
 
 		// open with ImgOpener using an ArrayImgFactory
-		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayImgFactory< T >() );
+		Img< FloatType > image = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< FloatType >(), new FloatType() );
 
 		// display maxima
 		ImageJFunctions.copyToImagePlus( image ).show();

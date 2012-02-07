@@ -30,7 +30,7 @@ public class Example2c
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with ImgOpener using an ArrayImgFactory
-		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayImgFactory< T >() );
+		Img< FloatType > image = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< FloatType >(), new FloatType() );
 
 		// copy the image
 		Img< FloatType > duplicate = copyImage( image, new CellImgFactory< FloatType >( 20 ) );

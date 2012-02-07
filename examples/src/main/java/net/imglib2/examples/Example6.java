@@ -28,7 +28,7 @@ public class Example6
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with ImgOpener using an ArrayImgFactory
-		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayImgFactory< T >() );
+		Img< FloatType > image = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< FloatType >(), new FloatType() );
 
 		// perform gaussian convolution
 		GaussianConvolution< FloatType > gauss = new GaussianConvolution< FloatType >( image, new OutOfBoundsStrategyValueFactory< FloatType >(), 4 );

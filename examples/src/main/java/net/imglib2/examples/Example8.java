@@ -20,8 +20,8 @@ public class Example8
 	public Example8()
 	{
 		// open with ImgOpener using an ArrayImgFactory
-		Img< FloatType > image = new ImgOpener().openLOCIFloatType( "DrosophilaWing.tif", new ArrayImgFactory< T >() );
-		Img< FloatType > kernel = new ImgOpener().openLOCIFloatType( "kernelGauss.tif", new ArrayImgFactory< T >() );
+		Img< FloatType > image = new ImgOpener().openImg( "DrosophilaWing.tif", new ArrayImgFactory< FloatType >(), new FloatType() );
+		Img< FloatType > kernel = new ImgOpener().openImg( "kernelGauss.tif", new ArrayImgFactory< FloatType >(), new FloatType() );
 
 		// normalize the kernel
 		NormalizeImageFloat< FloatType > normImage = new NormalizeImageFloat< FloatType >( kernel );
