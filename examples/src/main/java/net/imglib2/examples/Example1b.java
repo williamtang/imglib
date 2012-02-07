@@ -5,6 +5,7 @@ import java.io.File;
 import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgOpener;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 
@@ -21,13 +22,13 @@ import ij.ImageJ;
 public class Example1b
 {
 	// within this method we define <T> to be a RealType
-	public < T extends RealType< T > > Example1b()
+	public < T extends RealType< T > & NativeType< T > > Example1b()
 	{
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with ImgOpener using an ArrayContainer
-		Img< T > image = ImgOpener.openLOCI( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Img< T > image = ImgOpener.openImg( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// display it via ImgLib using ImageJ
 		ImageJFunctions.show( image );
