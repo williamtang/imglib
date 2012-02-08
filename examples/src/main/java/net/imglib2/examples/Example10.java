@@ -38,7 +38,6 @@ public class Example10
 		}
 
 		// display the image
-		shapeListImage.getDisplay().setMinMax();
 		ImageJFunctions.show( shapeListImage );
 	}
 

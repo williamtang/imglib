@@ -57,7 +57,6 @@ public class Example5
 			Img< T > out = canvas.getResult();
 
 			out.setName( outofboundsFactory.getClass().getSimpleName() + " took " + canvas.getProcessingTime() + " ms." );
-			out.getDisplay().setMinMax();
 			ImageJFunctions.show( out );
 		} else
 		{

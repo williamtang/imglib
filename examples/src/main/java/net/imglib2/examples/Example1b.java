@@ -36,7 +36,6 @@ public class Example1b
 		Img< FloatType > imageFloat = ImgOpener.openLOCIFloatType( file.getAbsolutePath(), new CellContainerFactory( 10 ) );
 
 		// display it via ImgLib using ImageJ
-		imageFloat.getDisplay().setMinMax();
 		ImageJFunctions.show( imageFloat );
 	}
 

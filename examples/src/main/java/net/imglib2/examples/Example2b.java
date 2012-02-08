@@ -37,7 +37,6 @@ public class Example2b
 		Img< FloatType > duplicate = copyImage( image, new CellContainerFactory( 20 ) );
 
 		// display the copy
-		duplicate.getDisplay().setMinMax();
 		ImageJFunctions.show( duplicate );
 	}
 

@@ -32,7 +32,6 @@ public class Example2a
 		Img< FloatType > duplicate = copyImage( image );
 
 		// display the copy
-		duplicate.getDisplay().setMinMax();
 		ImageJFunctions.show( duplicate );
 	}
 

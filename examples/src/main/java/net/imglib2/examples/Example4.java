@@ -39,8 +39,6 @@ public class Example4
 		Img< BitType > display = findAndDisplayLocalMaxima( image, new BitType() );
 
 		// display output and input
-		image.getDisplay().setMinMax();
-		display.getDisplay().setMinMax();
 		ImageJFunctions.copyToImagePlus( image ).show();
 		ImageJFunctions.copyToImagePlus( display ).show();
 	}

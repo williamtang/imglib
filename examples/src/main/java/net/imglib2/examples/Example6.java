@@ -44,14 +44,12 @@ public class Example6
 		Img< FloatType > convolved = gauss.getResult();
 
 		// display
-		convolved.getDisplay().setMinMax();
 		ImageJFunctions.show( convolved );
 
 		// find maxima again
 		final Img< ByteType > maxima = Example4.findAndDisplayLocalMaxima( convolved, new ByteType() );
 
 		// display maxima
-		maxima.getDisplay().setMinMax();
 		ImageJFunctions.show( maxima );
 	}
 

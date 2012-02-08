@@ -30,7 +30,6 @@ public class Example7
 		Img< FloatType > image = ImgOpener.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// display maxima
-		image.getDisplay().setMinMax();
 		ImageJFunctions.copyToImagePlus( image ).show();
 
 		// perform gaussian convolution
@@ -47,7 +46,6 @@ public class Example7
 		Img< FloatType > convolved = gauss.getResult();
 
 		// display
-		convolved.getDisplay().setMinMax();
 		ImageJFunctions.show( convolved );
 	}
 

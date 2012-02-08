@@ -36,11 +36,9 @@ public class Example8
 		kernel = normImage.getResult();
 
 		// display all
-		kernel.getDisplay().setMinMax();
 		kernel.setName( "kernel" );
 		ImageJFunctions.copyToImagePlus( kernel ).show();
 
-		image.getDisplay().setMinMax();
 		ImageJFunctions.copyToImagePlus( image ).show();
 
 		// compute fourier convolution
@@ -55,7 +53,6 @@ public class Example8
 		Img< FloatType > convolved = fourierConvolution.getResult();
 		convolved.setName( "(" + fourierConvolution.getProcessingTime() + " ms) Convolution of " + image.getName() );
 
-		convolved.getDisplay().setMinMax();
 		ImageJFunctions.copyToImagePlus( convolved ).show();
 
 	}
