@@ -10,7 +10,6 @@ import ij.ImageJ;
 import ij.ImagePlus;
 import ij.io.Opener;
 
-
 /**
  * Opens a file with ImageJ and wraps it into an ImgLib {@link Image}.
  *
@@ -20,7 +19,7 @@ import ij.io.Opener;
 public class Example1a
 {
 	// within this method we define <T> to be a RealType
-	public < T extends RealType<T> > Example1a()
+	public < T extends RealType< T > > Example1a()
 	{
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
@@ -32,12 +31,11 @@ public class Example1a
 		imp.show();
 
 		// wrap it into an ImgLib image (no copying)
-		final Image<T> image = ImagePlusAdapter.wrap( imp );
+		final Image< T > image = ImagePlusAdapter.wrap( imp );
 
 		// display it via ImgLib using ImageJ
 		ImageJFunctions.displayAsVirtualStack( image ).show();
 	}
-
 
 	public static void main( String[] args )
 	{

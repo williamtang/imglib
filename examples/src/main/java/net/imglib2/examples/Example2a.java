@@ -26,27 +26,27 @@ public class Example2a
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with LOCI using an ArrayContainer
-		Image<FloatType> image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Image< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// copy the image
-		Image<FloatType> duplicate = copyImage( image );
+		Image< FloatType > duplicate = copyImage( image );
 
 		// display the copy
 		duplicate.getDisplay().setMinMax();
 		ImageJFunctions.displayAsVirtualStack( duplicate ).show();
 	}
 
-	public <T extends Type<T>> Image<T> copyImage( final Image<T> input )
+	public < T extends Type< T >> Image< T > copyImage( final Image< T > input )
 	{
 		// create a new Image with the same properties
-		Image<T> output = input.createNewImage();
+		Image< T > output = input.createNewImage();
 
 		// create a cursor for both images
-		Cursor<T> cursorInput = input.createCursor();
-		Cursor<T> cursorOutput = output.createCursor();
+		Cursor< T > cursorInput = input.createCursor();
+		Cursor< T > cursorOutput = output.createCursor();
 
 		// iterate over the input cursor
-		while ( cursorInput.hasNext() )
+		while ( cursorInput.hasNext())
 		{
 			// move both forward
 			cursorInput.fwd();

@@ -23,8 +23,8 @@ public class Example9
 	public Example9()
 	{
 		// open with LOCI using an ArrayContainer
-		Image<FloatType> image = LOCI.openLOCIFloatType( "JohannesAndAlbert.jpg", new ArrayContainerFactory() );
-		Image<FloatType> kernel = LOCI.openLOCIFloatType( "kernelAlbert.tif", new ArrayContainerFactory() );
+		Image< FloatType > image = LOCI.openLOCIFloatType( "JohannesAndAlbert.jpg", new ArrayContainerFactory() );
+		Image< FloatType > kernel = LOCI.openLOCIFloatType( "kernelAlbert.tif", new ArrayContainerFactory() );
 
 		final FourierTransform< FloatType, ComplexFloatType > fft = new FourierTransform< FloatType, ComplexFloatType >( kernel, new ComplexFloatType() );
 		final Image< ComplexFloatType > kernelFFT;
@@ -58,7 +58,7 @@ public class Example9
 		}
 
 		// normalize the kernel
-		NormalizeImageFloat<FloatType> normImage = new NormalizeImageFloat<FloatType>( kernel );
+		NormalizeImageFloat< FloatType > normImage = new NormalizeImageFloat< FloatType >( kernel );
 
 		if ( !normImage.checkInput() || !normImage.process() )
 		{
@@ -82,7 +82,7 @@ public class Example9
 		ImageJFunctions.copyToImagePlus( image ).show();
 
 		// compute fourier convolution
-		FourierConvolution<FloatType, FloatType> fourierConvolution = new FourierConvolution<FloatType, FloatType>( image, kernelInverse );
+		FourierConvolution< FloatType, FloatType > fourierConvolution = new FourierConvolution< FloatType, FloatType >( image, kernelInverse );
 
 		if ( !fourierConvolution.checkInput() || !fourierConvolution.process() )
 		{
@@ -90,8 +90,8 @@ public class Example9
 			return;
 		}
 
-		Image<FloatType> convolved = fourierConvolution.getResult();
-		convolved.setName( "("  + fourierConvolution.getProcessingTime() + " ms) Convolution of " + image.getName() );
+		Image< FloatType > convolved = fourierConvolution.getResult();
+		convolved.setName( "(" + fourierConvolution.getProcessingTime() + " ms) Convolution of " + image.getName() );
 
 		convolved.getDisplay().setMinMax();
 		ImageJFunctions.copyToImagePlus( convolved ).show();

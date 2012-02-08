@@ -30,28 +30,28 @@ public class Example2c
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with LOCI using an ArrayContainer
-		Image<FloatType> image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Image< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// copy the image
-		Image<FloatType> duplicate = copyImage( image, new CellContainerFactory( 20 ) );
+		Image< FloatType > duplicate = copyImage( image, new CellContainerFactory( 20 ) );
 
 		// display the copy
 		duplicate.getDisplay().setMinMax();
 		ImageJFunctions.displayAsVirtualStack( duplicate ).show();
 	}
 
-	public <T extends Type<T>> Image<T> copyImage( final Image<T> input, final ContainerFactory containerFactory )
+	public < T extends Type< T >> Image< T > copyImage( final Image< T > input, final ContainerFactory containerFactory )
 	{
 		// create a new Image with the same dimensions
-		ImageFactory<T> imageFactory = new ImageFactory<T>( input.createType(), containerFactory );
-		Image<T> output = imageFactory.createImage( input.getDimensions(), "Copy of " + input.getName() );
+		ImageFactory< T > imageFactory = new ImageFactory< T >( input.createType(), containerFactory );
+		Image< T > output = imageFactory.createImage( input.getDimensions(), "Copy of " + input.getName() );
 
 		// create a cursor for both images
-		LocalizableCursor<T> cursorInput = input.createLocalizableCursor();
-		LocalizableByDimCursor<T> cursorOutput = output.createLocalizableByDimCursor();
+		LocalizableCursor< T > cursorInput = input.createLocalizableCursor();
+		LocalizableByDimCursor< T > cursorOutput = output.createLocalizableByDimCursor();
 
 		// iterate over the input cursor
-		while ( cursorInput.hasNext() )
+		while ( cursorInput.hasNext())
 		{
 			// move input cursor forward
 			cursorInput.fwd();

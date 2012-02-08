@@ -27,27 +27,27 @@ public class Example6
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with LOCI using an ArrayContainer
-		Image<FloatType> image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Image< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// perform gaussian convolution
-		GaussianConvolution<FloatType> gauss = new GaussianConvolution<FloatType>( image, new OutOfBoundsStrategyValueFactory<FloatType>(), 4 );
+		GaussianConvolution< FloatType > gauss = new GaussianConvolution< FloatType >( image, new OutOfBoundsStrategyValueFactory< FloatType >(), 4 );
 
 		// run the algorithm
-		if( !gauss.checkInput() || !gauss.process() )
+		if ( !gauss.checkInput() || !gauss.process() )
 		{
 			System.out.println( "Error running gaussian convolution: " + gauss.getErrorMessage() );
 			return;
 		}
 
 		// get the result
-		Image<FloatType> convolved = gauss.getResult();
+		Image< FloatType > convolved = gauss.getResult();
 
 		// display
 		convolved.getDisplay().setMinMax();
 		ImageJFunctions.displayAsVirtualStack( convolved ).show();
 
 		// find maxima again
-		final Image<ByteType> maxima = Example4.findAndDisplayLocalMaxima( convolved, new ByteType() );
+		final Image< ByteType > maxima = Example4.findAndDisplayLocalMaxima( convolved, new ByteType() );
 
 		// display maxima
 		maxima.getDisplay().setMinMax();

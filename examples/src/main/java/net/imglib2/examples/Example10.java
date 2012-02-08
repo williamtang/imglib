@@ -25,7 +25,7 @@ public class Example10
 		final int depth = 200;
 
 		// Create ShapeList
-		final ShapeList< RGBALegacyType > shapeList = new ShapeList< RGBALegacyType >( new int[]{ 500, 500, depth },  new RGBALegacyType() );
+		final ShapeList< RGBALegacyType > shapeList = new ShapeList< RGBALegacyType >( new int[]{ 500, 500, depth }, new RGBALegacyType() );
 		final Image< RGBALegacyType > shapeListImage = new Image< RGBALegacyType >( shapeList, shapeList.getBackground(), "ShapeListContainer" );
 
 		// add some shapes
@@ -33,7 +33,7 @@ public class Example10
 		{
 			shapeList.addShape( new RoundRectangle2D.Double( 10 + i, 20, 40, 70 + 2 * i, 25, 25 ), new RGBALegacyType( RGBALegacyType.rgba( 255, 0, 0, 0 ) ), new int[]{ i } );
 			shapeList.addShape( new Polygon( new int[]{ 90 + i, 180 - 2 * i, 190 - 4 * i, 120 - 2 * i }, new int[]{ 90, 80 + i, 140 - 3 * i, 130 - 2 * i }, 4 ), new RGBALegacyType( RGBALegacyType.rgba( 0, 255, 0, 0 ) ), new int[]{ i } );
-			shapeList.addShape( new CubicCurve2D.Double( 10 + i, 200- i, 30 - 2*i, 30-0.5*i, i, 80, 390-i, 50+i ), new RGBALegacyType( RGBALegacyType.rgba( 255, 255, 0, 0 ) ), new int[]{ i } );
+			shapeList.addShape( new CubicCurve2D.Double( 10 + i, 200 - i, 30 - 2 * i, 30 - 0.5 * i, i, 80, 390 - i, 50 + i ), new RGBALegacyType( RGBALegacyType.rgba( 255, 255, 0, 0 ) ), new int[]{ i } );
 		}
 
 		// display the image

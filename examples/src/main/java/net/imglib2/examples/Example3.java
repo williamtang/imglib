@@ -29,7 +29,7 @@ public class Example3
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with LOCI using an ArrayContainer
-		Image<FloatType> image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Image< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// compute min and max of the Image
 		FloatType min = image.createType();
@@ -54,10 +54,10 @@ public class Example3
 		System.out.println( "real average Value: " + avg );
 	}
 
-	public <T extends Comparable<T> & Type<T>> void computeMinMax( final Image<T> image, final T min, final T max )
+	public < T extends Comparable< T > & Type< T >> void computeMinMax( final Image< T > image, final T min, final T max )
 	{
 		// create a cursor for the image (the order does not matter)
-		Cursor<T> cursor = image.createCursor();
+		Cursor< T > cursor = image.createCursor();
 
 		// initialize min and max with the first image value
 		cursor.fwd();
@@ -66,7 +66,7 @@ public class Example3
 		max.set( cursor.getType() );
 
 		// loop over the image and determine min and max value
-		while( cursor.hasNext() )
+		while ( cursor.hasNext())
 		{
 			cursor.fwd();
 
@@ -81,16 +81,16 @@ public class Example3
 		}
 	}
 
-	public <T extends RealType<T>> double computeAverage( final Image<T> image )
+	public < T extends RealType< T >> double computeAverage( final Image< T > image )
 	{
 		// create a cursor for the image (the order does not matter)
-		Cursor<T> cursor = image.createCursor();
+		Cursor< T > cursor = image.createCursor();
 
 		// count all values
 		double sum = 0;
 
 		// loop over the image and determine min and max value
-		while( cursor.hasNext() )
+		while ( cursor.hasNext())
 		{
 			cursor.fwd();
 
@@ -100,16 +100,16 @@ public class Example3
 		return sum / image.getNumPixels();
 	}
 
-	public <T extends RealType<T>> double computeRealAverage( final Image<T> image )
+	public < T extends RealType< T >> double computeRealAverage( final Image< T > image )
 	{
 		// create a cursor for the image (the order does not matter)
-		Cursor<T> cursor = image.createCursor();
+		Cursor< T > cursor = image.createCursor();
 
 		// count all values
 		RealSum realsum = new RealSum();
 
 		// loop over the image and determine min and max value
-		while( cursor.hasNext() )
+		while ( cursor.hasNext())
 		{
 			cursor.fwd();
 
@@ -119,10 +119,10 @@ public class Example3
 		return realsum.getSum() / image.getNumPixels();
 	}
 
-	public <T extends Comparable<T> & Type<T>> T computeMedian( final Image<T> image )
+	public < T extends Comparable< T > & Type< T >> T computeMedian( final Image< T > image )
 	{
 		// create an ArrayList of values
-		ArrayList<T> values = new ArrayList<T>();
+		ArrayList< T > values = new ArrayList< T >();
 
 		// loop over the image and add all values
 		for ( final T value : image )
@@ -132,7 +132,7 @@ public class Example3
 		Collections.sort( values );
 
 		// collect median value
-		T median = values.get( values.size()/2 );
+		T median = values.get( values.size() / 2 );
 
 		return median;
 	}

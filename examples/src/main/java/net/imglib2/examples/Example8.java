@@ -20,11 +20,11 @@ public class Example8
 	public Example8()
 	{
 		// open with LOCI using an ArrayContainer
-		Image<FloatType> image = LOCI.openLOCIFloatType( "DrosophilaWing.tif", new ArrayContainerFactory() );
-		Image<FloatType> kernel = LOCI.openLOCIFloatType( "kernelGauss.tif", new ArrayContainerFactory() );
+		Image< FloatType > image = LOCI.openLOCIFloatType( "DrosophilaWing.tif", new ArrayContainerFactory() );
+		Image< FloatType > kernel = LOCI.openLOCIFloatType( "kernelGauss.tif", new ArrayContainerFactory() );
 
 		// normalize the kernel
-		NormalizeImageFloat<FloatType> normImage = new NormalizeImageFloat<FloatType>( kernel );
+		NormalizeImageFloat< FloatType > normImage = new NormalizeImageFloat< FloatType >( kernel );
 
 		if ( !normImage.checkInput() || !normImage.process() )
 		{
@@ -44,7 +44,7 @@ public class Example8
 		ImageJFunctions.copyToImagePlus( image ).show();
 
 		// compute fourier convolution
-		FourierConvolution<FloatType, FloatType> fourierConvolution = new FourierConvolution<FloatType, FloatType>( image, kernel );
+		FourierConvolution< FloatType, FloatType > fourierConvolution = new FourierConvolution< FloatType, FloatType >( image, kernel );
 
 		if ( !fourierConvolution.checkInput() || !fourierConvolution.process() )
 		{
@@ -52,8 +52,8 @@ public class Example8
 			return;
 		}
 
-		Image<FloatType> convolved = fourierConvolution.getResult();
-		convolved.setName( "("  + fourierConvolution.getProcessingTime() + " ms) Convolution of " + image.getName() );
+		Image< FloatType > convolved = fourierConvolution.getResult();
+		convolved.setName( "(" + fourierConvolution.getProcessingTime() + " ms) Convolution of " + image.getName() );
 
 		convolved.getDisplay().setMinMax();
 		ImageJFunctions.copyToImagePlus( convolved ).show();

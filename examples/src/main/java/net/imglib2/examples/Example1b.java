@@ -11,7 +11,6 @@ import mpicbg.imglib.type.numeric.RealType;
 import mpicbg.imglib.type.numeric.real.FloatType;
 import ij.ImageJ;
 
-
 /**
  * Opens a file with LOCI Bioformats as an ImgLib {@link Image}.
  *
@@ -21,25 +20,24 @@ import ij.ImageJ;
 public class Example1b
 {
 	// within this method we define <T> to be a RealType
-	public < T extends RealType<T> > Example1b()
+	public < T extends RealType< T > > Example1b()
 	{
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with LOCI using an ArrayContainer
-		Image<T> image = LOCI.openLOCI( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Image< T > image = LOCI.openLOCI( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// display it via ImgLib using ImageJ
 		ImageJFunctions.displayAsVirtualStack( image ).show();
 
 		// open with LOCI as Float using an ArrayContainer
-		Image<FloatType> imageFloat = LOCI.openLOCIFloatType( file.getAbsolutePath(), new CellContainerFactory( 10 ) );
+		Image< FloatType > imageFloat = LOCI.openLOCIFloatType( file.getAbsolutePath(), new CellContainerFactory( 10 ) );
 
 		// display it via ImgLib using ImageJ
 		imageFloat.getDisplay().setMinMax();
 		ImageJFunctions.displayAsVirtualStack( imageFloat ).show();
 	}
-
 
 	public static void main( String[] args )
 	{

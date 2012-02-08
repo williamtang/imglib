@@ -19,13 +19,13 @@ public class Example1c
 	public Example1c()
 	{
 		// create the Factory that will instantiate the Image
-		final ImageFactory<FloatType> imageFactory = new ImageFactory<FloatType>( new FloatType(), new CellContainerFactory() );
+		final ImageFactory< FloatType > imageFactory = new ImageFactory< FloatType >( new FloatType(), new CellContainerFactory() );
 
 		// create an Image
-		final Image<FloatType> image1 = imageFactory.createImage( new int[] { 20, 30, 40 } );
+		final Image< FloatType > image1 = imageFactory.createImage( new int[]{ 20, 30, 40 } );
 
 		// create another Image with exactly the same properties
-		final Image<FloatType> image2 = image1.createNewImage();
+		final Image< FloatType > image2 = image1.createNewImage();
 
 		// display both (but they are empty)
 		ImageJFunctions.displayAsVirtualStack( image1 ).show();

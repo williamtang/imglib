@@ -32,10 +32,10 @@ public class Example4
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with LOCI using an ArrayContainer
-		Image<FloatType> image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Image< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// find local maxima and paint them into another image as spheres
-		Image<BitType> display = findAndDisplayLocalMaxima( image, new BitType() );
+		Image< BitType > display = findAndDisplayLocalMaxima( image, new BitType() );
 
 		// display output and input
 		image.getDisplay().setMinMax();
@@ -44,29 +44,29 @@ public class Example4
 		ImageJFunctions.copyToImagePlus( display ).show();
 	}
 
-	public static <T extends Comparable<T> & Type<T>, U extends RealType<U>> Image<U> findAndDisplayLocalMaxima( final Image<T> image, final U outputType )
+	public static < T extends Comparable< T > & Type< T >, U extends RealType< U >> Image< U > findAndDisplayLocalMaxima( final Image< T > image, final U outputType )
 	{
 		// Create a new image of the provided RealType U
-		ImageFactory<U> imageFactory = new ImageFactory<U>( outputType, image.getContainerFactory() );
-		Image<U> output = imageFactory.createImage( image.getDimensions() );
+		ImageFactory< U > imageFactory = new ImageFactory< U >( outputType, image.getContainerFactory() );
+		Image< U > output = imageFactory.createImage( image.getDimensions() );
 
 		// create a Cursor that runs over the image and checks in a 3^n neighborhood if it is a maxima
-		LocalizableCursor<T> cursor1 = image.createLocalizableCursor();
+		LocalizableCursor< T > cursor1 = image.createLocalizableCursor();
 
 		// create a LocalizableByDimCursor that is used to check the local neighborhood of each pixel
-		LocalizableByDimCursor<T> cursor2 = image.createLocalizableByDimCursor();
+		LocalizableByDimCursor< T > cursor2 = image.createLocalizableByDimCursor();
 
 		// and a local neighborhood cursor on top of the localizablebydim
-		LocalNeighborhoodCursor<T> nbCursor = LocalNeighborhoodCursorFactory.createLocalNeighborhoodCursor( cursor2 );
+		LocalNeighborhoodCursor< T > nbCursor = LocalNeighborhoodCursorFactory.createLocalNeighborhoodCursor( cursor2 );
 
 		// we need the number of dimensions a lot
 		final int numDimensions = image.getNumDimensions();
 
 		// we should have a temporary array to get the current position
-		int[] tmp = new int[ image.getNumDimensions() ];
+		int[] tmp = new int[image.getNumDimensions()];
 
 		// iterate over the image
-A:		while ( cursor1.hasNext() )
+		A: while ( cursor1.hasNext())
 		{
 			cursor1.fwd();
 
@@ -75,7 +75,7 @@ A:		while ( cursor1.hasNext() )
 
 			// check if there is at least a distance of 1 to the border
 			for ( int d = 0; d < numDimensions; ++d )
-				if ( tmp[ d ] < 1 || tmp[ d ] > image.getDimension( d ) - 2 )
+				if ( tmp[d] < 1 || tmp[d] > image.getDimension( d ) - 2 )
 					continue A;
 
 			// move the cursor to the current position
@@ -90,7 +90,7 @@ A:		while ( cursor1.hasNext() )
 			boolean isMaximum = true;
 
 			// check if all pixels are smaller
-			while ( nbCursor.hasNext() && isMaximum )
+			while ( nbCursor.hasNext() && isMaximum)
 			{
 				nbCursor.fwd();
 
@@ -102,7 +102,7 @@ A:		while ( cursor1.hasNext() )
 			if ( isMaximum )
 			{
 				// draw a sphere of radius one in the new image
-				HyperSphereIterator<U> sphere = new HyperSphereIterator<U>( output, cursor1, 1 );
+				HyperSphereIterator< U > sphere = new HyperSphereIterator< U >( output, cursor1, 1 );
 
 				for ( U value : sphere )
 					value.setOne();

@@ -10,13 +10,17 @@ package net.imglib2.examples.util;
  *
  * @author Johannes Schindelin
  */
-public class RealSum { protected double sum;
+public class RealSum
+{
+	protected double sum;
 
-	public void add(double value) {
+	public void add( double value )
+	{
 		sum += value;
 	}
 
-	public double getSum() {
+	public double getSum()
+	{
 		return sum;
 	}
 }
