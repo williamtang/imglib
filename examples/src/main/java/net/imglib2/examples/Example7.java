@@ -4,9 +4,11 @@ import ij.ImageJ;
 
 import java.io.File;
 
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.numeric.real.FloatType;
 
@@ -21,7 +23,7 @@ import mpicbg.imglib.outofbounds.OutOfBoundsStrategyMirrorFactory;
  */
 public class Example7
 {
-	public Example7()
+	public Example7() throws ImgIOException, IncompatibleTypeException
 	{
 		// define the file to open
 		File file = new File( "street_bw.tif" );
@@ -49,7 +51,7 @@ public class Example7
 		ImageJFunctions.show( convolved );
 	}
 
-	public static void main( String[] args )
+	public static void main( String[] args ) throws ImgIOException, IncompatibleTypeException
 	{
 		// open an ImageJ window
 		new ImageJ();

@@ -6,8 +6,10 @@ import java.util.Collections;
 
 import net.imglib2.Cursor;
 import net.imglib2.examples.util.RealSum;
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.real.FloatType;
@@ -23,7 +25,7 @@ import ij.ImageJ;
  */
 public class Example3
 {
-	public Example3()
+	public Example3() throws ImgIOException, IncompatibleTypeException
 	{
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
@@ -137,7 +139,7 @@ public class Example3
 		return median;
 	}
 
-	public static void main( String[] args )
+	public static void main( String[] args ) throws ImgIOException, IncompatibleTypeException
 	{
 		// open an ImageJ window
 		new ImageJ();

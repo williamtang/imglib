@@ -4,9 +4,11 @@ import ij.ImageJ;
 
 import java.io.File;
 
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.type.numeric.RealType;
@@ -27,7 +29,7 @@ import mpicbg.imglib.util.Util;
  */
 public class Example5
 {
-	public Example5()
+	public Example5() throws ImgIOException, IncompatibleTypeException
 	{
 		// define the file to open
 		File file = new File( "DrosophilaWingSmall.tif" );
@@ -64,7 +66,7 @@ public class Example5
 		}
 	}
 
-	public static void main( String[] args )
+	public static void main( String[] args ) throws ImgIOException, IncompatibleTypeException
 	{
 		// open an ImageJ window
 		new ImageJ();

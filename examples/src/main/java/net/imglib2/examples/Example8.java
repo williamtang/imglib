@@ -1,8 +1,10 @@
 package net.imglib2.examples;
 
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.numeric.real.FloatType;
 import ij.ImageJ;
@@ -17,7 +19,7 @@ import mpicbg.imglib.algorithm.math.NormalizeImageFloat;
  */
 public class Example8
 {
-	public Example8()
+	public Example8() throws ImgIOException, IncompatibleTypeException
 	{
 		// open with ImgOpener using an ArrayImgFactory
 		Img< FloatType > image = new ImgOpener().openImg( "DrosophilaWing.tif", new ArrayImgFactory< FloatType >(), new FloatType() );
@@ -56,7 +58,7 @@ public class Example8
 
 	}
 
-	public static void main( String[] args )
+	public static void main( String[] args ) throws ImgIOException, IncompatibleTypeException
 	{
 		// open an ImageJ window
 		new ImageJ();

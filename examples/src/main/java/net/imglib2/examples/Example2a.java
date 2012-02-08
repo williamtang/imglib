@@ -3,9 +3,11 @@ package net.imglib2.examples;
 import java.io.File;
 
 import net.imglib2.Cursor;
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
@@ -22,7 +24,7 @@ import ij.ImageJ;
 public class Example2a< T extends RealType< T > & NativeType< T >>
 {
 
-	public Example2a()
+	public Example2a() throws ImgIOException, IncompatibleTypeException
 	{
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
@@ -68,7 +70,7 @@ public class Example2a< T extends RealType< T > & NativeType< T >>
 		return output;
 	}
 
-	public static < T extends RealType< T > & NativeType< T >> void main( String[] args )
+	public static < T extends RealType< T > & NativeType< T >> void main( String[] args ) throws ImgIOException, IncompatibleTypeException
 	{
 		// open an ImageJ window
 		new ImageJ();
