@@ -9,7 +9,6 @@ import java.awt.geom.RoundRectangle2D;
 import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 
-import mpicbg.imglib.container.shapelist.ShapeList;
 import mpicbg.imglib.type.numeric.RGBALegacyType;
 
 /**
