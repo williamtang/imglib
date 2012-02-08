@@ -5,6 +5,7 @@ import java.io.File;
 import net.imglib2.Cursor;
 import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.io.ImgOpener;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.real.FloatType;
 
@@ -12,7 +13,6 @@ import mpicbg.imglib.container.ContainerFactory;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.container.cell.CellContainerFactory;
 import mpicbg.imglib.image.ImageFactory;
-import mpicbg.imglib.io.LOCI;
 import ij.ImageJ;
 
 /**
@@ -30,8 +30,8 @@ public class Example2b
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
 
-		// open with LOCI using an ArrayContainer
-		Img< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		// open with ImgOpener using an ArrayContainer
+		Img< FloatType > image = ImgOpener.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// copy the image
 		Img< FloatType > duplicate = copyImage( image, new CellContainerFactory( 20 ) );

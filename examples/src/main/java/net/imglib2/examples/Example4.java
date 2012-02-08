@@ -4,6 +4,7 @@ import java.io.File;
 
 import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.io.ImgOpener;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.type.numeric.RealType;
@@ -15,7 +16,6 @@ import mpicbg.imglib.cursor.special.HyperSphereIterator;
 import mpicbg.imglib.cursor.special.LocalNeighborhoodCursor;
 import mpicbg.imglib.cursor.special.LocalNeighborhoodCursorFactory;
 import mpicbg.imglib.image.ImageFactory;
-import mpicbg.imglib.io.LOCI;
 import mpicbg.imglib.type.logic.BitType;
 import ij.ImageJ;
 
@@ -32,8 +32,8 @@ public class Example4
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
 
-		// open with LOCI using an ArrayContainer
-		Img< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		// open with ImgOpener using an ArrayContainer
+		Img< FloatType > image = ImgOpener.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// find local maxima and paint them into another image as spheres
 		Img< BitType > display = findAndDisplayLocalMaxima( image, new BitType() );

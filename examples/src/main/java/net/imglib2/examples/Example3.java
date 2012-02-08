@@ -7,12 +7,12 @@ import java.util.Collections;
 import net.imglib2.Cursor;
 import net.imglib2.examples.util.RealSum;
 import net.imglib2.img.Img;
+import net.imglib2.io.ImgOpener;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.type.numeric.RealType;
 
 import mpicbg.imglib.container.array.ArrayContainerFactory;
-import mpicbg.imglib.io.LOCI;
 import ij.ImageJ;
 
 /**
@@ -28,8 +28,8 @@ public class Example3
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
 
-		// open with LOCI using an ArrayContainer
-		Img< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		// open with ImgOpener using an ArrayContainer
+		Img< FloatType > image = ImgOpener.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// compute min and max of the Image
 		FloatType min = image.createType();
