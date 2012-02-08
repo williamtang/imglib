@@ -6,9 +6,10 @@ import java.awt.Polygon;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.RoundRectangle2D;
 
+import net.imglib2.img.display.imagej.ImageJFunctions;
+
 import mpicbg.imglib.container.shapelist.ShapeList;
 import mpicbg.imglib.image.Image;
-import mpicbg.imglib.image.display.imagej.ImageJFunctions;
 import mpicbg.imglib.type.numeric.RGBALegacyType;
 
 /**

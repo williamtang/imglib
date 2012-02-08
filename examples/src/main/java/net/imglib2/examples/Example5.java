@@ -4,12 +4,12 @@ import ij.ImageJ;
 
 import java.io.File;
 
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
 
 import mpicbg.imglib.algorithm.CanvasImage;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.image.Image;
-import mpicbg.imglib.image.display.imagej.ImageJFunctions;
 import mpicbg.imglib.io.LOCI;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyFactory;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyMirrorExpWindowingFactory;

@@ -4,10 +4,11 @@ import ij.ImageJ;
 
 import java.io.File;
 
+import net.imglib2.img.display.imagej.ImageJFunctions;
+
 import mpicbg.imglib.algorithm.gauss.GaussianConvolution;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.image.Image;
-import mpicbg.imglib.image.display.imagej.ImageJFunctions;
 import mpicbg.imglib.io.LOCI;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyMirrorFactory;
 import mpicbg.imglib.type.numeric.real.FloatType;
