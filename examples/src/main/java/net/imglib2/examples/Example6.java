@@ -5,12 +5,12 @@ import ij.ImageJ;
 import java.io.File;
 
 import net.imglib2.img.Img;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.numeric.real.FloatType;
 
 import mpicbg.imglib.algorithm.gauss.GaussianConvolution;
-import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyValueFactory;
 import mpicbg.imglib.type.numeric.integer.ByteType;
 
@@ -27,8 +27,8 @@ public class Example6
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
 
-		// open with ImgOpener using an ArrayContainer
-		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		// open with ImgOpener using an ArrayImgFactory
+		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayImgFactory< T >() );
 
 		// perform gaussian convolution
 		GaussianConvolution< FloatType > gauss = new GaussianConvolution< FloatType >( image, new OutOfBoundsStrategyValueFactory< FloatType >(), 4 );

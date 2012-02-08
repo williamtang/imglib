@@ -4,11 +4,11 @@ import java.io.File;
 
 import net.imglib2.Cursor;
 import net.imglib2.img.Img;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.Type;
 
-import mpicbg.imglib.container.array.ArrayContainerFactory;
 import ij.ImageJ;
 
 /**
@@ -25,8 +25,8 @@ public class Example2a
 		// define the file to open
 		File file = new File( "DrosophilaWing.tif" );
 
-		// open with ImgOpener using an ArrayContainer
-		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		// open with ImgOpener using an ArrayImgFactory
+		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayImgFactory< T >() );
 
 		// copy the image
 		Img< FloatType > duplicate = copyImage( image );
