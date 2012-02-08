@@ -2,10 +2,10 @@ package net.imglib2.examples;
 
 import java.io.File;
 
+import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.type.numeric.RealType;
 
 import mpicbg.imglib.image.Image;
-import mpicbg.imglib.image.ImagePlusAdapter;
 import mpicbg.imglib.image.display.imagej.ImageJFunctions;
 import ij.ImageJ;
 import ij.ImagePlus;
