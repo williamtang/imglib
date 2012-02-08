@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import net.imglib2.Cursor;
 import net.imglib2.examples.util.RealSum;
 import net.imglib2.type.numeric.RealType;
 
 import mpicbg.imglib.container.array.ArrayContainerFactory;
-import mpicbg.imglib.cursor.Cursor;
 import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
 import mpicbg.imglib.type.Type;

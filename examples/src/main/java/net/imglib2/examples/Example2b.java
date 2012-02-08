@@ -2,12 +2,12 @@ package net.imglib2.examples;
 
 import java.io.File;
 
+import net.imglib2.Cursor;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 
 import mpicbg.imglib.container.ContainerFactory;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.container.cell.CellContainerFactory;
-import mpicbg.imglib.cursor.Cursor;
 import mpicbg.imglib.image.Image;
 import mpicbg.imglib.image.ImageFactory;
 import mpicbg.imglib.io.LOCI;
