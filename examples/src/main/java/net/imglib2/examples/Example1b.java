@@ -4,12 +4,12 @@ import java.io.File;
 
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.real.FloatType;
 
 import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.container.cell.CellContainerFactory;
 import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
-import mpicbg.imglib.type.numeric.real.FloatType;
 import ij.ImageJ;
 
 /**

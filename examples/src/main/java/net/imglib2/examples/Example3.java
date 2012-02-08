@@ -7,12 +7,12 @@ import java.util.Collections;
 import net.imglib2.Cursor;
 import net.imglib2.examples.util.RealSum;
 import net.imglib2.type.Type;
+import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.type.numeric.RealType;
 
 import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
-import mpicbg.imglib.type.numeric.real.FloatType;
 import ij.ImageJ;
 
 /**

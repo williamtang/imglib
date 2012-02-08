@@ -1,13 +1,13 @@
 package net.imglib2.examples;
 
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.real.FloatType;
 import ij.ImageJ;
 import mpicbg.imglib.algorithm.fft.FourierConvolution;
 import mpicbg.imglib.algorithm.math.NormalizeImageFloat;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
-import mpicbg.imglib.type.numeric.real.FloatType;
 
 /**
  * Perform a gaussian convolution using fourier convolution

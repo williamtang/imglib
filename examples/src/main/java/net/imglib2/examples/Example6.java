@@ -5,6 +5,7 @@ import ij.ImageJ;
 import java.io.File;
 
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.real.FloatType;
 
 import mpicbg.imglib.algorithm.gauss.GaussianConvolution;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
@@ -12,7 +13,6 @@ import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyValueFactory;
 import mpicbg.imglib.type.numeric.integer.ByteType;
-import mpicbg.imglib.type.numeric.real.FloatType;
 
 /**
  * Use of Gaussian Convolution on the Image

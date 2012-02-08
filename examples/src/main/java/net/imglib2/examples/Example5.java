@@ -5,6 +5,7 @@ import ij.ImageJ;
 import java.io.File;
 
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.type.numeric.RealType;
 
 import mpicbg.imglib.algorithm.CanvasImage;
@@ -16,7 +17,6 @@ import mpicbg.imglib.outofbounds.OutOfBoundsStrategyMirrorExpWindowingFactory;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyMirrorFactory;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyPeriodicFactory;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyValueFactory;
-import mpicbg.imglib.type.numeric.real.FloatType;
 import mpicbg.imglib.util.Util;
 
 /**

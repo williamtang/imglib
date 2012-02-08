@@ -1,6 +1,7 @@
 package net.imglib2.examples;
 
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.real.FloatType;
 import mpicbg.imglib.algorithm.fft.FourierConvolution;
 import mpicbg.imglib.algorithm.fft.FourierTransform;
 import mpicbg.imglib.algorithm.fft.InverseFourierTransform;
@@ -9,7 +10,6 @@ import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
 import mpicbg.imglib.type.numeric.complex.ComplexFloatType;
-import mpicbg.imglib.type.numeric.real.FloatType;
 import ij.ImageJ;
 
 /**

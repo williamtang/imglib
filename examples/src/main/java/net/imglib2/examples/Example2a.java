@@ -9,7 +9,6 @@ import net.imglib2.type.Type;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
-import mpicbg.imglib.type.numeric.real.FloatType;
 import ij.ImageJ;
 
 /**
