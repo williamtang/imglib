@@ -56,8 +56,8 @@ public class Example5
 		{
 			Img< T > out = canvas.getResult();
 
-			out.setName( outofboundsFactory.getClass().getSimpleName() + " took " + canvas.getProcessingTime() + " ms." );
-			ImageJFunctions.show( out );
+			final String name = outofboundsFactory.getClass().getSimpleName() + " took " + canvas.getProcessingTime() + " ms.";
+			ImageJFunctions.show( out ).setTitle( name );
 		} else
 		{
 			System.out.println( canvas.getErrorMessage() );
