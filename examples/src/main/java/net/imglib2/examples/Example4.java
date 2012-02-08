@@ -3,6 +3,7 @@ package net.imglib2.examples;
 import java.io.File;
 
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.Type;
 import net.imglib2.type.numeric.RealType;
 
 import mpicbg.imglib.container.array.ArrayContainerFactory;
@@ -14,7 +15,6 @@ import mpicbg.imglib.cursor.special.LocalNeighborhoodCursorFactory;
 import mpicbg.imglib.image.Image;
 import mpicbg.imglib.image.ImageFactory;
 import mpicbg.imglib.io.LOCI;
-import mpicbg.imglib.type.Type;
 import mpicbg.imglib.type.logic.BitType;
 import mpicbg.imglib.type.numeric.real.FloatType;
 import ij.ImageJ;
