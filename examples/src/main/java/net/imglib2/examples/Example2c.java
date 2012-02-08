@@ -2,6 +2,7 @@ package net.imglib2.examples;
 
 import java.io.File;
 
+import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.real.FloatType;
@@ -11,7 +12,6 @@ import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.container.cell.CellContainerFactory;
 import mpicbg.imglib.cursor.LocalizableByDimCursor;
 import mpicbg.imglib.cursor.LocalizableCursor;
-import mpicbg.imglib.image.Image;
 import mpicbg.imglib.image.ImageFactory;
 import mpicbg.imglib.io.LOCI;
 import ij.ImageJ;
@@ -31,21 +31,21 @@ public class Example2c
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with LOCI using an ArrayContainer
-		Image< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Img< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// copy the image
-		Image< FloatType > duplicate = copyImage( image, new CellContainerFactory( 20 ) );
+		Img< FloatType > duplicate = copyImage( image, new CellContainerFactory( 20 ) );
 
 		// display the copy
 		duplicate.getDisplay().setMinMax();
 		ImageJFunctions.displayAsVirtualStack( duplicate ).show();
 	}
 
-	public < T extends Type< T >> Image< T > copyImage( final Image< T > input, final ContainerFactory containerFactory )
+	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ContainerFactory containerFactory )
 	{
 		// create a new Image with the same dimensions
 		ImageFactory< T > imageFactory = new ImageFactory< T >( input.createType(), containerFactory );
-		Image< T > output = imageFactory.createImage( input.getDimensions(), "Copy of " + input.getName() );
+		Img< T > output = imageFactory.createImage( input.getDimensions(), "Copy of " + input.getName() );
 
 		// create a cursor for both images
 		LocalizableCursor< T > cursorInput = input.createLocalizableCursor();

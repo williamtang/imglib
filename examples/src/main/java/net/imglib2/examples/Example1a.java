@@ -3,10 +3,10 @@ package net.imglib2.examples;
 import java.io.File;
 
 import net.imglib2.img.ImagePlusAdapter;
+import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
 
-import mpicbg.imglib.image.Image;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.io.Opener;
@@ -32,7 +32,7 @@ public class Example1a
 		imp.show();
 
 		// wrap it into an ImgLib image (no copying)
-		final Image< T > image = ImagePlusAdapter.wrap( imp );
+		final Img< T > image = ImagePlusAdapter.wrap( imp );
 
 		// display it via ImgLib using ImageJ
 		ImageJFunctions.displayAsVirtualStack( image ).show();

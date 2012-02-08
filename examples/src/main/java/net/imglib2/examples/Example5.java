@@ -4,13 +4,13 @@ import ij.ImageJ;
 
 import java.io.File;
 
+import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.type.numeric.RealType;
 
 import mpicbg.imglib.algorithm.CanvasImage;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
-import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyFactory;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyMirrorExpWindowingFactory;
@@ -33,7 +33,7 @@ public class Example5
 		File file = new File( "DrosophilaWingSmall.tif" );
 
 		// open with LOCI using an ArrayContainer
-		Image< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Img< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// test serveral out of bounds strategies
 		testCanvas( image, new OutOfBoundsStrategyValueFactory< FloatType >() );
@@ -43,7 +43,7 @@ public class Example5
 		testCanvas( image, new OutOfBoundsStrategyMirrorExpWindowingFactory< FloatType >( 0.5f ) );
 	}
 
-	public < T extends RealType< T >> void testCanvas( final Image< T > img, final OutOfBoundsStrategyFactory< T > outofboundsFactory )
+	public < T extends RealType< T >> void testCanvas( final Img< T > img, final OutOfBoundsStrategyFactory< T > outofboundsFactory )
 	{
 		final int[] newSize = new int[img.getNumDimensions()];
 
@@ -54,7 +54,7 @@ public class Example5
 
 		if ( canvas.checkInput() && canvas.process() )
 		{
-			Image< T > out = canvas.getResult();
+			Img< T > out = canvas.getResult();
 
 			out.setName( outofboundsFactory.getClass().getSimpleName() + " took " + canvas.getProcessingTime() + " ms." );
 			out.getDisplay().setMinMax();

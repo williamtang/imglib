@@ -3,11 +3,11 @@ package net.imglib2.examples;
 import java.io.File;
 
 import net.imglib2.Cursor;
+import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.Type;
 
 import mpicbg.imglib.container.array.ArrayContainerFactory;
-import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
 import ij.ImageJ;
 
@@ -26,20 +26,20 @@ public class Example2a
 		File file = new File( "DrosophilaWing.tif" );
 
 		// open with LOCI using an ArrayContainer
-		Image< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
+		Img< FloatType > image = LOCI.openLOCIFloatType( file.getAbsolutePath(), new ArrayContainerFactory() );
 
 		// copy the image
-		Image< FloatType > duplicate = copyImage( image );
+		Img< FloatType > duplicate = copyImage( image );
 
 		// display the copy
 		duplicate.getDisplay().setMinMax();
 		ImageJFunctions.displayAsVirtualStack( duplicate ).show();
 	}
 
-	public < T extends Type< T >> Image< T > copyImage( final Image< T > input )
+	public < T extends Type< T >> Img< T > copyImage( final Img< T > input )
 	{
 		// create a new Image with the same properties
-		Image< T > output = input.createNewImage();
+		Img< T > output = input.createNewImage();
 
 		// create a cursor for both images
 		Cursor< T > cursorInput = input.createCursor();

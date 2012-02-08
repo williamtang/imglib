@@ -1,5 +1,6 @@
 package net.imglib2.examples;
 
+import net.imglib2.img.Img;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.real.FloatType;
 import mpicbg.imglib.algorithm.fft.FourierConvolution;
@@ -7,7 +8,6 @@ import mpicbg.imglib.algorithm.fft.FourierTransform;
 import mpicbg.imglib.algorithm.fft.InverseFourierTransform;
 import mpicbg.imglib.algorithm.math.NormalizeImageFloat;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
-import mpicbg.imglib.image.Image;
 import mpicbg.imglib.io.LOCI;
 import mpicbg.imglib.type.numeric.complex.ComplexFloatType;
 import ij.ImageJ;
@@ -23,11 +23,11 @@ public class Example9
 	public Example9()
 	{
 		// open with LOCI using an ArrayContainer
-		Image< FloatType > image = LOCI.openLOCIFloatType( "JohannesAndAlbert.jpg", new ArrayContainerFactory() );
-		Image< FloatType > kernel = LOCI.openLOCIFloatType( "kernelAlbert.tif", new ArrayContainerFactory() );
+		Img< FloatType > image = LOCI.openLOCIFloatType( "JohannesAndAlbert.jpg", new ArrayContainerFactory() );
+		Img< FloatType > kernel = LOCI.openLOCIFloatType( "kernelAlbert.tif", new ArrayContainerFactory() );
 
 		final FourierTransform< FloatType, ComplexFloatType > fft = new FourierTransform< FloatType, ComplexFloatType >( kernel, new ComplexFloatType() );
-		final Image< ComplexFloatType > kernelFFT;
+		final Img< ComplexFloatType > kernelFFT;
 		if ( fft.checkInput() && fft.process() )
 			kernelFFT = fft.getResult();
 		else
@@ -48,7 +48,7 @@ public class Example9
 
 		// compute inverse fourier transform of the kernel
 		final InverseFourierTransform< FloatType, ComplexFloatType > ifft = new InverseFourierTransform< FloatType, ComplexFloatType >( kernelFFT, fft );
-		final Image< FloatType > kernelInverse;
+		final Img< FloatType > kernelInverse;
 		if ( ifft.checkInput() && ifft.process() )
 			kernelInverse = ifft.getResult();
 		else
@@ -90,7 +90,7 @@ public class Example9
 			return;
 		}
 
-		Image< FloatType > convolved = fourierConvolution.getResult();
+		Img< FloatType > convolved = fourierConvolution.getResult();
 		convolved.setName( "(" + fourierConvolution.getProcessingTime() + " ms) Convolution of " + image.getName() );
 
 		convolved.getDisplay().setMinMax();
