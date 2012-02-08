@@ -3,6 +3,7 @@ package net.imglib2.examples;
 import java.io.File;
 
 import net.imglib2.img.Img;
+import net.imglib2.img.ImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.Type;
@@ -15,7 +16,6 @@ import mpicbg.imglib.cursor.LocalizableCursor;
 import mpicbg.imglib.cursor.special.HyperSphereIterator;
 import mpicbg.imglib.cursor.special.LocalNeighborhoodCursor;
 import mpicbg.imglib.cursor.special.LocalNeighborhoodCursorFactory;
-import mpicbg.imglib.image.ImageFactory;
 import mpicbg.imglib.type.logic.BitType;
 import ij.ImageJ;
 
@@ -48,7 +48,7 @@ public class Example4
 	public static < T extends Comparable< T > & Type< T >, U extends RealType< U >> Img< U > findAndDisplayLocalMaxima( final Img< T > image, final U outputType )
 	{
 		// Create a new image of the provided RealType U
-		ImageFactory< U > imageFactory = new ImageFactory< U >( outputType, image.getContainerFactory() );
+		ImgFactory< U > imageFactory = new ImgFactory< U >( outputType, image.getContainerFactory() );
 		Img< U > output = imageFactory.createImage( image.getDimensions() );
 
 		// create a Cursor that runs over the image and checks in a 3^n neighborhood if it is a maxima

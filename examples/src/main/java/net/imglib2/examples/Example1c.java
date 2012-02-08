@@ -1,10 +1,10 @@
 package net.imglib2.examples;
 
 import net.imglib2.img.Img;
+import net.imglib2.img.ImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.real.FloatType;
 import mpicbg.imglib.container.cell.CellContainerFactory;
-import mpicbg.imglib.image.ImageFactory;
 import ij.ImageJ;
 
 /**
@@ -18,7 +18,7 @@ public class Example1c
 	public Example1c()
 	{
 		// create the Factory that will instantiate the Image
-		final ImageFactory< FloatType > imageFactory = new ImageFactory< FloatType >( new FloatType(), new CellContainerFactory() );
+		final ImgFactory< FloatType > imageFactory = new ImgFactory< FloatType >( new FloatType(), new CellContainerFactory() );
 
 		// create an Image
 		final Img< FloatType > image1 = imageFactory.createImage( new int[]{ 20, 30, 40 } );

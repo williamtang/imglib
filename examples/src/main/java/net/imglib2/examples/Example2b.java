@@ -4,6 +4,7 @@ import java.io.File;
 
 import net.imglib2.Cursor;
 import net.imglib2.img.Img;
+import net.imglib2.img.ImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.Type;
@@ -12,7 +13,6 @@ import net.imglib2.type.numeric.real.FloatType;
 import mpicbg.imglib.container.ContainerFactory;
 import mpicbg.imglib.container.array.ArrayContainerFactory;
 import mpicbg.imglib.container.cell.CellContainerFactory;
-import mpicbg.imglib.image.ImageFactory;
 import ij.ImageJ;
 
 /**
@@ -44,7 +44,7 @@ public class Example2b
 	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ContainerFactory containerFactory )
 	{
 		// create a new Image with the same dimensions
-		ImageFactory< T > imageFactory = new ImageFactory< T >( input.createType(), containerFactory );
+		ImgFactory< T > imageFactory = new ImgFactory< T >( input.createType(), containerFactory );
 		Img< T > output = imageFactory.createImage( input.getDimensions(), "Copy of " + input.getName() );
 
 		// create a cursor for both images
