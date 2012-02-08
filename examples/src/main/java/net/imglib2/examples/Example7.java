@@ -32,7 +32,7 @@ public class Example7
 		Img< FloatType > image = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< FloatType >(), new FloatType() );
 
 		// display maxima
-		ImageJFunctions.copyToImagePlus( image ).show();
+		ImageJFunctions.show( image );
 
 		// perform gaussian convolution
 		GaussianConvolution< FloatType > gauss = new GaussianConvolution< FloatType >( image, new OutOfBoundsStrategyMirrorFactory< FloatType >(), new double[]{ 0, 0, 4 } );

@@ -41,8 +41,8 @@ public class Example4
 		Img< BitType > display = findAndDisplayLocalMaxima( image, new BitType() );
 
 		// display output and input
-		ImageJFunctions.copyToImagePlus( image ).show();
-		ImageJFunctions.copyToImagePlus( display ).show();
+		ImageJFunctions.show( image );
+		ImageJFunctions.show( display );
 	}
 
 	public static < T extends Comparable< T > & Type< T >, U extends RealType< U >> Img< U > findAndDisplayLocalMaxima( final Img< T > image, final U outputType )

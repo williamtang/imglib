@@ -71,11 +71,11 @@ public class Example9
 		kernel = normImage.getResult();
 
 		// display all
-		ImageJFunctions.copyToImagePlus( kernel ).show().setTitle( "kernel" );
+		ImageJFunctions.show( kernel ).setTitle( "kernel" );
 
-		ImageJFunctions.copyToImagePlus( kernelInverse ).show().setTitle( "inverse kernel" );
+		ImageJFunctions.show( kernelInverse ).setTitle( "inverse kernel" );
 
-		ImageJFunctions.copyToImagePlus( image ).show();
+		ImageJFunctions.show( image );
 
 		// compute fourier convolution
 		FourierConvolution< FloatType, FloatType > fourierConvolution = new FourierConvolution< FloatType, FloatType >( image, kernelInverse );
@@ -89,7 +89,7 @@ public class Example9
 		Img< FloatType > convolved = fourierConvolution.getResult();
 
 		final String nameConvolved = "(" + fourierConvolution.getProcessingTime() + " ms) Convolution of " + image.getName();
-		ImageJFunctions.copyToImagePlus( convolved ).show().setTitle( nameConvolved );
+		ImageJFunctions.show( convolved ).setTitle( nameConvolved );
 
 	}
 
