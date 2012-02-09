@@ -18,10 +18,10 @@ public class Example1c
 	public Example1c()
 	{
 		// create the ImgFactory based on cells (cellsize = 5x5x5...x5) that will instantiate the Img
-		final ImgFactory< FloatType > imageFactory = new CellImgFactory< FloatType >( 5 );
+		final ImgFactory< FloatType > imgFactory = new CellImgFactory< FloatType >( 5 );
 
 		// create an 3d-Img with dimensions 20x30x40 (here cellsize is 5x5x5)Ø
-		final Img< FloatType > image1 = imageFactory.create( new long[]{ 20, 30, 40 }, new FloatType() );
+		final Img< FloatType > image1 = imgFactory.create( new long[]{ 20, 30, 40 }, new FloatType() );
 
 		// create another image with the same size
 		// note that the input provides the size for the new image as it implements the Interval interface

@@ -41,11 +41,11 @@ public class Example2b
 		ImageJFunctions.show( duplicate );
 	}
 
-	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ImgFactory< T > imageFactory )
+	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ImgFactory< T > imgFactory )
 	{
-		// create a new Image with the same dimensions but the other imageFactory
+		// create a new Image with the same dimensions but the other imgFactory
 		// note that the input provides the size for the new image as it implements the Interval interface
-		Img< T > output = imageFactory.create( input, input.firstElement() );
+		Img< T > output = imgFactory.create( input, input.firstElement() );
 
 		// create a cursor for both images
 		Cursor< T > cursorInput = input.cursor();
