@@ -4,13 +4,13 @@ import java.io.File;
 
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.cell.CellImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 
-import mpicbg.imglib.container.cell.CellContainerFactory;
 import ij.ImageJ;
 
 /**
@@ -33,8 +33,8 @@ public class Example1b
 		// display it via ImgLib using ImageJ
 		ImageJFunctions.show( image );
 
-		// open with ImgOpener as Float using an ArrayImgFactory
-		Img< FloatType > imageFloat = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new CellContainerFactory( 10 ) );
+		// open with ImgOpener as Float using a CellImgFactory
+		Img< FloatType > imageFloat = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new CellImgFactory< FloatType >( 10 ) );
 
 		// display it via ImgLib using ImageJ
 		ImageJFunctions.show( imageFloat );

@@ -2,9 +2,9 @@ package net.imglib2.examples;
 
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
+import net.imglib2.img.cell.CellImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.real.FloatType;
-import mpicbg.imglib.container.cell.CellContainerFactory;
 import ij.ImageJ;
 
 /**
@@ -17,8 +17,8 @@ public class Example1c
 {
 	public Example1c()
 	{
-		// create the Factory that will instantiate the Image
-		final ImgFactory< FloatType > imageFactory = new ImgFactory< FloatType >( new FloatType(), new CellContainerFactory() );
+		// create the ImgFactory based on cells (cellsize = 5x5x5...x5) that will instantiate the Img
+		final ImgFactory< FloatType > imageFactory = new CellImgFactory< FloatType >( 5 );
 
 		// create an Image
 		final Img< FloatType > image1 = imageFactory.create( new int[]{ 20, 30, 40 }, new FloatType() );

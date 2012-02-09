@@ -6,13 +6,12 @@ import net.imglib2.Cursor;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.cell.CellImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.real.FloatType;
 
-import mpicbg.imglib.container.ContainerFactory;
-import mpicbg.imglib.container.cell.CellContainerFactory;
 import ij.ImageJ;
 
 /**
@@ -34,13 +33,13 @@ public class Example2b
 		Img< FloatType > image = new ImgOpener().openLOCIFloatType( file.getAbsolutePath(), new ArrayImgFactory< T >() );
 
 		// copy the image
-		Img< FloatType > duplicate = copyImage( image, new CellContainerFactory( 20 ) );
+		Img< FloatType > duplicate = copyImage( image, new CellImgFactory< FloatType >( 20 ) );
 
 		// display the copy
 		ImageJFunctions.show( duplicate );
 	}
 
-	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ContainerFactory containerFactory )
+	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ImgFactory< T > containerFactory )
 	{
 		// create a new Image with the same dimensions
 		ImgFactory< T > imageFactory = new ImgFactory< T >( input.createType(), containerFactory );
