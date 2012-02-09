@@ -48,8 +48,8 @@ public class Example4
 	public static < T extends Comparable< T > & Type< T >, U extends RealType< U >> Img< U > findAndDisplayLocalMaxima( final Img< T > image, final U outputType )
 	{
 		// Create a new image of the provided RealType U
-		ImgFactory< U > imageFactory = new ImgFactory< U >( outputType, image.getContainerFactory() );
-		Img< U > output = imageFactory.createImage( image.getDimensions() );
+		ImgFactory< U > imageFactory = image.factory().imgFactory( outputType );
+		Img< U > output = imageFactory.create( image, outputType );
 
 		// create a Cursor that runs over the image and checks in a 3^n neighborhood if it is a maxima
 		LocalizableCursor< T > cursor1 = image.createLocalizableCursor();

@@ -41,11 +41,10 @@ public class Example2b
 		ImageJFunctions.show( duplicate );
 	}
 
-	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ImgFactory< T > containerFactory )
+	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ImgFactory< T > imageFactory )
 	{
 		// create a new Image with the same dimensions
-		ImgFactory< T > imageFactory = new ImgFactory< T >( input.createType(), containerFactory );
-		Img< T > output = imageFactory.createImage( input.getDimensions(), "Copy of " + input.getName() );
+		Img< T > output = imageFactory.create( input, input.firstElement() );
 
 		// create a cursor for both images
 		Cursor< T > cursorInput = input.createCursor();
