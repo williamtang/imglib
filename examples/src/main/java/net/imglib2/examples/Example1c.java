@@ -20,8 +20,8 @@ public class Example1c
 		// create the ImgFactory based on cells (cellsize = 5x5x5...x5) that will instantiate the Img
 		final ImgFactory< FloatType > imageFactory = new CellImgFactory< FloatType >( 5 );
 
-		// create an Image
-		final Img< FloatType > image1 = imageFactory.create( new int[]{ 20, 30, 40 }, new FloatType() );
+		// create an 3d-Img with dimensions 20x30x40 (here cellsize is 5x5x5)Ø
+		final Img< FloatType > image1 = imageFactory.create( new long[]{ 20, 30, 40 }, new FloatType() );
 
 		// create another Image with exactly the same properties
 		final Img< FloatType > image2 = image1.createNewImage();
