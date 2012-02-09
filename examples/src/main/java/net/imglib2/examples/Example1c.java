@@ -21,7 +21,7 @@ public class Example1c
 		final ImgFactory< FloatType > imageFactory = new ImgFactory< FloatType >( new FloatType(), new CellContainerFactory() );
 
 		// create an Image
-		final Img< FloatType > image1 = imageFactory.createImage( new int[]{ 20, 30, 40 } );
+		final Img< FloatType > image1 = imageFactory.create( new int[]{ 20, 30, 40 }, new FloatType() );
 
 		// create another Image with exactly the same properties
 		final Img< FloatType > image2 = image1.createNewImage();
