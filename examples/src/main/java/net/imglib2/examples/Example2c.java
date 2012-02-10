@@ -60,7 +60,7 @@ public class Example2c
 			cursorOutput.setPosition( cursorInput );
 
 			// set the value of this pixel of the output image, every Type supports T.set( T type )
-			cursorOutput.getType().set( cursorInput.getType() );
+			cursorOutput.get().set( cursorInput.get() );
 		}
 
 		// close the cursors

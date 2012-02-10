@@ -55,7 +55,7 @@ public class Example2a< T extends RealType< T > & NativeType< T >>
 			cursorOutput.fwd();
 
 			// set the value of this pixel of the output image, every Type supports T.set( T type )
-			cursorOutput.getType().set( cursorInput.getType() );
+			cursorOutput.get().set( cursorInput.get() );
 		}
 
 		// close the cursors

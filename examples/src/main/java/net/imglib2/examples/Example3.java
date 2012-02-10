@@ -64,8 +64,8 @@ public class Example3
 		// initialize min and max with the first image value
 		cursor.fwd();
 
-		min.set( cursor.getType() );
-		max.set( cursor.getType() );
+		min.set( cursor.get() );
+		max.set( cursor.get() );
 
 		// loop over the image and determine min and max value
 		while ( cursor.hasNext())
@@ -73,7 +73,7 @@ public class Example3
 			cursor.fwd();
 
 			// we need this type more than once
-			T type = cursor.getType();
+			T type = cursor.get();
 
 			if ( type.compareTo( min ) < 0 )
 				min.set( type );
@@ -96,7 +96,7 @@ public class Example3
 		{
 			cursor.fwd();
 
-			sum += cursor.getType().getRealDouble();
+			sum += cursor.get().getRealDouble();
 		}
 
 		return sum / image.getNumPixels();
@@ -115,7 +115,7 @@ public class Example3
 		{
 			cursor.fwd();
 
-			realsum.add( cursor.getType().getRealDouble() );
+			realsum.add( cursor.get().getRealDouble() );
 		}
 
 		return realsum.getSum() / image.getNumPixels();

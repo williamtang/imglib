@@ -86,7 +86,7 @@ public class Example4
 			nbCursor.update();
 
 			// what is the value that we investigate
-			final T centerValue = cursor2.getType().copy();
+			final T centerValue = cursor2.get().copy();
 
 			boolean isMaximum = true;
 
@@ -96,7 +96,7 @@ public class Example4
 				nbCursor.fwd();
 
 				// test if the center is smaller than the current pixel value
-				if ( centerValue.compareTo( nbCursor.getType() ) <= 0 )
+				if ( centerValue.compareTo( nbCursor.get() ) <= 0 )
 					isMaximum = false;
 			}
 
