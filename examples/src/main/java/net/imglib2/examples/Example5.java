@@ -52,7 +52,7 @@ public class Example5
 		//testCanvas( image, new OutOfBoundsStrategyPeriodicFactory< FloatType >() );
 		RandomAccessible< FloatType> infiniteImg5 = Views.extendPeriodic( image ); 
 
-		testCanvas( image, new OutOfBoundsStrategyMirrorExpWindowingFactory< FloatType >( 0.5f ) );
+		//testCanvas( image, new OutOfBoundsStrategyMirrorExpWindowingFactory< FloatType >( 0.5f ) );
 	}
 
 	public static void main( String[] args ) throws ImgIOException, IncompatibleTypeException
