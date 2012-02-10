@@ -4,6 +4,7 @@ import ij.ImageJ;
 
 import java.io.File;
 
+import net.imglib2.RandomAccessible;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
@@ -12,6 +13,7 @@ import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.Views;
 
 import mpicbg.imglib.algorithm.CanvasImage;
 import mpicbg.imglib.outofbounds.OutOfBoundsStrategyFactory;
@@ -38,8 +40,11 @@ public class Example5
 		Img< FloatType > image = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< FloatType >(), new FloatType() );
 
 		// test serveral out of bounds strategies
-		testCanvas( image, new OutOfBoundsStrategyValueFactory< FloatType >() );
-		testCanvas( image, new OutOfBoundsStrategyValueFactory< FloatType >( new FloatType( 128 ) ) );
+		//testCanvas( image, new OutOfBoundsStrategyValueFactory< FloatType >() );
+		RandomAccessible< FloatType> infiniteImg1 = Views.extendValue( image, new FloatType( 0 ) );
+		//testCanvas( image, new OutOfBoundsStrategyValueFactory< FloatType >( new FloatType( 128 ) ) );
+		RandomAccessible< FloatType> infiniteImg2 = Views.extendValue( image, new FloatType( 128 ) );
+		
 		testCanvas( image, new OutOfBoundsStrategyMirrorFactory< FloatType >() );
 		testCanvas( image, new OutOfBoundsStrategyPeriodicFactory< FloatType >() );
 		testCanvas( image, new OutOfBoundsStrategyMirrorExpWindowingFactory< FloatType >( 0.5f ) );
