@@ -4,6 +4,7 @@ import ij.ImageJ;
 
 import java.io.File;
 
+import net.imglib2.FinalInterval;
 import net.imglib2.Point;
 import net.imglib2.RandomAccessible;
 import net.imglib2.exception.IncompatibleTypeException;
@@ -64,6 +65,27 @@ public class Example6
 		
 		// show the in-place convolved image (note the different outofboundsstrategy at the edges)
 		ImageJFunctions.show( image );
+		
+		//
+		// convolve just a part of the image
+		//
+		
+		// open the image again as we convolved it in-place already
+		Img< FloatType > image2 = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< FloatType >(), new FloatType() );
+		
+		// we need to extend it nevertheless as the algorithm needs more area around convolved spot
+		// and we are not sure how much exactly (altough we could compute it with some effort from the sigma)
+		RandomAccessible< FloatType > infiniteImg2 =infiniteImg = Views.extendMirrorSingle( image );
+		
+		// define the area
+		long[] min = new long[] { 100, 30 };
+		long[] max = new long[] { 500, 250 };
+		FinalInterval region = new FinalInterval( min, max );
+		
+		// call the gauss, we convolve only a region and write it back to the exact same coordinates
+		Gauss.inFloat( sigma, infiniteImg2, region, image2, new Point( min ), image2.factory() );
+		
+		ImageJFunctions.show( image2 );
 		
 		// find maxima again
 		final Img< ByteType > maxima = Example4.findAndDisplayLocalMaxima( convolved, new ByteType() );
