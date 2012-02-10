@@ -45,7 +45,10 @@ public class Example5
 		//testCanvas( image, new OutOfBoundsStrategyValueFactory< FloatType >( new FloatType( 128 ) ) );
 		RandomAccessible< FloatType> infiniteImg2 = Views.extendValue( image, new FloatType( 128 ) );
 		
-		testCanvas( image, new OutOfBoundsStrategyMirrorFactory< FloatType >() );
+		//testCanvas( image, new OutOfBoundsStrategyMirrorFactory< FloatType >() );
+		RandomAccessible< FloatType> infiniteImg3 = Views.extendMirrorSingle( image ); 
+		RandomAccessible< FloatType> infiniteImg4 = Views.extendMirrorDouble( image ); 
+		
 		testCanvas( image, new OutOfBoundsStrategyPeriodicFactory< FloatType >() );
 		testCanvas( image, new OutOfBoundsStrategyMirrorExpWindowingFactory< FloatType >( 0.5f ) );
 	}
