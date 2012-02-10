@@ -4,13 +4,16 @@ import ij.ImageJ;
 
 import java.io.File;
 
+import net.imglib2.ExtendedRandomAccessibleInterval;
 import net.imglib2.RandomAccessible;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
+import net.imglib2.outofbounds.OutOfBoundsConstantValueFactory;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
@@ -53,6 +56,9 @@ public class Example5
 		RandomAccessible< FloatType> infiniteImg5 = Views.extendPeriodic( image ); 
 
 		//testCanvas( image, new OutOfBoundsStrategyMirrorExpWindowingFactory< FloatType >( 0.5f ) );
+		
+		// if you implemented your own strategy that you want to instantiate, it will look like this
+		RandomAccessible< FloatType> infiniteImg6 = new ExtendedRandomAccessibleInterval< FloatType, Img< FloatType > >( image, new OutOfBoundsConstantValueFactory< FloatType, Img< FloatType > >( new FloatType( 256 ) ) ); 
 	}
 
 	public static void main( String[] args ) throws ImgIOException, IncompatibleTypeException
