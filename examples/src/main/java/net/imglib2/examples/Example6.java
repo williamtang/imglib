@@ -10,11 +10,9 @@ import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
+import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.real.FloatType;
-
-import mpicbg.imglib.algorithm.gauss.GaussianConvolution;
-import mpicbg.imglib.outofbounds.OutOfBoundsStrategyValueFactory;
-import mpicbg.imglib.type.numeric.integer.ByteType;
+import net.imglib2.algorithm.gauss.Gauss;
 
 /**
  * Use of Gaussian Convolution on the Image
@@ -32,18 +30,13 @@ public class Example6
 		// open with ImgOpener using an ArrayImgFactory
 		Img< FloatType > image = new ImgOpener().openImg( file.getAbsolutePath(), new ArrayImgFactory< FloatType >(), new FloatType() );
 
-		// perform gaussian convolution
-		GaussianConvolution< FloatType > gauss = new GaussianConvolution< FloatType >( image, new OutOfBoundsStrategyValueFactory< FloatType >(), 4 );
-
-		// run the algorithm
-		if ( !gauss.checkInput() || !gauss.process() )
-		{
-			System.out.println( "Error running gaussian convolution: " + gauss.getErrorMessage() );
-			return;
-		}
-
-		// get the result
-		Img< FloatType > convolved = gauss.getResult();
+		// perform gaussian convolution with float precision
+		double[] sigma = new double[ image.numDimensions() ];
+		
+		for ( int d = 0; d < image.numDimensions(); ++d )
+			sigma[ d ] = 4;
+		
+		Img< FloatType > convolved = Gauss.toFloat( sigma, image );
 
 		// display
 		ImageJFunctions.show( convolved );

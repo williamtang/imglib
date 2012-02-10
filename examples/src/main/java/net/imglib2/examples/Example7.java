@@ -11,9 +11,7 @@ import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
 import net.imglib2.type.numeric.real.FloatType;
-
-import mpicbg.imglib.algorithm.gauss.GaussianConvolution;
-import mpicbg.imglib.outofbounds.OutOfBoundsStrategyMirrorFactory;
+import net.imglib2.algorithm.gauss.Gauss;
 
 /**
  * Use of Gaussian Convolution on the Image
@@ -34,19 +32,9 @@ public class Example7
 		// display maxima
 		ImageJFunctions.show( image );
 
-		// perform gaussian convolution
-		GaussianConvolution< FloatType > gauss = new GaussianConvolution< FloatType >( image, new OutOfBoundsStrategyMirrorFactory< FloatType >(), new double[]{ 0, 0, 4 } );
-
-		// run the algorithm
-		if ( !gauss.checkInput() || !gauss.process() )
-		{
-			System.out.println( "Error running gaussian convolution: " + gauss.getErrorMessage() );
-			return;
-		}
-
-		// get the result
-		Img< FloatType > convolved = gauss.getResult();
-
+		// perform gaussian convolution with double precision
+		Img< FloatType > convolved = Gauss.toDouble( new double[]{ 0, 0, 4 }, image );
+		
 		// display
 		ImageJFunctions.show( convolved );
 	}
