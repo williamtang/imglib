@@ -10,6 +10,7 @@ import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
+import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.algorithm.gauss.Gauss;
 
@@ -33,10 +34,16 @@ public class Example7
 		ImageJFunctions.show( image );
 
 		// perform gaussian convolution with double precision
-		Img< FloatType > convolved = Gauss.toDouble( new double[]{ 0, 0, 4 }, image );
+		Img< DoubleType > convolved = Gauss.toDouble( new double[]{ 0, 0, 4 }, image );
 		
 		// display
 		ImageJFunctions.show( convolved );
+		
+		// perform Gaussian convolution with double precision but return input type
+		Img< FloatType > convolved2 = Gauss.inDouble( new double[]{ 0, 0, 4 }, image );
+
+		// display
+		ImageJFunctions.show( convolved2 );
 	}
 
 	public static void main( String[] args ) throws ImgIOException, IncompatibleTypeException
