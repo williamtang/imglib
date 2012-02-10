@@ -43,7 +43,8 @@ public class Example2c
 
 	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ImgFactory< T > imageFactory )
 	{
-		// create a new Image with the same dimensions
+		// create a new Image with the same dimensions but the other imageFactory
+		// note that the input provides the size for the new image as it implements the Interval interface
 		Img< T > output = imageFactory.create( input, input.firstElement() );
 
 		// create a cursor that automatically localizes itself on every move
