@@ -18,7 +18,7 @@ import ij.ImageJ;
 
 /**
  * Here we want to copy an Image into another with a different Container one using a generic method,
- * but we cannot do it with simple Cursors
+ * but we cannot do it with simple Cursors as we use different {@link ImgFactory}s
  *
  * @author Stephan Preibisch &amp; Stephan Saalfeld
  *
@@ -43,7 +43,8 @@ public class Example2b
 
 	public < T extends Type< T >> Img< T > copyImage( final Img< T > input, final ImgFactory< T > imageFactory )
 	{
-		// create a new Image with the same dimensions
+		// create a new Image with the same dimensions but the other imageFactory
+		// note that the input provides the size for the new image as it implements the Interval interface
 		Img< T > output = imageFactory.create( input, input.firstElement() );
 
 		// create a cursor for both images
