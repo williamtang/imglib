@@ -49,7 +49,9 @@ public class Example5
 		RandomAccessible< FloatType> infiniteImg3 = Views.extendMirrorSingle( image ); 
 		RandomAccessible< FloatType> infiniteImg4 = Views.extendMirrorDouble( image ); 
 		
-		testCanvas( image, new OutOfBoundsStrategyPeriodicFactory< FloatType >() );
+		//testCanvas( image, new OutOfBoundsStrategyPeriodicFactory< FloatType >() );
+		RandomAccessible< FloatType> infiniteImg5 = Views.extendPeriodic( image ); 
+
 		testCanvas( image, new OutOfBoundsStrategyMirrorExpWindowingFactory< FloatType >( 0.5f ) );
 	}
 
