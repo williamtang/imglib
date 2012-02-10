@@ -3,6 +3,7 @@ package net.imglib2.examples;
 import java.io.File;
 
 import net.imglib2.Cursor;
+import net.imglib2.RandomAccess;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
@@ -14,12 +15,11 @@ import net.imglib2.io.ImgOpener;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.real.FloatType;
 
-import mpicbg.imglib.cursor.LocalizableByDimCursor;
 import ij.ImageJ;
 
 /**
  * Here we want to copy an Image into another with a different Container one using a generic method,
- * using a LocalizingCursor and a LocalizableByDimCursor
+ * using a LocalizingCursor and a RandomAccess
  *
  * @author Stephan Preibisch &amp; Stephan Saalfeld
  *
@@ -48,7 +48,7 @@ public class Example2c
 
 		// create a cursor that automatically localizes itself on every move
 		Cursor< T > cursorInput = input.localizingCursor();
-		LocalizableByDimCursor< T > cursorOutput = output.createLocalizableByDimCursor();
+		RandomAccess< T > cursorOutput = output.randomAccess();
 
 		// iterate over the input cursor
 		while ( cursorInput.hasNext())
