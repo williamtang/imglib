@@ -40,7 +40,7 @@ public class Example9
 
 		// complex invert the kernel
 		final ComplexFloatType c = new ComplexFloatType();
-		for ( final ComplexFloatType t : kernelFFT.createCursor() )
+		for ( final ComplexFloatType t : kernelFFT.cursor() )
 		{
 			c.set( t );
 			t.complexConjugate();

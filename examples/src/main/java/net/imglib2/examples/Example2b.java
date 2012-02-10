@@ -48,8 +48,8 @@ public class Example2b
 		Img< T > output = imageFactory.create( input, input.firstElement() );
 
 		// create a cursor for both images
-		Cursor< T > cursorInput = input.createCursor();
-		Cursor< T > cursorOutput = output.createCursor();
+		Cursor< T > cursorInput = input.cursor();
+		Cursor< T > cursorOutput = output.cursor();
 
 		// iterate over the input cursor
 		while ( cursorInput.hasNext())

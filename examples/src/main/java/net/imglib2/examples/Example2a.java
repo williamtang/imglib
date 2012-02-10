@@ -44,8 +44,8 @@ public class Example2a< T extends RealType< T > & NativeType< T >>
 		Img< T > output = input.createNewImage();
 
 		// create a cursor for both images
-		Cursor< T > cursorInput = input.createCursor();
-		Cursor< T > cursorOutput = output.createCursor();
+		Cursor< T > cursorInput = input.cursor();
+		Cursor< T > cursorOutput = output.cursor();
 
 		// iterate over the input cursor
 		while ( cursorInput.hasNext())

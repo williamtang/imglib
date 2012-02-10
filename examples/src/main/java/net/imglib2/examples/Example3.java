@@ -59,7 +59,7 @@ public class Example3
 	public < T extends Comparable< T > & Type< T >> void computeMinMax( final Img< T > image, final T min, final T max )
 	{
 		// create a cursor for the image (the order does not matter)
-		Cursor< T > cursor = image.createCursor();
+		Cursor< T > cursor = image.cursor();
 
 		// initialize min and max with the first image value
 		cursor.fwd();
@@ -86,7 +86,7 @@ public class Example3
 	public < T extends RealType< T >> double computeAverage( final Img< T > image )
 	{
 		// create a cursor for the image (the order does not matter)
-		Cursor< T > cursor = image.createCursor();
+		Cursor< T > cursor = image.cursor();
 
 		// count all values
 		double sum = 0;
@@ -105,7 +105,7 @@ public class Example3
 	public < T extends RealType< T >> double computeRealAverage( final Img< T > image )
 	{
 		// create a cursor for the image (the order does not matter)
-		Cursor< T > cursor = image.createCursor();
+		Cursor< T > cursor = image.cursor();
 
 		// count all values
 		RealSum realsum = new RealSum();
