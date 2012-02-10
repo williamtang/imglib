@@ -62,10 +62,6 @@ public class Example2b
 			cursorOutput.get().set( cursorInput.get() );
 		}
 
-		// close the cursors
-		cursorInput.close();
-		cursorOutput.close();
-
 		//. return the copy
 		return output;
 	}

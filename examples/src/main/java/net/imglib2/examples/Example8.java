@@ -34,7 +34,6 @@ public class Example8
 			return;
 		}
 
-		kernel.close();
 		kernel = normImage.getResult();
 
 		// display all

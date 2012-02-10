@@ -107,8 +107,6 @@ public class Example4
 
 				for ( U value : sphere )
 					value.setOne();
-
-				sphere.close();
 			}
 		}
 

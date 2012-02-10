@@ -58,10 +58,6 @@ public class Example2a< T extends RealType< T > & NativeType< T >>
 			cursorOutput.get().set( cursorInput.get() );
 		}
 
-		// close the cursors
-		cursorInput.close();
-		cursorOutput.close();
-
 		// rename the output image
 		output.setName( "Copy of " + input.getName() );
 
