@@ -45,27 +45,6 @@ public class Example5
 		testCanvas( image, new OutOfBoundsStrategyMirrorExpWindowingFactory< FloatType >( 0.5f ) );
 	}
 
-	public < T extends RealType< T >> void testCanvas( final Img< T > img, final OutOfBoundsStrategyFactory< T > outofboundsFactory )
-	{
-		final int[] newSize = new int[img.getNumDimensions()];
-
-		for ( int d = 0; d < img.getNumDimensions(); ++d )
-			newSize[d] = Util.round( img.getDimension( d ) * 3 );
-
-		final CanvasImage< T > canvas = new CanvasImage< T >( img, newSize, outofboundsFactory );
-
-		if ( canvas.checkInput() && canvas.process() )
-		{
-			Img< T > out = canvas.getResult();
-
-			final String name = outofboundsFactory.getClass().getSimpleName() + " took " + canvas.getProcessingTime() + " ms.";
-			ImageJFunctions.show( out ).setTitle( name );
-		} else
-		{
-			System.out.println( canvas.getErrorMessage() );
-		}
-	}
-
 	public static void main( String[] args ) throws ImgIOException, IncompatibleTypeException
 	{
 		// open an ImageJ window
