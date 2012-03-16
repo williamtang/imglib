@@ -28,6 +28,7 @@
 package net.imglib2.interpolation.neighborsearch;
 
 import net.imglib2.RealInterval;
+import net.imglib2.interpolation.Interpolant;
 import net.imglib2.interpolation.InterpolatorFactory;
 import net.imglib2.neighborsearch.NearestNeighborSearch;
 
@@ -39,14 +40,20 @@ import net.imglib2.neighborsearch.NearestNeighborSearch;
  * 
  * @author Stephan Saalfeld
  */
-public class NearestNeighborInterpolatorFactory< T > implements InterpolatorFactory< T, NearestNeighborSearch< T > >
+public class NearestNeighborInterpolatorFactory< T > extends InterpolatorFactory< T, NearestNeighborSearch< T > >
 {
+	@Override
+	public Interpolant< T, NearestNeighborSearch< T > > create( NearestNeighborSearch< T > source ) 
+	{
+		return new Interpolant< T, NearestNeighborSearch< T > >( source, this );
+	}
+
 	/**
 	 * Creates a new {@link NearestNeighborInterpolator} using a copy of the
 	 * passed {@link NearestNeighborSearch}.
 	 */
 	@Override
-	public NearestNeighborInterpolator< T > create( final NearestNeighborSearch< T > search )
+	public NearestNeighborInterpolator< T > createRealRandomAccess( final NearestNeighborSearch< T > search )
 	{
 		return new NearestNeighborInterpolator< T >( search.copy() );
 	}
@@ -59,8 +66,8 @@ public class NearestNeighborInterpolatorFactory< T > implements InterpolatorFact
 	 * {@link #create(NearestNeighborSearch)}.</p>
 	 */
 	@Override
-	public NearestNeighborInterpolator< T > create( final NearestNeighborSearch< T > search, final RealInterval interval )
+	public NearestNeighborInterpolator< T > createRealRandomAccess( final NearestNeighborSearch< T > search, final RealInterval interval )
 	{
-		return create( search );
+		return createRealRandomAccess( search );
 	}
 }

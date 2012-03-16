@@ -29,10 +29,11 @@ package net.imglib2.interpolation.randomaccess;
 
 import net.imglib2.RandomAccessible;
 import net.imglib2.RealInterval;
+import net.imglib2.interpolation.Interpolant;
 import net.imglib2.interpolation.InterpolatorFactory;
 import net.imglib2.type.numeric.RealType;
 
-public class LanczosInterpolatorFactory<T extends RealType<T>> implements InterpolatorFactory< T, RandomAccessible< T > >
+public class LanczosInterpolatorFactory<T extends RealType<T>> extends InterpolatorFactory< T, RandomAccessible< T > >
 {
 	int alpha;
 	boolean clipping;
@@ -50,6 +51,12 @@ public class LanczosInterpolatorFactory<T extends RealType<T>> implements Interp
 		this.clipping = clipping;
 	}
 
+	@Override
+	public Interpolant< T, RandomAccessible< T > > create( RandomAccessible< T > source ) 
+	{
+		return new Interpolant< T, RandomAccessible< T > >( source, this );
+	}
+
 	/**
 	 * Creates a new {@link LanczosInterpolatorFactory} with standard parameters (do clipping, alpha=3)
 	 */
@@ -59,7 +66,7 @@ public class LanczosInterpolatorFactory<T extends RealType<T>> implements Interp
 	}
 	
 	@Override
-	public LanczosInterpolator< T > create( final RandomAccessible< T > randomAccessible )
+	protected LanczosInterpolator< T > createRealRandomAccess( final RandomAccessible< T > randomAccessible )
 	{
 		return new LanczosInterpolator< T >( randomAccessible, alpha, clipping );
 	}
@@ -69,9 +76,9 @@ public class LanczosInterpolatorFactory<T extends RealType<T>> implements Interp
 	 * {@link #create(RandomAccessible)}.
 	 */
 	@Override
-	public LanczosInterpolator< T > create( final RandomAccessible< T > randomAccessible, final RealInterval interval )
+	protected LanczosInterpolator< T > createRealRandomAccess( final RandomAccessible< T > randomAccessible, final RealInterval interval )
 	{
-		return create( randomAccessible );
+		return createRealRandomAccess( randomAccessible );
 	}
 
 	/**

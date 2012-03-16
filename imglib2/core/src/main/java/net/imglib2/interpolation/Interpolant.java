@@ -48,7 +48,7 @@ final public class Interpolant< T, F extends EuclideanSpace > implements RealRan
 		this.source = source;
 		this.factory = factory;
 	}
-	
+
 	@Override
 	public int numDimensions()
 	{
@@ -58,12 +58,12 @@ final public class Interpolant< T, F extends EuclideanSpace > implements RealRan
 	@Override
 	public RealRandomAccess< T > realRandomAccess()
 	{
-		return factory.create( source );
+		return factory.createRealRandomAccess( source );
 	}
 
 	@Override
 	public RealRandomAccess< T > realRandomAccess( final RealInterval interval )
 	{
-		return factory.create( source, interval );
+		return factory.createRealRandomAccess( source, interval );
 	}
 }

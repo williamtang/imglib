@@ -27,6 +27,7 @@
  */
 package net.imglib2.interpolation;
 
+import net.imglib2.EuclideanSpace;
 import net.imglib2.RealInterval;
 import net.imglib2.RealRandomAccess;
 
@@ -36,8 +37,10 @@ import net.imglib2.RealRandomAccess;
  * @param <T> Type of values provided by the interpolator.
  * @param <F> Type of function, which the interpolator operates on. 
  */
-public interface InterpolatorFactory< T, F >
+public abstract class InterpolatorFactory< T, F extends EuclideanSpace >
 {	
-	public RealRandomAccess< T > create( final F f );
-	public RealRandomAccess< T > create( final F f, final RealInterval interval );
+	public abstract Interpolant< T, F > create( F f );
+	
+	protected abstract RealRandomAccess< T > createRealRandomAccess( final F f );
+	protected abstract RealRandomAccess< T > createRealRandomAccess( final F f, final RealInterval interval );
 }

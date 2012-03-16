@@ -29,6 +29,7 @@ package net.imglib2.interpolation.randomaccess;
 
 import net.imglib2.RandomAccessible;
 import net.imglib2.RealInterval;
+import net.imglib2.interpolation.Interpolant;
 import net.imglib2.interpolation.InterpolatorFactory;
 import net.imglib2.type.numeric.NumericType;
 
@@ -38,10 +39,16 @@ import net.imglib2.type.numeric.NumericType;
  *
  * @author Tobias Pietzsch, Stephan Preibisch and Stephan Saalfeld
  */
-public class NLinearInterpolatorFactory< T extends NumericType< T > > implements InterpolatorFactory< T, RandomAccessible< T > >
+public class NLinearInterpolatorFactory< T extends NumericType< T > > extends InterpolatorFactory< T, RandomAccessible< T > >
 {
 	@Override
-	public NLinearInterpolator< T > create( final RandomAccessible< T > randomAccessible )
+	public Interpolant< T, RandomAccessible< T > > create( RandomAccessible< T > source ) 
+	{
+		return new Interpolant< T, RandomAccessible< T > >( source, this );
+	}
+	
+	@Override
+	protected NLinearInterpolator< T > createRealRandomAccess( final RandomAccessible< T > randomAccessible )
 	{
 		switch ( randomAccessible.numDimensions() ) 
 		{
@@ -61,8 +68,8 @@ public class NLinearInterpolatorFactory< T extends NumericType< T > > implements
 	 * {@link #create(RandomAccessible)}.
 	 */
 	@Override
-	public NLinearInterpolator< T > create( final RandomAccessible< T > randomAccessible, final RealInterval interval )
+	protected NLinearInterpolator< T > createRealRandomAccess( final RandomAccessible< T > randomAccessible, final RealInterval interval )
 	{
-		return create( randomAccessible );
+		return createRealRandomAccess( randomAccessible );
 	}
 }
