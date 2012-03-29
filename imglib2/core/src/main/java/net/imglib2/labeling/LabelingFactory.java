@@ -36,19 +36,31 @@
 
 package net.imglib2.labeling;
 
-/**
- * TODO
- *
- * @author Lee Kamentsky
- */
-public class DefaultROIStrategyFactory<T extends Comparable<T>> implements
-		LabelingROIStrategyFactory<T> {
+import net.imglib2.Interval;
+import net.imglib2.util.Util;
 
-	@Override
-	public < L extends Labeling< T >> LabelingROIStrategy< T, L > createLabelingROIStrategy( final L labeling )
+/**
+ * TODO:
+ * 
+ * @author Christian Dietz
+ * 
+ * @param <T>
+ */
+public abstract class LabelingFactory< T extends Comparable< T >>
+{
+
+	public abstract Labeling< T > create( final long[] dim );
+
+	public Labeling< T > create( final int[] dim )
 	{
-		// TODO Auto-generated method stub
-		return new DefaultROIStrategy< T, L >( labeling );
+		return create( Util.int2long( dim ) );
 	}
 
+	public Labeling< T > create( final Interval interval )
+	{
+		final long[] dim = new long[ interval.numDimensions() ];
+		interval.dimensions( dim );
+
+		return create( dim );
+	}
 }
