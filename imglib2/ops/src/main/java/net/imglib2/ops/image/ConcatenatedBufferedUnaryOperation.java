@@ -34,7 +34,6 @@
  * #L%
  */
 
-
 package net.imglib2.ops.image;
 
 import net.imglib2.ops.UnaryOperation;
@@ -43,31 +42,33 @@ import net.imglib2.ops.UnaryOperation;
  * 
  * @author Christian Dietz
  */
-public class ConcatenatedBufferedUnaryOperation<T> implements
-		UnaryOperation<T, T> {
+public class ConcatenatedBufferedUnaryOperation< T > implements UnaryOperation< T, T >
+{
 
-	private UnaryOperation<T, T>[] m_operations;
+	private UnaryOperation< T, T >[] m_operations;
+
 	protected T m_buffer;
 
-	public ConcatenatedBufferedUnaryOperation(T buffer,
-			UnaryOperation<T, T>... operations) {
+	public ConcatenatedBufferedUnaryOperation( T buffer, UnaryOperation< T, T >... operations )
+	{
 		m_operations = operations;
 		m_buffer = buffer;
 
 	}
 
 	@Override
-	public T compute(T input, T output) {
+	public T compute( T input, T output )
+	{
 
-		if (m_buffer == null)
-			throw new IllegalArgumentException(
-					"Buffer can't be null in ConcatenatedBufferedUnaryOperation");
+		if ( m_buffer == null )
+			throw new IllegalArgumentException( "Buffer can't be null in ConcatenatedBufferedUnaryOperation" );
 
 		T tmpOutput = output;
 		T tmpInput = input;
 
-		for (UnaryOperation<T, T> op : m_operations) {
-			op.compute(tmpInput, tmpOutput);
+		for ( UnaryOperation< T, T > op : m_operations )
+		{
+			op.compute( tmpInput, tmpOutput );
 
 			tmpInput = tmpOutput;
 			tmpOutput = m_buffer;
@@ -76,16 +77,17 @@ public class ConcatenatedBufferedUnaryOperation<T> implements
 		return output;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	@Override
-	public UnaryOperation<T, T> copy() {
-		UnaryOperation<T, T>[] copyOps = new UnaryOperation[m_operations.length];
+	public UnaryOperation< T, T > copy()
+	{
+		UnaryOperation< T, T >[] copyOps = new UnaryOperation[ m_operations.length ];
 
 		int c = 0;
-		for (UnaryOperation<T, T> op : m_operations)
-			copyOps[c++] = op.copy();
+		for ( UnaryOperation< T, T > op : m_operations )
+			copyOps[ c++ ] = op.copy();
 
-		return new ConcatenatedBufferedUnaryOperation<T>(m_buffer, copyOps);
+		return new ConcatenatedBufferedUnaryOperation< T >( m_buffer, copyOps );
 	}
 
 }
