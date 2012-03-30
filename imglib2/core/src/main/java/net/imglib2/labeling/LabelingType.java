@@ -234,5 +234,4 @@ public class LabelingType< T extends Comparable< T >> implements Type< LabelingT
 	{
 		return mapping;
 	}
-
 }

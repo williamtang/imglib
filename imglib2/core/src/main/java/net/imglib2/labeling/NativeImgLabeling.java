@@ -194,6 +194,12 @@ public class NativeImgLabeling< T extends Comparable< T >, I extends IntegerType
 	}
 
 	@Override
+	public Object iterationOrder()
+	{
+		return img.iterationOrder();
+	}
+
+	@Override
 	public < LL extends Comparable< LL >> LabelingFactory< LL > factory()
 	{
 		return new LabelingFactory< LL >()
@@ -206,12 +212,6 @@ public class NativeImgLabeling< T extends Comparable< T >, I extends IntegerType
 			}
 
 		};
-	}
-
-	@Override
-	public Object iterationOrder()
-	{
-		return img.iterationOrder();
 	}
 
 }

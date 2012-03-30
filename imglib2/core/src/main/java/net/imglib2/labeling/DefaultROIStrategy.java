@@ -198,13 +198,9 @@ public class DefaultROIStrategy< T extends Comparable< T >, L extends Labeling< 
 
 	/**
 	 * Implement a region of interest by linking to the statistics.
-<<<<<<< HEAD
 	 *
 	 * @author leek
 	 *
-=======
-	 * 
->>>>>>> origin/master
 	 */
 	class DefaultRegionOfInterest extends AbstractIterableRegionOfInterest
 	{

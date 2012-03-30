@@ -42,10 +42,10 @@ import net.imglib2.roi.IterableRegionOfInterest;
 import net.imglib2.roi.RegionOfInterest;
 
 /**
- * A labeling cursor strategy provides label cursors, bounds and other
- * potentially cacheable parameters on the labeling. It may be advantageous to
- * find all pixels for each label only once for sparse labelings, small spaces
- * and labelings that do not change during cursor use.
+ * A labeling cursor strategy provides label cursors, bounds and other <<<<<<<
+ * HEAD potentially cacheable parameters on the labeling. It may be advantageous
+ * to find all pixels for each label only once for sparse labelings, small
+ * spaces and labelings that do not change during cursor use.
  * 
  * @param <T>
  * @param <L>
