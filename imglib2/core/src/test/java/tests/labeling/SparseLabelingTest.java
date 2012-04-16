@@ -469,4 +469,35 @@ public class SparseLabelingTest
 			}
 		}
 	}
+
+	@Test
+	public void testSparseImgRndAccess()
+	{
+		final long[] dimensions = new long[] { 1000, 1000, 40 };
+		final Img< IntType > tree = new NtreeImgFactory< IntType >().create( dimensions, new IntType() );
+
+		long[] posA = new long[] { 1, 1, 1 };
+		long[] posB = new long[] { 5, 5, 5 };
+
+		int label = 5;
+
+		RandomAccess< IntType > randomAccess = tree.randomAccess();
+
+		// Set 1,1,1 to label
+		randomAccess.setPosition( posA );
+		randomAccess.get().set( label );
+
+		// Set 5,5,5 to label
+		randomAccess.setPosition( posB );
+		randomAccess.get().set( label );
+
+		// Set 1,1,1 to def label (defined in ntree img)
+		randomAccess.setPosition( posA );
+		randomAccess.get().set( 0 );
+
+		// Set tp 5,5,5
+		randomAccess.setPosition( posB );
+
+		assertEquals( ( int ) randomAccess.get().get(), label );
+	}
 }
