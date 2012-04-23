@@ -67,6 +67,7 @@ public class ConvertedCursor< A, B extends Type< B > > extends AbstractConverted
 	@Override
 	public B get()
 	{
+		converter.convert( source.get(), converted );
 		return converted;
 	}
 

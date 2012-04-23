@@ -60,6 +60,7 @@ final public class ConvertedRandomAccess< A, B extends Type< B > > extends Abstr
 	@Override
 	public B get()
 	{
+		converter.convert( source.get(), converted );
 		return converted;
 	}
 
