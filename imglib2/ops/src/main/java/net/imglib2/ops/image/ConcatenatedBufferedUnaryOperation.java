@@ -55,6 +55,9 @@ public abstract class ConcatenatedBufferedUnaryOperation< T > implements UnaryOp
 	@Override
 	public T compute( T input, T output )
 	{
+		// Check wether there exists only one solution
+		if ( m_operations.length == 1 )
+			return m_operations[ 0 ].compute( input, output );;
 
 		T buffer = getBuffer( input );
 
@@ -97,4 +100,3 @@ public abstract class ConcatenatedBufferedUnaryOperation< T > implements UnaryOp
 	public abstract UnaryOperation< T, T > copy();
 
 }
-
