@@ -44,7 +44,6 @@ public class NtreeImgFactory< T extends NativeType< T >> extends NativeImgFactor
 	public NtreeImg< T, ? > create( final long[] dim, final T type )
 	{
 		NtreeImg< T, ? > img = ( NtreeImg< T, ? > ) type.createSuitableNativeImg( this, dim );
-		img.setLinkedType( type );
 		return img;
 	}
 
