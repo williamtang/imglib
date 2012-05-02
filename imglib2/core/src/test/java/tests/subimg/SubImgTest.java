@@ -6,7 +6,7 @@ import net.imglib2.Cursor;
 import net.imglib2.FinalInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.subimg.SubImg;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 
 import org.junit.Test;
@@ -14,6 +14,7 @@ import org.junit.Test;
 public class SubImgTest
 {
 
+	// Not very general test to check a {@link SubImg}
 	@Test
 	public void testSubImg()
 	{
@@ -34,7 +35,7 @@ public class SubImgTest
 		assertTrue( subCursor.next().get() == 0 );
 
 		subCursor.localize( pos );
-		// Pos should be at [0,0,0] as the SubImg should act like an img
+		// Pos should be at [0,0,0] as the SubImg should act like an Img
 		assertArrayEquals( pos, new long[ sourceImg.numDimensions() ] );
 
 	}

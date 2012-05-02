@@ -64,8 +64,7 @@ public class SparseLabelingTest
 {
 	protected < T extends Comparable< T >> Labeling< T > makeLabeling( final T exemplar, final long[] dimensions )
 	{
-		NativeImgLabeling< T, IntType > labeling;
-		labeling = new NativeImgLabeling< T, IntType >( new NtreeImgFactory< IntType >().create( dimensions, new IntType() ) );
+		final Labeling< T > labeling = new NativeImgLabeling< T, IntType >( new NtreeImgFactory< IntType >().create( dimensions, new IntType() ) );
 		return labeling;
 	}
 
@@ -116,8 +115,7 @@ public class SparseLabelingTest
 	public void testDefaultConstructor()
 	{
 		final long[] dimensions = { 5, 6, 7 };
-		Labeling< String > labeling;
-		labeling = new NativeImgLabeling< String, IntType >( new NtreeImgFactory< IntType >().create( dimensions, new IntType() ) );
+		Labeling< String > labeling = new NativeImgLabeling< String, IntType >( new NtreeImgFactory< IntType >().create( dimensions, new IntType() ) );;
 		assertEquals( 3, labeling.numDimensions() );
 	}
 
