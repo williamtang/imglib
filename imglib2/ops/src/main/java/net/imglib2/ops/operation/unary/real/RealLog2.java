@@ -34,60 +34,30 @@
  * #L%
  */
 
-package net.imglib2.img.sparse;
 
-import net.imglib2.img.basictypeaccess.ShortAccess;
+package net.imglib2.ops.operation.unary.real;
+
+import net.imglib2.type.numeric.RealType;
 
 /**
+ * Sets the real component of an output real number to the base 2
+ * log of the real component of an input real number.
  * 
- * @author Tobias Pietzsch
+ * @author Barry DeZonia
  */
-public final class ShortNtree implements ShortAccess, NtreeAccess< Short, ShortNtree >
+public final class RealLog2<I extends RealType<I>, O extends RealType<O>>
+	implements RealUnaryOperation<I,O>
 {
-
-	private long[] position;
-
-	private Ntree< Short > data;
-
-	public ShortNtree( long[] dimenions, final long[] position, short value )
-	{
-		this.data = new Ntree< Short >( dimenions, value );
-		this.position = position;
-	}
-
-	public ShortNtree( Ntree< Short > data, long[] position )
-	{
-		this.data = data;
-		this.position = position;
+	@Override
+	public O compute(I x, O output) {
+		double value = Math.log(x.getRealDouble()) / Math.log(2);
+		output.setReal(value);
+		return output;
 	}
 
 	@Override
-	public void close()
-	{}
-
-	@Override
-	public short getValue( final int index )
-	{
-		// ignore index, get tree position from RandomAccess/Cursor
-		return data.getNode( position ).getValue();
+	public RealLog2<I,O> copy() {
+		return new RealLog2<I,O>();
 	}
 
-	@Override
-	public void setValue( final int index, final short value )
-	{
-		// ignore index, get tree position from RandomAccess/Cursor
-		data.createNodeWithValue( position, value );
-	}
-
-	@Override
-	public Ntree< Short > getCurrentStorageNtree()
-	{
-		return data;
-	}
-
-	@Override
-	public ShortNtree createInstance( long[] position )
-	{
-		return new ShortNtree( data, position );
-	}
 }

@@ -34,60 +34,32 @@
  * #L%
  */
 
-package net.imglib2.img.sparse;
 
-import net.imglib2.img.basictypeaccess.ShortAccess;
+package net.imglib2.ops.operation.unary.real;
+
+import net.imglib2.type.numeric.RealType;
 
 /**
+ * Sets the real component of an output real number to the size of the ulp
+ * of an input real number. An ulp of a floating point value is the positive
+ * distance between an input floating-point value and the floating point value
+ * next larger in magnitude. Note that for non-NaN x, ulp(-x) == ulp(x).
  * 
- * @author Tobias Pietzsch
+ * @author Barry DeZonia
  */
-public final class ShortNtree implements ShortAccess, NtreeAccess< Short, ShortNtree >
+public final class RealUlp<I extends RealType<I>, O extends RealType<O>>
+	implements RealUnaryOperation<I,O>
 {
-
-	private long[] position;
-
-	private Ntree< Short > data;
-
-	public ShortNtree( long[] dimenions, final long[] position, short value )
-	{
-		this.data = new Ntree< Short >( dimenions, value );
-		this.position = position;
-	}
-
-	public ShortNtree( Ntree< Short > data, long[] position )
-	{
-		this.data = data;
-		this.position = position;
+	@Override
+	public O compute(I x, O output) {
+		double value = Math.ulp(x.getRealDouble());
+		output.setReal(value);
+		return output;
 	}
 
 	@Override
-	public void close()
-	{}
-
-	@Override
-	public short getValue( final int index )
-	{
-		// ignore index, get tree position from RandomAccess/Cursor
-		return data.getNode( position ).getValue();
+	public RealUlp<I,O> copy() {
+		return new RealUlp<I,O>();
 	}
 
-	@Override
-	public void setValue( final int index, final short value )
-	{
-		// ignore index, get tree position from RandomAccess/Cursor
-		data.createNodeWithValue( position, value );
-	}
-
-	@Override
-	public Ntree< Short > getCurrentStorageNtree()
-	{
-		return data;
-	}
-
-	@Override
-	public ShortNtree createInstance( long[] position )
-	{
-		return new ShortNtree( data, position );
-	}
 }
