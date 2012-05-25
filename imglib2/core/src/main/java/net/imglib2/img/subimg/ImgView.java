@@ -37,15 +37,12 @@
 package net.imglib2.img.subimg;
 
 import net.imglib2.Cursor;
-import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.type.Type;
-import net.imglib2.util.Util;
 import net.imglib2.view.IterableRandomAccessibleInterval;
-import net.imglib2.view.Views;
 
 /**
  * Helper class to create a subview on an {@link Img} which behaves exactly as
@@ -53,56 +50,37 @@ import net.imglib2.view.Views;
  * 
  * @author Tobias Pietzsch, Christian Dietz
  */
-public class SubImg< T extends Type< T > > extends IterableRandomAccessibleInterval< T > implements Img< T >
+public class ImgView< T extends Type< T > > extends IterableRandomAccessibleInterval< T > implements Img< T >
 {
-	/**
-	 * View on interval of a source img. If needed, dims with size one can be
-	 * removed.
-	 * 
-	 * @param srcImg
-	 *            Source img for the view
-	 * @param interval
-	 *            Interval which will be used for to create this view
-	 * @param keepDimsWithSizeOne
-	 *            If false, dimensions with size one will be virtually removed
-	 *            from the resulting view
-	 * @return
-	 */
-	public static final < T extends Type< T > > RandomAccessibleInterval< T > getView( final RandomAccessibleInterval< T > srcImg, final Interval interval, final boolean keepDimsWithSizeOne )
-	{
-		if ( !Util.contains( srcImg, interval ) )
-			throw new IllegalArgumentException( "In SubImgs the interval min and max must be inside the dimensions of the SrcImg" );
-
-		RandomAccessibleInterval< T > slice = Views.offsetInterval( srcImg, interval );
-		if ( !keepDimsWithSizeOne )
-			for ( int d = interval.numDimensions() - 1; d >= 0; --d )
-				if ( interval.dimension( d ) == 1 && slice.numDimensions() > 1 )
-					slice = Views.hyperSlice( slice, d, 0 );
-		return slice;
-	}
 
 	// src img
-	private final Img< T > m_srcImg;
+	private final RandomAccessibleInterval< T > m_src;
 
 	// origin of source img
 	private final long[] m_origin;
+
+	// factory
+	private final ImgFactory< T > m_fac;
 
 	/**
 	 * SubImg is created. View on {@link Img} which is defined by a given
 	 * Interval, but still is an {@link Img}
 	 * 
-	 * @param srcImg
-	 *            Source img for the view
+	 * @param RandomAccessibleInterval
+	 *            Source interval for the view
+	 * @param ImgFactory
+	 *            <T> Factory to create img
 	 * @param interval
 	 *            Interval which will be used for to create this view
 	 * @param keepDimsWithSizeOne
 	 *            If false, dimensions with size one will be virtually removed
 	 *            from the resulting view
 	 */
-	public SubImg( final Img< T > srcImg, final Interval interval, final boolean keepDimsWithSizeOne )
+	public ImgView( final RandomAccessibleInterval< T > src, ImgFactory< T > fac )
 	{
-		super( getView( srcImg, interval, keepDimsWithSizeOne ) );
-		m_srcImg = srcImg;
+		super( src );
+		m_src = src;
+		m_fac = fac;
 		m_origin = new long[ interval.numDimensions() ];
 		interval.min( m_origin );
 	}
@@ -129,21 +107,21 @@ public class SubImg< T extends Type< T > > extends IterableRandomAccessibleInter
 	/**
 	 * @return Source image
 	 */
-	public Img< T > getImg()
+	public RandomAccessibleInterval< T > getSrc()
 	{
-		return m_srcImg;
+		return m_src;
 	}
 
 	@Override
 	public ImgFactory< T > factory()
 	{
-		return m_srcImg.factory();
+		return m_fac;
 	}
 
 	@Override
 	public Img< T > copy()
 	{
-		final Img< T > copy = m_srcImg.factory().create( this, m_srcImg.firstElement() );
+		final Img< T > copy = m_fac.create( this, m_src.randomAccess().get().createVariable() );
 
 		Cursor< T > srcCursor = localizingCursor();
 		RandomAccess< T > resAccess = copy.randomAccess();
@@ -158,4 +136,5 @@ public class SubImg< T extends Type< T > > extends IterableRandomAccessibleInter
 
 		return copy;
 	}
+
 }
