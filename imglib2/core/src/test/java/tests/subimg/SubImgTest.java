@@ -24,7 +24,7 @@ public class SubImgTest
 		sourceImg.firstElement().set( 1 );
 
 		// SubImg from [1,0,0] to [9,9,9] NOT including the first pixel
-		ImgView< UnsignedByteType > subImg = new ImgView< UnsignedByteType >( KNIPViews.getSubsetView( sourceImg, new FinalInterval( new long[] { 1, 0, 0 }, new long[] { 9, 9, 9 } ), false ), sourceImg.factory() );
+		ImgView< UnsignedByteType > subImg = new ImgView< UnsignedByteType >( KNIPViews.subsetView( sourceImg, new FinalInterval( new long[] { 1, 0, 0 }, new long[] { 9, 9, 9 } ), false ), sourceImg.factory() );
 
 		// Cursor over SUBIMG
 		Cursor< UnsignedByteType > subCursor = subImg.cursor();

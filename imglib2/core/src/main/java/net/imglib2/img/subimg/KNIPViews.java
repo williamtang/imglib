@@ -12,27 +12,32 @@ import net.imglib2.view.IntervalView;
 import net.imglib2.view.MixedTransformView;
 import net.imglib2.view.Views;
 
+/**
+ * @author dietzc, hornm (University of Konstanz)
+ * 
+ */
 public class KNIPViews
 {
 	/**
-	 * View on interval of a source img. If needed, dims with size one can be
-	 * removed.
+	 * View on interval of a source. If wanted, dims with size 1 are removed.
 	 * 
 	 * @param src
-	 *            Source img for the view
+	 *            The source {@link RandomAccessibleInterval}
 	 * @param interval
-	 *            Interval which will be used for to create this view
+	 *            Interval
 	 * @param keepDimsWithSizeOne
 	 *            If false, dimensions with size one will be virtually removed
 	 *            from the resulting view
 	 * @return
 	 */
-	public static final < T extends Type< T > > RandomAccessibleInterval< T > getSubsetView( final RandomAccessibleInterval< T > src, final Interval interval, final boolean keepDimsWithSizeOne )
+	public static final < T extends Type< T > > RandomAccessibleInterval< T > subsetView( final RandomAccessibleInterval< T > src, final Interval interval, final boolean keepDimsWithSizeOne )
 	{
 		RandomAccessibleInterval< T > res = src;
 
 		if ( Util.contains( res, interval ) )
 			res = Views.offsetInterval( res, interval );
+		else
+			throw new IllegalArgumentException( "Interval must fit into src in KNIPViews.subsetView(...)" );
 
 		if ( !keepDimsWithSizeOne )
 			for ( int d = interval.numDimensions() - 1; d >= 0; --d )
@@ -40,21 +45,6 @@ public class KNIPViews
 					res = Views.hyperSlice( res, d, 0 );
 
 		return res;
-	}
-
-	public static final < T extends Type< T > > RandomAccessibleInterval< T > getExtendedDimensionalityView( final RandomAccessibleInterval< T > src, final Interval target )
-	{
-
-		if ( src.numDimensions() >= target.numDimensions() )
-			return src;
-
-		RandomAccessibleInterval< T > res = src;
-		for ( int d = src.numDimensions(); d < target.numDimensions(); d++ )
-		{
-			res = addDimension( res, target.min( d ), target.max( d ) );
-		}
-
-		return Views.interval( Views.extendBorder( res ), target );
 	}
 
 	public static < T > MixedTransformView< T > addDimension( final RandomAccessible< T > view )
@@ -80,6 +70,15 @@ public class KNIPViews
 		return Views.interval( addDimension( view ), min, max );
 	}
 
+	/**
+	 * {@link RandomAccessibleInterval} with same sice as target is returned
+	 * 
+	 * @param src
+	 *            {@link RandomAccessibleInterval} to be adjusted
+	 * @param target
+	 *            {@link Interval} describing the resulting sizes
+	 * @return Adjusted {@link RandomAccessibleInterval}
+	 */
 	public static < T > RandomAccessibleInterval< T > synchronizeDimensionality( final RandomAccessibleInterval< T > src, final Interval target )
 	{
 		RandomAccessibleInterval< T > res = src;
@@ -110,9 +109,6 @@ public class KNIPViews
 
 		resDims = new long[ res.numDimensions() ];
 		res.dimensions( resDims );
-
-		// now targetDims.length == resDims.length
-		// Dimensionality needs to be adjusted
 
 		return Views.interval( Views.extendBorder( res ), target );
 

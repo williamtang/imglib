@@ -45,71 +45,30 @@ import net.imglib2.type.Type;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 
 /**
- * Helper class to create a subview on an {@link Img} which behaves exactly as
- * an {@link Img}.
+ * Helper class to create a {@link ImgView} on an
+ * {@link RandomAccessibleInterval} which behaves exactly as an {@link Img}.
  * 
  * @author Tobias Pietzsch, Christian Dietz
  */
 public class ImgView< T extends Type< T > > extends IterableRandomAccessibleInterval< T > implements Img< T >
 {
 
-	// src img
-	private final RandomAccessibleInterval< T > m_src;
-
-	// origin of source img
-	private final long[] m_origin;
-
 	// factory
 	private final ImgFactory< T > m_fac;
 
 	/**
-	 * SubImg is created. View on {@link Img} which is defined by a given
-	 * Interval, but still is an {@link Img}
+	 * View on {@link Img} which is defined by a given Interval, but still is an
+	 * {@link Img}.
 	 * 
 	 * @param RandomAccessibleInterval
 	 *            Source interval for the view
 	 * @param ImgFactory
 	 *            <T> Factory to create img
-	 * @param interval
-	 *            Interval which will be used for to create this view
-	 * @param keepDimsWithSizeOne
-	 *            If false, dimensions with size one will be virtually removed
-	 *            from the resulting view
 	 */
 	public ImgView( final RandomAccessibleInterval< T > src, ImgFactory< T > fac )
 	{
 		super( src );
-		m_src = src;
 		m_fac = fac;
-		m_origin = new long[ interval.numDimensions() ];
-		interval.min( m_origin );
-	}
-
-	/**
-	 * Origin in the source img
-	 * 
-	 * @param origin
-	 */
-	public final void getOrigin( final long[] origin )
-	{
-		for ( int d = 0; d < origin.length; d++ )
-			origin[ d ] = m_origin[ d ];
-	}
-
-	/**
-	 * Origin of dimension d in the source img
-	 */
-	public final long getOrigin( final int d )
-	{
-		return m_origin[ d ];
-	}
-
-	/**
-	 * @return Source image
-	 */
-	public RandomAccessibleInterval< T > getSrc()
-	{
-		return m_src;
 	}
 
 	@Override
@@ -118,10 +77,15 @@ public class ImgView< T extends Type< T > > extends IterableRandomAccessibleInte
 		return m_fac;
 	}
 
+	public RandomAccessibleInterval< T > getInterval()
+	{
+		return interval;
+	}
+
 	@Override
 	public Img< T > copy()
 	{
-		final Img< T > copy = m_fac.create( this, m_src.randomAccess().get().createVariable() );
+		final Img< T > copy = m_fac.create( this, interval.randomAccess().get().createVariable() );
 
 		Cursor< T > srcCursor = localizingCursor();
 		RandomAccess< T > resAccess = copy.randomAccess();
@@ -131,7 +95,6 @@ public class ImgView< T extends Type< T > > extends IterableRandomAccessibleInte
 			srcCursor.fwd();
 			resAccess.setPosition( srcCursor );
 			resAccess.get().set( srcCursor.get() );
-
 		}
 
 		return copy;
