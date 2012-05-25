@@ -114,8 +114,7 @@ public class KNIPViews
 		// now targetDims.length == resDims.length
 		// Dimensionality needs to be adjusted
 
-		return Views.interval( res.numDimensions() < target.numDimensions() ? Views.extendBorder( res ) : res, target );
+		return Views.interval( Views.extendBorder( res ), target );
 
 	}
-
 }
