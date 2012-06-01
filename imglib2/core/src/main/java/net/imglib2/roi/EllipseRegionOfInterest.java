@@ -169,12 +169,14 @@ public class EllipseRegionOfInterest extends AbstractIterableRegionOfInterest
 		invalidateCachedState();
 	}
 
+	@Override
 	public void move( double[] displacement )
 	{
 		origin.move( displacement );
 		invalidateCachedState();
 	}
 
+	@Override
 	public void move( double displacement, int d )
 	{
 		origin.move( displacement, d );
@@ -215,7 +217,6 @@ public class EllipseRegionOfInterest extends AbstractIterableRegionOfInterest
 	 * 
 	 * @param d
 	 *            fetch radius for this dimension
-	 * @return
 	 */
 	public double getRadius( int d )
 	{
@@ -410,7 +411,6 @@ public class EllipseRegionOfInterest extends AbstractIterableRegionOfInterest
 	 * @param position
 	 * @param dim
 	 *            dimension to retrieve
-	 * @return
 	 */
 	private double getRasterDisplacement( long[] position, int dim )
 	{
@@ -424,7 +424,6 @@ public class EllipseRegionOfInterest extends AbstractIterableRegionOfInterest
 	 * 
 	 * @param position
 	 * @param dim
-	 * @return
 	 */
 	private double getPartialDisplacement( long[] position, int dim )
 	{
@@ -458,7 +457,6 @@ public class EllipseRegionOfInterest extends AbstractIterableRegionOfInterest
 	 * Test to see if an integer position is inside the ellipse.
 	 * 
 	 * @param position
-	 * @return
 	 */
 	public boolean isMember( long[] position )
 	{
