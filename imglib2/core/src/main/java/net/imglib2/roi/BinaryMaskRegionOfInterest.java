@@ -74,7 +74,7 @@ public class BinaryMaskRegionOfInterest< T extends BitType, I extends Img< T >> 
 
 	long[] maxima;
 	
-	long[] origin;
+	double[] origin;
 
 	protected class BMROIIterationOrder
 	{
@@ -153,14 +153,14 @@ public class BinaryMaskRegionOfInterest< T extends BitType, I extends Img< T >> 
 			@Override
 			public void localize( long[] pos )
 			{
-				System.arraycopy( this.position, 0, pos, 0, numDimensions() );
-				for (int i = 0; i < numDimensions(); i++) pos[i] += origin[i];
+				for (int i = 0; i < numDimensions(); i++)
+					pos[i] = position[i] + (long) origin[i];
 			}
 
 			@Override
 			public long getLongPosition( int d )
 			{
-				return this.position[ d ] + origin[ d ];
+				return this.position[ d ] + (long) origin[ d ];
 			}
 
 			@Override
@@ -238,7 +238,8 @@ public class BinaryMaskRegionOfInterest< T extends BitType, I extends Img< T >> 
 		public void realMin( double[] min )
 		{
 			img.realMin( min );
-			for (int i = 0; i < min.length; i++) min[i] += origin[i];
+			for (int i = 0; i < min.length; i++)
+				min[i] += origin[i];
 		}
 
 		@Override
@@ -258,7 +259,8 @@ public class BinaryMaskRegionOfInterest< T extends BitType, I extends Img< T >> 
 		public void realMax( double[] max )
 		{
 			img.realMax( max );
-			for (int i = 0; i < max.length; i++) max[i] += origin[i];
+			for (int i = 0; i < max.length; i++)
+				max[i] += origin[i];
 		}
 
 		@Override
@@ -284,46 +286,48 @@ public class BinaryMaskRegionOfInterest< T extends BitType, I extends Img< T >> 
 		public long min( int d )
 		{
 			validate();
-			return minima[ d ] + origin[d];
+			return minima[ d ] + (long) origin[d];
 		}
 
 		@Override
 		public void min( long[] min )
 		{
 			validate();
-			System.arraycopy( minima, 0, min, 0, numDimensions() );
-			for (int i = 0; i < numDimensions(); i++) min[i] += origin[i];
+			for (int i = 0; i < numDimensions(); i++)
+				min[i] = minima[i] + (long) origin[i];
 		}
 
 		@Override
 		public void min( Positionable min )
 		{
 			validate();
-			min.setPosition( minima );
-			min.move(origin);
+			for (int i = 0; i < min.numDimensions(); i++) {
+				min.setPosition( minima[i] + (long) origin[i], i );
+			}
 		}
 
 		@Override
 		public long max( int d )
 		{
 			validate();
-			return maxima[ d ] + origin[d];
+			return maxima[ d ] + (long) origin[d];
 		}
 
 		@Override
 		public void max( long[] max )
 		{
 			validate();
-			System.arraycopy( maxima, 0, max, 0, numDimensions() );
-			for (int i = 0; i < numDimensions(); i++) max[i] += origin[i];
+			for (int i = 0; i < numDimensions(); i++)
+				max[i] = maxima[i] + (long) origin[i];
 		}
 
 		@Override
 		public void max( Positionable max )
 		{
 			validate();
-			max.setPosition( maxima );
-			max.move(origin);
+			for (int i = 0; i < max.numDimensions(); i++) {
+				max.setPosition( maxima[i] + (long) origin[i], i );
+			}
 		}
 
 		@Override
@@ -355,7 +359,7 @@ public class BinaryMaskRegionOfInterest< T extends BitType, I extends Img< T >> 
 	{
 		super( img.numDimensions() );
 		this.img = img;
-		origin = new long[ img.numDimensions() ];
+		origin = new double[ img.numDimensions() ];
 		randomAccess = new ThreadLocal< RandomAccess< T >>()
 		{
 
@@ -392,7 +396,7 @@ public class BinaryMaskRegionOfInterest< T extends BitType, I extends Img< T >> 
 		validate();
 		for ( int i = 0; i < numDimensions(); i++ )
 		{
-			long lPosition = Math.round( position[ i ] - origin[ i ] );
+			long lPosition = (long) ( position[i] - origin[i] );
 			if ( ( lPosition < minima[ i ] ) || ( lPosition > maxima[ i ] ) )
 				return false;
 			randomAccess.get().setPosition( lPosition, i );
@@ -475,13 +479,7 @@ public class BinaryMaskRegionOfInterest< T extends BitType, I extends Img< T >> 
 		origin[d] += displacement;
 	}
 
-	@Override
-	public void move(double[] displacement) {
-		for (int i = 0; i < displacement.length; i++)
-			move(displacement[i], i);
-	}
-	
 	public I getImg() { return img; }
 	
-	public long[] getOrigin() { return origin; }
+	public double[] getOrigin() { return origin; }
 }
