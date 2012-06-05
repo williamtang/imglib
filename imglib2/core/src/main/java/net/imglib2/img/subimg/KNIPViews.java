@@ -6,9 +6,11 @@ import net.imglib2.Interval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.transform.integer.MixedTransform;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.util.Util;
 import net.imglib2.view.IntervalView;
+import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.MixedTransformView;
 import net.imglib2.view.Views;
 
@@ -18,6 +20,12 @@ import net.imglib2.view.Views;
  */
 public class KNIPViews
 {
+
+	public static final < T extends NativeType< T >> IterableRandomAccessibleInterval< T > optimizedSubsetView( final RandomAccessibleInterval< T > src, final Interval interval, final boolean keepDimsWithSizeOne )
+	{
+		return new OptimizedCursorSubsetView< T >( src, interval, keepDimsWithSizeOne );
+	}
+
 	/**
 	 * View on interval of a source. If wanted, dims with size 1 are removed.
 	 * 

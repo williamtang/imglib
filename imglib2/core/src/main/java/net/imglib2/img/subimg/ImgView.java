@@ -37,12 +37,15 @@
 package net.imglib2.img.subimg;
 
 import net.imglib2.Cursor;
+import net.imglib2.IterableInterval;
+import net.imglib2.IterableRealInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.type.Type;
 import net.imglib2.view.IterableRandomAccessibleInterval;
+import net.imglib2.view.Views;
 
 /**
  * Helper class to create a {@link ImgView} on an
@@ -54,7 +57,10 @@ public class ImgView< T extends Type< T > > extends IterableRandomAccessibleInte
 {
 
 	// factory
-	private final ImgFactory< T > m_fac;
+	private final ImgFactory< T > factory;
+
+	// ImgView ii
+	private final IterableInterval< T > ii;
 
 	/**
 	 * View on {@link Img} which is defined by a given Interval, but still is an
@@ -65,27 +71,23 @@ public class ImgView< T extends Type< T > > extends IterableRandomAccessibleInte
 	 * @param ImgFactory
 	 *            <T> Factory to create img
 	 */
-	public ImgView( final RandomAccessibleInterval< T > src, ImgFactory< T > fac )
+	public ImgView( final RandomAccessibleInterval< T > in, ImgFactory< T > fac )
 	{
-		super( src );
-		m_fac = fac;
+		super( in );
+		factory = fac;
+		ii = Views.iterable( in );
 	}
 
 	@Override
 	public ImgFactory< T > factory()
 	{
-		return m_fac;
-	}
-
-	public RandomAccessibleInterval< T > getInterval()
-	{
-		return interval;
+		return factory;
 	}
 
 	@Override
 	public Img< T > copy()
 	{
-		final Img< T > copy = m_fac.create( this, interval.randomAccess().get().createVariable() );
+		final Img< T > copy = factory.create( this, randomAccess().get().createVariable() );
 
 		Cursor< T > srcCursor = localizingCursor();
 		RandomAccess< T > resAccess = copy.randomAccess();
@@ -100,4 +102,21 @@ public class ImgView< T extends Type< T > > extends IterableRandomAccessibleInte
 		return copy;
 	}
 
+	@Override
+	public Cursor< T > cursor()
+	{
+		return ii.cursor();
+	}
+
+	@Override
+	public Cursor< T > localizingCursor()
+	{
+		return ii.localizingCursor();
+	}
+
+	@Override
+	public boolean equalIterationOrder( IterableRealInterval< ? > f )
+	{
+		return iterationOrder().equals( f.iterationOrder() );
+	}
 }
