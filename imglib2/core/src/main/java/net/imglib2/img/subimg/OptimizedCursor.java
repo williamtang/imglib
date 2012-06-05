@@ -137,7 +137,7 @@ public class OptimizedCursor< T extends NativeType< T >> implements Cursor< T >
 	@Override
 	public T next()
 	{
-		m_cursor.fwd();
+		fwd();
 		return m_cursor.get();
 	}
 
