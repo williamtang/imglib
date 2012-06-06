@@ -105,7 +105,7 @@ public class IterableSubsetView< T extends NativeType< T >> extends IterableRand
 	{
 		int numPlaneDims = 2;
 
-		long[] dims = new long[] { 1000, 1000, 50 };
+		long[] dims = new long[] { 1000, 1000, 1 };
 		long[] iterationDims = new long[ dims.length - numPlaneDims ];
 
 		for ( int d = 0; d < iterationDims.length; d++ )
