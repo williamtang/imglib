@@ -13,66 +13,64 @@ import net.imglib2.util.IntervalIndexer;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
-public class OptimizedCursorSubsetView< T extends NativeType< T >> extends IterableRandomAccessibleInterval< T >
+public class IterableSubsetView< T extends NativeType< T >> extends IterableRandomAccessibleInterval< T >
 {
+
+	private IterableInterval< T > m_iterableIntervalSource;
+
+	private IterableInterval< T > m_iterableIntervalView;
 
 	private boolean m_isOptimizable;
 
-	private IterableInterval< T > m_srcII;
+	private int m_planeOffset;
 
-	private IterableInterval< T > m_localII;
+	private int m_numPlaneDims;
 
-	private int m_idx;
-
-	private int m_cubeSize;
-
-	public OptimizedCursorSubsetView( RandomAccessibleInterval< T > src, Interval interval, boolean keepSizeOneDims )
+	public IterableSubsetView( RandomAccessibleInterval< T > src, Interval interval, boolean keepSizeOneDims )
 	{
 		super( KNIPViews.subsetView( src, interval, keepSizeOneDims ) );
-		boolean isIterable = ( src instanceof IterableInterval );
 
-		m_srcII = Views.iterable( src );;
-		m_localII = Views.iterable( super.interval );
+		m_iterableIntervalSource = Views.iterable( src );
+		m_iterableIntervalView = Views.iterable( super.interval );
+
 		m_isOptimizable = false;
-		m_idx = 1;
+		m_planeOffset = 1;
 
-		if ( isIterable )
+		if ( KNIPViews.intervalEquals( src, interval ) )
+			return;
+
+		if ( ( src instanceof IterableInterval ) )
 		{
-			if ( !intervalEquals( src, interval ) )
+			m_isOptimizable = true;
+			for ( int d = 0; d < interval.numDimensions(); d++ )
 			{
-				m_isOptimizable = true;
-				for ( int d = 0; d < interval.numDimensions(); d++ )
+				if ( interval.dimension( d ) > 1 )
 				{
-					if ( interval.dimension( d ) > 1 )
+					m_numPlaneDims++;
+
+					if ( m_numPlaneDims != d + 1 )
 					{
-						m_cubeSize++;
-
-						if ( m_cubeSize != d + 1 )
-						{
-							m_isOptimizable = false;
-							break;
-						}
+						m_isOptimizable = false;
+						break;
 					}
-
 				}
+
 			}
 
 			if ( m_isOptimizable )
 			{
-				long[] iterDims = new long[ src.numDimensions() - m_cubeSize ];
-				long[] cubePos = new long[ src.numDimensions() - m_cubeSize ];
-				for ( int d = m_cubeSize; d < src.numDimensions(); d++ )
+
+				long[] iterDims = new long[ src.numDimensions() - m_numPlaneDims ];
+				long[] cubePos = iterDims.clone();
+				for ( int d = m_numPlaneDims; d < src.numDimensions(); d++ )
 				{
-					iterDims[ d - m_cubeSize ] = src.dimension( d );
-					cubePos[ d - m_cubeSize ] = interval.min( d );
+					iterDims[ d - m_numPlaneDims ] = src.dimension( d );
+					cubePos[ d - m_numPlaneDims ] = interval.min( d );
 				}
-				m_idx = ( int ) IntervalIndexer.positionToIndex( cubePos, iterDims );
+
+				m_planeOffset = ( int ) ( IntervalIndexer.positionToIndex( cubePos, iterDims ) * super.size() );
 			}
-			else
-			{
-				m_idx = 0;
-				m_cubeSize = super.numDimensions();
-			}
+
 		}
 
 	}
@@ -81,39 +79,25 @@ public class OptimizedCursorSubsetView< T extends NativeType< T >> extends Itera
 	public Cursor< T > cursor()
 	{
 		if ( m_isOptimizable )
-			return new OptimizedCursor< T >( m_srcII.cursor(), ( int ) super.size(), m_idx, m_cubeSize );
+			return new IterableSubsetViewCursor< T >( m_iterableIntervalSource.cursor(), ( int ) super.size(), m_planeOffset, m_numPlaneDims );
 		else
-			return m_localII.cursor();
+			return m_iterableIntervalView.cursor();
 	}
 
 	@Override
 	public Cursor< T > localizingCursor()
 	{
 		if ( m_isOptimizable )
-			return new OptimizedCursor< T >( m_srcII.localizingCursor(), ( int ) super.size(), m_idx, m_cubeSize );
+			return new IterableSubsetViewCursor< T >( m_iterableIntervalSource.localizingCursor(), ( int ) super.size(), m_planeOffset, m_numPlaneDims );
 		else
-			return m_localII.localizingCursor();
-	}
-
-	private boolean intervalEquals( Interval a, Interval b )
-	{
-
-		if ( a.numDimensions() != b.numDimensions() ) { return false; }
-
-		for ( int d = 0; d < a.numDimensions(); d++ )
-		{
-			if ( a.min( d ) != b.min( d ) || a.max( d ) != b.max( d ) )
-				return false;
-		}
-
-		return true;
+			return m_iterableIntervalView.localizingCursor();
 	}
 
 	public static void main( String[] args )
 	{
 
-		callTest( true, 50 );
-		callTest( false, 50 );
+		callTest( true, 10 );
+		callTest( false, 10 );
 
 	}
 
@@ -182,8 +166,8 @@ public class OptimizedCursorSubsetView< T extends NativeType< T >> extends Itera
 
 				while ( cursor.hasNext() )
 				{
-					cursor.fwd();
-					cursor.get().getRealDouble();
+					cursor.next();
+					// cursor.get().getRealDouble();
 					// long[] pos2 = new long[ cursor.numDimensions() ];
 					// cursor.localize( pos2 );
 				}

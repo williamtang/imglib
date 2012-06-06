@@ -1,7 +1,5 @@
 package net.imglib2.img.subimg;
 
-import java.util.Arrays;
-
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
@@ -23,7 +21,7 @@ public class KNIPViews
 
 	public static final < T extends NativeType< T >> IterableRandomAccessibleInterval< T > optimizedSubsetView( final RandomAccessibleInterval< T > src, final Interval interval, final boolean keepDimsWithSizeOne )
 	{
-		return new OptimizedCursorSubsetView< T >( src, interval, keepDimsWithSizeOne );
+		return new IterableSubsetView< T >( src, interval, keepDimsWithSizeOne );
 	}
 
 	/**
@@ -41,6 +39,9 @@ public class KNIPViews
 	public static final < T extends Type< T > > RandomAccessibleInterval< T > subsetView( final RandomAccessibleInterval< T > src, final Interval interval, final boolean keepDimsWithSizeOne )
 	{
 		RandomAccessibleInterval< T > res = src;
+
+		if ( intervalEquals( src, interval ) )
+			return res;
 
 		if ( Util.contains( res, interval ) )
 			res = Views.offsetInterval( res, interval );
@@ -91,14 +92,8 @@ public class KNIPViews
 	{
 		RandomAccessibleInterval< T > res = src;
 
-		long[] resDims = new long[ src.numDimensions() ];
-		long[] targetDims = new long[ target.numDimensions() ];
-
-		res.dimensions( resDims );
-		target.dimensions( targetDims );
-
 		// Check direction of conversion
-		if ( res.numDimensions() == target.numDimensions() && Arrays.equals( resDims, targetDims ) )
+		if ( intervalEquals( src, target ) )
 			return res;
 
 		// adjust dimensions
@@ -115,10 +110,24 @@ public class KNIPViews
 				res = Views.hyperSlice( res, d, 0 );
 		}
 
-		resDims = new long[ res.numDimensions() ];
+		long[] resDims = new long[ res.numDimensions() ];
 		res.dimensions( resDims );
 
 		return Views.interval( Views.extendBorder( res ), target );
 
+	}
+
+	public static synchronized boolean intervalEquals( Interval a, Interval b )
+	{
+
+		if ( a.numDimensions() != b.numDimensions() ) { return false; }
+
+		for ( int d = 0; d < a.numDimensions(); d++ )
+		{
+			if ( a.min( d ) != b.min( d ) || a.max( d ) != b.max( d ) )
+				return false;
+		}
+
+		return true;
 	}
 }
