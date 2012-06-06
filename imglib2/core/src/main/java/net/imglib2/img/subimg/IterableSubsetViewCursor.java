@@ -2,7 +2,6 @@ package net.imglib2.img.subimg;
 
 import net.imglib2.Cursor;
 import net.imglib2.Sampler;
-import net.imglib2.img.planar.PlanarCursor;
 import net.imglib2.type.NativeType;
 
 public class IterableSubsetViewCursor< T extends NativeType< T >> implements Cursor< T >
@@ -28,45 +27,10 @@ public class IterableSubsetViewCursor< T extends NativeType< T >> implements Cur
 		m_numPlaneDims = numPlaneDims;
 		m_mainType = cursor.get();
 
-		// I can ask for numPlaneDims as only dims in a row starting from zero
-		// are optimizable
+		m_offset = offset;
 		reset();
 
-		if ( cursor instanceof PlanarCursor && numPlaneDims == 2 )
-			m_offset = offset;
 	}
-
-	// public OptimizedCursor( Cursor< T > cursor, long[] srcDims, long[]
-	// planePos, int[] planeDims )
-	// {
-	// this( cursor, calcNumEntries( planeDims ), calcOffset( srcDims,
-	// planePos.length ), planePos.length );
-	// }
-
-	// private static int calcNumEntries( int[] planeDims )
-	// {
-	//
-	// int numEntries = 1;
-	// for ( int d = 0; d < planeDims.length; d++ )
-	// {
-	// if ( planeDims[ d ] != d ) { throw new IllegalArgumentException(
-	// "Optimized Cursor is only possible if dimensions of selected hypercube are in one row starting from 0"
-	// ); }
-	// numEntries *= planeDims[ d ];
-	// }
-	//
-	// return numEntries;
-	// }
-	//
-	// private static int calcOffset( long[] srcDims, int numPlaneDims )
-	// {
-	// int offset = 1;
-	//
-	// for ( int d = numPlaneDims; d < srcDims.length; d++ )
-	// offset *= srcDims[ d ];
-	//
-	// return offset;
-	// }
 
 	@Override
 	public void localize( float[] position )
