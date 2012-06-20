@@ -40,7 +40,21 @@ public class KNIPViews
 	{
 		RandomAccessibleInterval< T > res = src;
 
-		if ( intervalEquals( src, interval ) )
+		boolean oneSizedDims = false;
+		if ( !keepDimsWithSizeOne )
+		{
+
+			for ( int d = 0; d < res.numDimensions(); d++ )
+			{
+				if ( res.dimension( d ) == 1 )
+				{
+					oneSizedDims = true;
+					break;
+				}
+			}
+		}
+
+		if ( intervalEquals( src, interval ) && !oneSizedDims )
 			return res;
 
 		if ( Util.contains( res, interval ) )
