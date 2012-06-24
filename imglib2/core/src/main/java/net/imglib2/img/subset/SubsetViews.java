@@ -4,7 +4,6 @@ import net.imglib2.Interval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.transform.integer.MixedTransform;
-import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.util.Util;
 import net.imglib2.view.IntervalView;
@@ -19,7 +18,7 @@ import net.imglib2.view.Views;
 public class SubsetViews
 {
 
-	public static final < T extends NativeType< T >> IterableRandomAccessibleInterval< T > iterableSubsetView( final RandomAccessibleInterval< T > src, final Interval interval, final boolean keepDimsWithSizeOne )
+	public static final < T extends Type< T >> IterableRandomAccessibleInterval< T > iterableSubsetView( final RandomAccessibleInterval< T > src, final Interval interval, final boolean keepDimsWithSizeOne )
 	{
 		return new IterableSubsetView< T >( src, interval, keepDimsWithSizeOne );
 	}

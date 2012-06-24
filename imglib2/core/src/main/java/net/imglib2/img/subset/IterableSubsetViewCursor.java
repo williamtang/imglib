@@ -2,9 +2,9 @@ package net.imglib2.img.subset;
 
 import net.imglib2.Cursor;
 import net.imglib2.Sampler;
-import net.imglib2.type.NativeType;
+import net.imglib2.type.Type;
 
-public class IterableSubsetViewCursor< T extends NativeType< T >> implements Cursor< T >
+public class IterableSubsetViewCursor< T extends Type< T >> implements Cursor< T >
 {
 
 	private Cursor< T > m_cursor;
