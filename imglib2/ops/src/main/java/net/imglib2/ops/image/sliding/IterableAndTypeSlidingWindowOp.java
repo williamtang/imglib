@@ -38,9 +38,16 @@ public class IterableAndTypeSlidingWindowOp< T extends Type< T >, V extends Type
 	@Override
 	public OUT compute( IN1 input1, OUT output )
 	{
+
 		SlidingWindowIterator< T > iterator = m_provider.createSlidingWindowIterator( input1 );
+
+		IterableInterval< T > iterable = Views.iterable( input1 );
+
+		if ( !iterable.iterationOrder().equals( output ) )
+			throw new IllegalArgumentException( "Iteration order doesn't fit in IterableAndTypeSlidingWindowOp" );
+
 		Cursor< V > resCursor = output.cursor();
-		Cursor< T > srcCursor = Views.iterable( input1 ).cursor();
+		Cursor< T > srcCursor = iterable.cursor();
 
 		while ( iterator.hasNext() )
 		{
@@ -56,8 +63,7 @@ public class IterableAndTypeSlidingWindowOp< T extends Type< T >, V extends Type
 	@Override
 	public UnaryOperation< IN1, OUT > copy()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new IterableAndTypeSlidingWindowOp< T, V, IN1, OUT >( m_provider, m_op );
 	}
 
 }
