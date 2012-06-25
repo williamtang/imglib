@@ -33,13 +33,13 @@ public class SlidingSpeedTests
 		Arrays.fill( roiDim, roiExtend );
 		Arrays.fill( roiMax, roiExtend - 1 );
 
-		NaiveSlidingROIWindowOp< UnsignedByteType > naiveRoi = new NaiveSlidingROIWindowOp< UnsignedByteType >( img, new RectangleRegionOfInterest( new double[ img.numDimensions() ], roiDim ) );
+		NaiveSlidingROIIterator< UnsignedByteType > naiveRoi = new NaiveSlidingROIIterator< UnsignedByteType >( img, new RectangleRegionOfInterest( new double[ img.numDimensions() ], roiDim ) );
 
 		BufferedEfficientSlidingIntervalOp< UnsignedByteType > bufferedEfficient = new BufferedEfficientSlidingIntervalOp< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
 
-		NaiveSlidingIntervalOp< UnsignedByteType > naive = new NaiveSlidingIntervalOp< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
+		NaiveSlidingIntervalIterator< UnsignedByteType > naive = new NaiveSlidingIntervalIterator< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
 
-		EfficientSlidingIntervalOp< UnsignedByteType > efficient = new EfficientSlidingIntervalOp< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
+		EfficientSlidingIntervalIterator< UnsignedByteType > efficient = new EfficientSlidingIntervalIterator< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
 
 		MedianOp< UnsignedByteType > op = new MedianOp< UnsignedByteType >();
 

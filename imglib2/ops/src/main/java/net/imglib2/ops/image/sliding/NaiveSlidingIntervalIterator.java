@@ -14,10 +14,10 @@ import net.imglib2.view.Views;
  * Naive implementation of a sliding {@link Interval}.
  * 
  */
-public class NaiveSlidingIntervalOp< T extends Type< T >> implements SlidingWindowIterator< T >
+public class NaiveSlidingIntervalIterator< T extends Type< T >> implements SlidingWindowIterator< T >
 {
 
-	private final LocalizingIntervalIterator m_intervalIterator;
+	private final LocalizingIntervalIterator m_cursor;
 
 	private final long[] m_displacement;
 
@@ -31,10 +31,17 @@ public class NaiveSlidingIntervalOp< T extends Type< T >> implements SlidingWind
 
 	private final long[] m_dims;
 
-	public NaiveSlidingIntervalOp( RandomAccessibleInterval< T > rndAccessible, final Interval interval )
+	private Interval m_interval;
+
+	protected NaiveSlidingIntervalIterator( RandomAccessibleInterval< T > rndAccessible, final Interval interval )
 	{
-		m_intervalIterator = new LocalizingIntervalIterator( rndAccessible );
+		m_cursor = new LocalizingIntervalIterator( rndAccessible );
 		m_rndAccessible = Views.extendBorder( rndAccessible );
+		m_interval = interval;
+
+		m_min = new long[ interval.numDimensions() ];
+		m_max = new long[ interval.numDimensions() ];
+
 		m_displacement = new long[ m_rndAccessible.numDimensions() ];
 
 		for ( int d = 0; d < m_displacement.length; d++ )
@@ -43,14 +50,9 @@ public class NaiveSlidingIntervalOp< T extends Type< T >> implements SlidingWind
 		}
 
 		m_dims = new long[ m_rndAccessible.numDimensions() ];
-		m_min = new long[ m_rndAccessible.numDimensions() ];
-
-		// Set it to behave like a cursor
-		m_min[ 0 ] = -1;
-		m_max = new long[ m_rndAccessible.numDimensions() ];
-
-		interval.max( m_max );
 		interval.dimensions( m_dims );
+
+		reset();
 
 		m_moveableInterval = new MoveableInterval();
 	}
@@ -58,17 +60,17 @@ public class NaiveSlidingIntervalOp< T extends Type< T >> implements SlidingWind
 	@Override
 	public boolean hasNext()
 	{
-		return m_intervalIterator.hasNext();
+		return m_cursor.hasNext();
 	}
 
 	@Override
 	public void fwd()
 	{
-		m_intervalIterator.fwd();
+		m_cursor.fwd();
 
 		for ( int d = 0; d < m_displacement.length; d++ )
 		{
-			m_min[ d ] = m_intervalIterator.getLongPosition( d ) - m_displacement[ d ];
+			m_min[ d ] = m_cursor.getLongPosition( d ) - m_displacement[ d ];
 			m_max[ d ] = m_min[ d ] + m_dims[ d ] - 1;
 		}
 
@@ -194,5 +196,17 @@ public class NaiveSlidingIntervalOp< T extends Type< T >> implements SlidingWind
 			return m_max[ d ] - m_min[ d ] + 1;
 		}
 
+	}
+
+	@Override
+	public void reset()
+	{
+		m_cursor.reset();
+
+		m_interval.min( m_min );
+		m_interval.max( m_max );
+
+		// Set it to behave like a cursor
+		m_min[ 0 ] = -1;
 	}
 }

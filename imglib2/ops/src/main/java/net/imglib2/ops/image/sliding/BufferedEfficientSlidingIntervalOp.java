@@ -51,7 +51,7 @@ public class BufferedEfficientSlidingIntervalOp< T extends Type< T >> implements
 	private int m_size;
 
 	@SuppressWarnings( "unchecked" )
-	public BufferedEfficientSlidingIntervalOp( final RandomAccessibleInterval< T > interval, Interval roi )
+	protected BufferedEfficientSlidingIntervalOp( final RandomAccessibleInterval< T > interval, Interval roi )
 	{
 
 		m_cursor = new LocalizingIntervalIterator( interval );
@@ -66,23 +66,14 @@ public class BufferedEfficientSlidingIntervalOp< T extends Type< T >> implements
 		for ( int d = 0; d < roi.numDimensions(); d++ )
 			m_size *= m_dims[ d ];
 
-		m_fastRoiIterator = new CursorRegionOfInterest();
-
-		m_fastIterable = new Iterable< T >()
-		{
-
-			@Override
-			public Iterator< T > iterator()
-			{
-				return m_fastRoiIterator;
-			}
-		};
-
 		m_bufferElements = new long[ interval.numDimensions() ];
 		Arrays.fill( m_bufferElements, 1 );
+
 		m_currentPos = new long[ interval.numDimensions() ];
 
+		// Buffer and position offsets
 		m_positionOffsets = new long[ interval.numDimensions() ];
+
 		for ( int d = 0; d < m_positionOffsets.length; d++ )
 		{
 			m_positionOffsets[ d ] = ( int ) Math.floor( roi.max( d ) / 2 );
@@ -102,6 +93,19 @@ public class BufferedEfficientSlidingIntervalOp< T extends Type< T >> implements
 		{
 			m_buffer[ t ] = type.copy();
 		}
+
+		// ROI
+		m_fastRoiIterator = new CursorRegionOfInterest();
+
+		m_fastIterable = new Iterable< T >()
+		{
+
+			@Override
+			public Iterator< T > iterator()
+			{
+				return m_fastRoiIterator;
+			}
+		};
 
 	}
 
@@ -239,5 +243,39 @@ public class BufferedEfficientSlidingIntervalOp< T extends Type< T >> implements
 			throw new UnsupportedOperationException( "Unsupported" );
 		}
 
+		public void reset()
+		{
+			m_idx = 0;
+			m_bufferPtr = 0;
+			Arrays.fill( m_doneSteps, 0 );
+		}
 	}
+
+	@Override
+	public void reset()
+	{
+		m_cursor.reset();
+		m_cursor.localize( m_currentPos );
+		m_rndAccess.setPosition( m_cursor );
+		m_fastRoiIterator.reset();
+	}
+
+	public class BufferedEfficientSlidingIntervalProvider implements SlidingWindowIteratorProvider< T >
+	{
+
+		private Interval m_roi;
+
+		public BufferedEfficientSlidingIntervalProvider( Interval roi )
+		{
+			m_roi = roi;
+		}
+
+		@Override
+		public SlidingWindowIterator< T > createSlidingWindowIterator( RandomAccessibleInterval< T > randomAccessible )
+		{
+			return new BufferedEfficientSlidingIntervalOp< T >( randomAccessible, m_roi );
+		}
+
+	}
+
 }
