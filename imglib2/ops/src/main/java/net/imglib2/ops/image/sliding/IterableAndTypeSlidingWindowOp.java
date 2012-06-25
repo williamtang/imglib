@@ -5,6 +5,7 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.ops.BinaryOperation;
 import net.imglib2.ops.UnaryOperation;
+import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
@@ -28,18 +29,21 @@ public class IterableAndTypeSlidingWindowOp< T extends Type< T >, V extends Type
 	// Iterator over the input
 	private SlidingWindowIteratorProvider< T > m_provider;
 
-	//
-	public IterableAndTypeSlidingWindowOp( SlidingWindowIteratorProvider< T > provider, BinaryOperation< Iterable< T >, T, V > op )
+	// Factory for out of bounds
+	private OutOfBoundsFactory< T, RandomAccessibleInterval< T >> m_fac;
+
+	public IterableAndTypeSlidingWindowOp( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, SlidingWindowIteratorProvider< T > provider, BinaryOperation< Iterable< T >, T, V > op )
 	{
 		m_provider = provider;
 		m_op = op;
+		m_fac = fac;
 	}
 
 	@Override
 	public OUT compute( IN1 input1, OUT output )
 	{
 
-		SlidingWindowIterator< T > iterator = m_provider.createSlidingWindowIterator( input1 );
+		SlidingWindowIterator< T > iterator = m_provider.createSlidingWindowIterator( m_fac, input1 );
 
 		IterableInterval< T > iterable = Views.iterable( input1 );
 
@@ -63,7 +67,7 @@ public class IterableAndTypeSlidingWindowOp< T extends Type< T >, V extends Type
 	@Override
 	public UnaryOperation< IN1, OUT > copy()
 	{
-		return new IterableAndTypeSlidingWindowOp< T, V, IN1, OUT >( m_provider, m_op );
+		return new IterableAndTypeSlidingWindowOp< T, V, IN1, OUT >( m_fac, m_provider, m_op );
 	}
 
 }

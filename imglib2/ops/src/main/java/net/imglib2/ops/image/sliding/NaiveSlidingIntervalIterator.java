@@ -1,11 +1,11 @@
 package net.imglib2.ops.image.sliding;
 
-import net.imglib2.ExtendedRandomAccessibleInterval;
 import net.imglib2.Interval;
 import net.imglib2.Positionable;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPositionable;
 import net.imglib2.iterator.LocalizingIntervalIterator;
+import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
@@ -21,8 +21,6 @@ public class NaiveSlidingIntervalIterator< T extends Type< T >> implements Slidi
 
 	private final long[] m_displacement;
 
-	private final ExtendedRandomAccessibleInterval< T, RandomAccessibleInterval< T >> m_rndAccessible;
-
 	private final long[] m_min;
 
 	private final long[] m_max;
@@ -33,10 +31,15 @@ public class NaiveSlidingIntervalIterator< T extends Type< T >> implements Slidi
 
 	private Interval m_interval;
 
-	protected NaiveSlidingIntervalIterator( RandomAccessibleInterval< T > rndAccessible, final Interval interval )
+	private RandomAccessibleInterval< T > m_rndAccessible;
+
+	private OutOfBoundsFactory< T, RandomAccessibleInterval< T >> m_fac;
+
+	protected NaiveSlidingIntervalIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > rndAccessible, final Interval interval )
 	{
 		m_cursor = new LocalizingIntervalIterator( rndAccessible );
-		m_rndAccessible = Views.extendBorder( rndAccessible );
+		m_fac = fac;
+
 		m_interval = interval;
 
 		m_min = new long[ interval.numDimensions() ];
@@ -79,7 +82,7 @@ public class NaiveSlidingIntervalIterator< T extends Type< T >> implements Slidi
 	@Override
 	public Iterable< T > getIterable()
 	{
-		return Views.iterable( Views.interval( m_rndAccessible, m_moveableInterval ) );
+		return Views.iterable( Views.interval( Views.extend( m_rndAccessible, m_fac ), m_moveableInterval ) );
 	}
 
 	@Override

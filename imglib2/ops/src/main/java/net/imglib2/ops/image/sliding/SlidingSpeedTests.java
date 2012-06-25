@@ -4,10 +4,13 @@ import java.util.Arrays;
 
 import net.imglib2.Cursor;
 import net.imglib2.FinalInterval;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.ops.iterable.MedianOp;
+import net.imglib2.outofbounds.OutOfBoundsMirrorFactory;
+import net.imglib2.outofbounds.OutOfBoundsMirrorFactory.Boundary;
 import net.imglib2.roi.RectangleRegionOfInterest;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 
@@ -33,13 +36,13 @@ public class SlidingSpeedTests
 		Arrays.fill( roiDim, roiExtend );
 		Arrays.fill( roiMax, roiExtend - 1 );
 
-		NaiveSlidingROIIterator< UnsignedByteType > naiveRoi = new NaiveSlidingROIIterator< UnsignedByteType >( img, new RectangleRegionOfInterest( new double[ img.numDimensions() ], roiDim ) );
+		NaiveSlidingROIIterator< UnsignedByteType > naiveRoi = new NaiveSlidingROIIterator< UnsignedByteType >( new OutOfBoundsMirrorFactory< UnsignedByteType, RandomAccessibleInterval< UnsignedByteType > >( Boundary.SINGLE ), img, new RectangleRegionOfInterest( new double[ img.numDimensions() ], roiDim ) );
 
-		BufferedEfficientSlidingIntervalIterator< UnsignedByteType > bufferedEfficient = new BufferedEfficientSlidingIntervalIterator< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
+		BufferedEfficientSlidingIntervalIterator< UnsignedByteType > bufferedEfficient = new BufferedEfficientSlidingIntervalIterator< UnsignedByteType >( new OutOfBoundsMirrorFactory< UnsignedByteType, RandomAccessibleInterval< UnsignedByteType > >( Boundary.SINGLE ), img, new FinalInterval( roiMin, roiMax ) );
 
-		NaiveSlidingIntervalIterator< UnsignedByteType > naive = new NaiveSlidingIntervalIterator< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
+		NaiveSlidingIntervalIterator< UnsignedByteType > naive = new NaiveSlidingIntervalIterator< UnsignedByteType >( new OutOfBoundsMirrorFactory< UnsignedByteType, RandomAccessibleInterval< UnsignedByteType > >( Boundary.SINGLE ), img, new FinalInterval( roiMin, roiMax ) );
 
-		EfficientSlidingIntervalIterator< UnsignedByteType > efficient = new EfficientSlidingIntervalIterator< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
+		EfficientSlidingIntervalIterator< UnsignedByteType > efficient = new EfficientSlidingIntervalIterator< UnsignedByteType >( new OutOfBoundsMirrorFactory< UnsignedByteType, RandomAccessibleInterval< UnsignedByteType > >( Boundary.SINGLE ), img, new FinalInterval( roiMin, roiMax ) );
 
 		MedianOp< UnsignedByteType > op = new MedianOp< UnsignedByteType >();
 
