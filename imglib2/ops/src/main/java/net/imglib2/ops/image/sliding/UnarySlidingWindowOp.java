@@ -5,6 +5,7 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.type.Type;
+import net.imglib2.view.Views;
 
 /**
  * Operation performing sliding window
@@ -36,16 +37,19 @@ public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN 
 	@Override
 	public OUT compute( IN input, OUT output )
 	{
+
+		IterableInterval< T > iterable = Views.iterable( input );
+
+		if ( !iterable.iterationOrder().equals( output ) )
+			throw new IllegalArgumentException( "Iteration order doesn't fit in UnarySlidingWindowOp" );
+
 		SlidingWindowIterator< T > iterator = m_provider.createSlidingWindowIterator( input );
 		Cursor< V > resCursor = output.cursor();
 
 		while ( iterator.hasNext() )
 		{
 			resCursor.fwd();
-
-			Iterable< T > iterable = iterator.next();
-
-			m_op.compute( iterable, resCursor.get() );
+			m_op.compute( iterator.next(), resCursor.get() );
 		}
 
 		return output;
