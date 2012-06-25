@@ -7,13 +7,13 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.planar.PlanarImgFactory;
-import net.imglib2.type.NativeType;
+import net.imglib2.type.Type;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.IntervalIndexer;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
-public class IterableSubsetView< T extends NativeType< T >> extends IterableRandomAccessibleInterval< T >
+public class IterableSubsetView< T extends Type< T >> extends IterableRandomAccessibleInterval< T >
 {
 
 	private IterableInterval< T > m_iterableIntervalSource;
@@ -68,7 +68,16 @@ public class IterableSubsetView< T extends NativeType< T >> extends IterableRand
 					cubePos[ d - m_numPlaneDims ] = interval.min( d );
 				}
 
-				m_planeOffset = ( int ) ( IntervalIndexer.positionToIndex( cubePos, iterDims ) * super.size() );
+				if ( iterDims.length == 0 )
+				{
+					m_planeOffset = 0;
+				}
+				else
+				{
+					m_planeOffset = ( int ) ( IntervalIndexer.positionToIndex( cubePos, iterDims ) * super.size() );
+
+				}
+
 			}
 
 		}
