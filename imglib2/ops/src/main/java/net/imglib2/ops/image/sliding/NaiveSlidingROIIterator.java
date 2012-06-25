@@ -97,7 +97,7 @@ public class NaiveSlidingROIIterator< T extends Type< T >> implements SlidingWin
 	 * Naive implementation of a sliding {@link Interval}.
 	 * 
 	 */
-	public class NaiveSlidingIntervalProvider implements SlidingWindowIteratorProvider< T >
+	public class NaiveSlidingIntervalProvider< TT extends Type< TT >> implements SlidingWindowIteratorProvider< TT >
 	{
 
 		private Interval m_roi;
@@ -108,9 +108,9 @@ public class NaiveSlidingROIIterator< T extends Type< T >> implements SlidingWin
 		}
 
 		@Override
-		public SlidingWindowIterator< T > createSlidingWindowIterator( RandomAccessibleInterval< T > randomAccessible )
+		public SlidingWindowIterator< TT > createSlidingWindowIterator( RandomAccessibleInterval< TT > randomAccessible )
 		{
-			return new NaiveSlidingIntervalIterator< T >( randomAccessible, m_roi );
+			return new NaiveSlidingIntervalIterator< TT >( randomAccessible, m_roi );
 		}
 
 	}

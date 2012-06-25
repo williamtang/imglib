@@ -164,7 +164,7 @@ public class EfficientSlidingIntervalIterator< T extends Type< T >> implements S
 		m_rndAccess.setPosition( m_cursor );
 	}
 
-	public class EfficientSlidingIntervalProvider implements SlidingWindowIteratorProvider< T >
+	public class EfficientSlidingIntervalProvider< TT extends Type< TT >> implements SlidingWindowIteratorProvider< TT >
 	{
 
 		private Interval m_roiInterval;
@@ -175,9 +175,9 @@ public class EfficientSlidingIntervalIterator< T extends Type< T >> implements S
 		}
 
 		@Override
-		public SlidingWindowIterator< T > createSlidingWindowIterator( RandomAccessibleInterval< T > randomAccessible )
+		public SlidingWindowIterator< TT > createSlidingWindowIterator( RandomAccessibleInterval< TT > randomAccessible )
 		{
-			return new EfficientSlidingIntervalIterator< T >( randomAccessible, m_roiInterval );
+			return new EfficientSlidingIntervalIterator< TT >( randomAccessible, m_roiInterval );
 		}
 	}
 

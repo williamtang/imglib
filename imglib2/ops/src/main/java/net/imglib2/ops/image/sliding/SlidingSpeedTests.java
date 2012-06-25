@@ -35,7 +35,7 @@ public class SlidingSpeedTests
 
 		NaiveSlidingROIIterator< UnsignedByteType > naiveRoi = new NaiveSlidingROIIterator< UnsignedByteType >( img, new RectangleRegionOfInterest( new double[ img.numDimensions() ], roiDim ) );
 
-		BufferedEfficientSlidingIntervalOp< UnsignedByteType > bufferedEfficient = new BufferedEfficientSlidingIntervalOp< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
+		BufferedEfficientSlidingIntervalIterator< UnsignedByteType > bufferedEfficient = new BufferedEfficientSlidingIntervalIterator< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
 
 		NaiveSlidingIntervalIterator< UnsignedByteType > naive = new NaiveSlidingIntervalIterator< UnsignedByteType >( img, new FinalInterval( roiMin, roiMax ) );
 
