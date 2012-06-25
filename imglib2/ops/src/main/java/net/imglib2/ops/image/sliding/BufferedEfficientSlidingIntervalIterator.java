@@ -19,7 +19,7 @@ import net.imglib2.view.Views;
  * 
  * @param <T>
  */
-public class BufferedEfficientSlidingIntervalOp< T extends Type< T >> implements SlidingWindowIterator< T >
+public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> implements SlidingWindowIterator< T >
 {
 
 	// Tmp
@@ -51,7 +51,7 @@ public class BufferedEfficientSlidingIntervalOp< T extends Type< T >> implements
 	private int m_size;
 
 	@SuppressWarnings( "unchecked" )
-	protected BufferedEfficientSlidingIntervalOp( final RandomAccessibleInterval< T > interval, Interval roi )
+	protected BufferedEfficientSlidingIntervalIterator( final RandomAccessibleInterval< T > interval, Interval roi )
 	{
 
 		m_cursor = new LocalizingIntervalIterator( interval );
@@ -260,7 +260,7 @@ public class BufferedEfficientSlidingIntervalOp< T extends Type< T >> implements
 		m_fastRoiIterator.reset();
 	}
 
-	public class BufferedEfficientSlidingIntervalProvider implements SlidingWindowIteratorProvider< T >
+	public class BufferedEfficientSlidingIntervalProvider< TT extends Type< TT >> implements SlidingWindowIteratorProvider< TT >
 	{
 
 		private Interval m_roi;
@@ -271,9 +271,9 @@ public class BufferedEfficientSlidingIntervalOp< T extends Type< T >> implements
 		}
 
 		@Override
-		public SlidingWindowIterator< T > createSlidingWindowIterator( RandomAccessibleInterval< T > randomAccessible )
+		public SlidingWindowIterator< TT > createSlidingWindowIterator( RandomAccessibleInterval< TT > randomAccessible )
 		{
-			return new BufferedEfficientSlidingIntervalOp< T >( randomAccessible, m_roi );
+			return new BufferedEfficientSlidingIntervalIterator< TT >( randomAccessible, m_roi );
 		}
 
 	}
