@@ -1,6 +1,5 @@
 package net.imglib2.ops.image.sliding;
 
-import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.iterator.LocalizingIntervalIterator;
 import net.imglib2.roi.IterableRegionOfInterest;
@@ -90,28 +89,5 @@ public class NaiveSlidingROIIterator< T extends Type< T >> implements SlidingWin
 			m_roi.move( -m_displacement[ d ], d );
 			m_totalDisplacement[ d ] = 0;
 		}
-	}
-
-	/**
-	 * 
-	 * Naive implementation of a sliding {@link Interval}.
-	 * 
-	 */
-	public class NaiveSlidingIntervalProvider< TT extends Type< TT >> implements SlidingWindowIteratorProvider< TT >
-	{
-
-		private Interval m_roi;
-
-		public NaiveSlidingIntervalProvider( Interval roi )
-		{
-			m_roi = roi;
-		}
-
-		@Override
-		public SlidingWindowIterator< TT > createSlidingWindowIterator( RandomAccessibleInterval< TT > randomAccessible )
-		{
-			return new NaiveSlidingIntervalIterator< TT >( randomAccessible, m_roi );
-		}
-
 	}
 }

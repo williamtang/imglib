@@ -35,7 +35,6 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> impl
 	private Iterable< T > m_fastIterable;
 
 	// Access
-	private final LocalizingIntervalIterator m_cursor;
 
 	private OutOfBounds< T > m_rndAccess;
 
@@ -49,6 +48,8 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> impl
 	private int m_bufferOffset;
 
 	private int m_size;
+
+	private LocalizingIntervalIterator m_cursor;
 
 	@SuppressWarnings( "unchecked" )
 	protected BufferedEfficientSlidingIntervalIterator( final RandomAccessibleInterval< T > interval, Interval roi )
@@ -258,24 +259,6 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> impl
 		m_cursor.localize( m_currentPos );
 		m_rndAccess.setPosition( m_cursor );
 		m_fastRoiIterator.reset();
-	}
-
-	public class BufferedEfficientSlidingIntervalProvider< TT extends Type< TT >> implements SlidingWindowIteratorProvider< TT >
-	{
-
-		private Interval m_roi;
-
-		public BufferedEfficientSlidingIntervalProvider( Interval roi )
-		{
-			m_roi = roi;
-		}
-
-		@Override
-		public SlidingWindowIterator< TT > createSlidingWindowIterator( RandomAccessibleInterval< TT > randomAccessible )
-		{
-			return new BufferedEfficientSlidingIntervalIterator< TT >( randomAccessible, m_roi );
-		}
-
 	}
 
 }
