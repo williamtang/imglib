@@ -17,7 +17,7 @@ import net.imglib2.type.Type;
  * @param <IN>
  * @param <OUT>
  */
-public class SlidingWindowOp< T extends Type< T >, V extends Type< V >, IN extends RandomAccessibleInterval< T >, OUT extends IterableInterval< V >> implements UnaryOperation< IN, OUT >
+public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN extends RandomAccessibleInterval< T >, OUT extends IterableInterval< V >> implements UnaryOperation< IN, OUT >
 {
 
 	// the operation which is applied one each window
@@ -27,7 +27,7 @@ public class SlidingWindowOp< T extends Type< T >, V extends Type< V >, IN exten
 	private SlidingWindowIteratorProvider< T > m_provider;
 
 	//
-	public SlidingWindowOp( SlidingWindowIteratorProvider< T > provider, UnaryOperation< Iterable< T >, V > op )
+	public UnarySlidingWindowOp( SlidingWindowIteratorProvider< T > provider, UnaryOperation< Iterable< T >, V > op )
 	{
 		m_provider = provider;
 		m_op = op;
@@ -38,9 +38,11 @@ public class SlidingWindowOp< T extends Type< T >, V extends Type< V >, IN exten
 	{
 		SlidingWindowIterator< T > iterator = m_provider.createSlidingWindowIterator( input );
 		Cursor< V > resCursor = output.cursor();
+
 		while ( iterator.hasNext() )
 		{
 			resCursor.fwd();
+
 			Iterable< T > iterable = iterator.next();
 
 			m_op.compute( iterable, resCursor.get() );
@@ -52,7 +54,7 @@ public class SlidingWindowOp< T extends Type< T >, V extends Type< V >, IN exten
 	@Override
 	public UnaryOperation< IN, OUT > copy()
 	{
-		return new SlidingWindowOp< T, V, IN, OUT >( m_provider, m_op );
+		return new UnarySlidingWindowOp< T, V, IN, OUT >( m_provider, m_op );
 	}
 
 }
