@@ -9,61 +9,61 @@ import net.imglib2.type.Type;
 public class SlidingWindowProviderFactory
 {
 	//
-	public static < T extends Type< T >> SlidingWindowIteratorProvider< T > createBufferedEfficientSlidingIntervalProvider( final Interval roi )
+	public static < T extends Type< T >, IN extends RandomAccessibleInterval< T >> SlidingWindowIteratorProvider< T, IN > createBufferedEfficientSlidingIntervalProvider( final Interval roi )
 	{
 
-		return new SlidingWindowIteratorProvider< T >()
+		return new SlidingWindowIteratorProvider< T, IN >()
 		{
 
 			@Override
-			public SlidingWindowIterator< T > createSlidingWindowIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > randomAccessible )
+			public SlidingWindowIterator< T > createSlidingWindowIterator( final OutOfBoundsFactory< T, IN > fac, IN randomAccessible )
 			{
-				return new BufferedEfficientSlidingIntervalIterator< T >( fac, randomAccessible, roi );
+				return new BufferedEfficientSlidingIntervalIterator< T, IN >( fac, randomAccessible, roi );
 			}
 		};
 	}
 
 	//
-	public static < T extends Type< T >> SlidingWindowIteratorProvider< T > createEfficientSlidingIntervalProvider( final Interval roi )
+	public static < T extends Type< T >, IN extends RandomAccessibleInterval< T >> SlidingWindowIteratorProvider< T, IN > createEfficientSlidingIntervalProvider( final Interval roi )
 	{
 
-		return new SlidingWindowIteratorProvider< T >()
+		return new SlidingWindowIteratorProvider< T, IN >()
 		{
 
 			@Override
-			public SlidingWindowIterator< T > createSlidingWindowIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > randomAccessible )
+			public SlidingWindowIterator< T > createSlidingWindowIterator( final OutOfBoundsFactory< T, IN > fac, IN randomAccessible )
 			{
-				return new EfficientSlidingIntervalIterator< T >( fac, randomAccessible, roi );
+				return new EfficientSlidingIntervalIterator< T, IN >( fac, randomAccessible, roi );
 			}
 		};
 	}
 
 	//
-	public static < T extends Type< T >> SlidingWindowIteratorProvider< T > createNaiveSlidingRoiProvider( final Interval roi )
+	public static < T extends Type< T >, IN extends RandomAccessibleInterval< T >> SlidingWindowIteratorProvider< T, IN > createNaiveSlidingRoiProvider( final Interval roi )
 	{
 
-		return new SlidingWindowIteratorProvider< T >()
+		return new SlidingWindowIteratorProvider< T, IN >()
 		{
 
 			@Override
-			public SlidingWindowIterator< T > createSlidingWindowIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > randomAccessible )
+			public SlidingWindowIterator< T > createSlidingWindowIterator( final OutOfBoundsFactory< T, IN > fac, IN randomAccessible )
 			{
-				return new NaiveSlidingIntervalIterator< T >( fac, randomAccessible, roi );
+				return new NaiveSlidingIntervalIterator< T, IN >( fac, randomAccessible, roi );
 			}
 		};
 	}
 
 	//
-	public static < T extends Type< T >> SlidingWindowIteratorProvider< T > createNaiveSlidingIntervalProvider( final IterableRegionOfInterest roi )
+	public static < T extends Type< T >, IN extends RandomAccessibleInterval< T >> SlidingWindowIteratorProvider< T, IN > createNaiveSlidingIntervalProvider( final IterableRegionOfInterest roi )
 	{
 
-		return new SlidingWindowIteratorProvider< T >()
+		return new SlidingWindowIteratorProvider< T, IN >()
 		{
 
 			@Override
-			public SlidingWindowIterator< T > createSlidingWindowIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > randomAccessible )
+			public SlidingWindowIterator< T > createSlidingWindowIterator( final OutOfBoundsFactory< T, IN > fac, IN randomAccessible )
 			{
-				return new NaiveSlidingROIIterator< T >( fac, randomAccessible, roi );
+				return new NaiveSlidingROIIterator< T, IN >( fac, randomAccessible, roi );
 			}
 		};
 	}

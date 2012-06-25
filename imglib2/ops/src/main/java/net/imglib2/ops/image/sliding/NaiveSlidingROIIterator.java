@@ -17,22 +17,22 @@ import net.imglib2.view.Views;
  * 
  * @param <T>
  */
-public class NaiveSlidingROIIterator< T extends Type< T >> implements SlidingWindowIterator< T >
+public class NaiveSlidingROIIterator< T extends Type< T >, IN extends RandomAccessibleInterval< T >> implements SlidingWindowIterator< T >
 {
 
 	private final IterableRegionOfInterest m_roi;
 
 	private final LocalizingIntervalIterator m_cursor;
 
+	private final ExtendedRandomAccessibleInterval< T, IN > m_rndAccessible;
+
 	private final double[] m_currentPos;
 
 	private final double[] m_displacement;
 
-	private final ExtendedRandomAccessibleInterval< T, RandomAccessibleInterval< T >> m_rndAccessible;
-
 	private double[] m_totalDisplacement;
 
-	public NaiveSlidingROIIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > rndAccessible, final IterableRegionOfInterest roi )
+	public NaiveSlidingROIIterator( final OutOfBoundsFactory< T, IN > fac, IN rndAccessible, final IterableRegionOfInterest roi )
 	{
 		m_cursor = new LocalizingIntervalIterator( rndAccessible );
 		m_rndAccessible = Views.extend( rndAccessible, fac );

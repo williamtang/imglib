@@ -19,7 +19,7 @@ import net.imglib2.type.Type;
  * 
  * @param <T>
  */
-public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> implements SlidingWindowIterator< T >
+public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >, IN extends RandomAccessibleInterval< T >> implements SlidingWindowIterator< T >
 {
 
 	// Tmp
@@ -52,7 +52,7 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> impl
 	private LocalizingIntervalIterator m_cursor;
 
 	@SuppressWarnings( "unchecked" )
-	protected BufferedEfficientSlidingIntervalIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, final RandomAccessibleInterval< T > rndAccess, Interval roi )
+	protected BufferedEfficientSlidingIntervalIterator( final OutOfBoundsFactory< T, IN > fac, final IN rndAccess, Interval roi )
 	{
 
 		m_cursor = new LocalizingIntervalIterator( rndAccess );
