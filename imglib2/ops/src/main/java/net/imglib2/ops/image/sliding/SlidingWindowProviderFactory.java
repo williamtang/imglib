@@ -24,7 +24,7 @@ public class SlidingWindowProviderFactory
 	}
 
 	//
-	public static < T extends Type< T >> SlidingWindowIteratorProvider< T > createEfficientSlidingIntervalProvider( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, final Interval roi )
+	public static < T extends Type< T >> SlidingWindowIteratorProvider< T > createEfficientSlidingIntervalProvider( final Interval roi )
 	{
 
 		return new SlidingWindowIteratorProvider< T >()
@@ -39,7 +39,7 @@ public class SlidingWindowProviderFactory
 	}
 
 	//
-	public static < T extends Type< T >> SlidingWindowIteratorProvider< T > createNaiveSlidingRoiProvider( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, final Interval roi )
+	public static < T extends Type< T >> SlidingWindowIteratorProvider< T > createNaiveSlidingRoiProvider( final Interval roi )
 	{
 
 		return new SlidingWindowIteratorProvider< T >()
