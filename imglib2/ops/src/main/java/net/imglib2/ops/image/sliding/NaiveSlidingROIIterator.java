@@ -1,9 +1,12 @@
 package net.imglib2.ops.image.sliding;
 
+import net.imglib2.ExtendedRandomAccessibleInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.iterator.LocalizingIntervalIterator;
+import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.roi.IterableRegionOfInterest;
 import net.imglib2.type.Type;
+import net.imglib2.view.Views;
 
 /**
  * Naive implementation of a ROI slider. Slides a ROI over a given
@@ -25,14 +28,14 @@ public class NaiveSlidingROIIterator< T extends Type< T >> implements SlidingWin
 
 	private final double[] m_displacement;
 
-	private final RandomAccessibleInterval< T > m_rndAccessible;
+	private final ExtendedRandomAccessibleInterval< T, RandomAccessibleInterval< T >> m_rndAccessible;
 
 	private double[] m_totalDisplacement;
 
-	public NaiveSlidingROIIterator( RandomAccessibleInterval< T > rndAccessible, final IterableRegionOfInterest roi )
+	public NaiveSlidingROIIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > rndAccessible, final IterableRegionOfInterest roi )
 	{
 		m_cursor = new LocalizingIntervalIterator( rndAccessible );
-		m_rndAccessible = rndAccessible;
+		m_rndAccessible = Views.extend( rndAccessible, fac );
 
 		m_roi = roi;
 		m_roi.move( -1, 0 );

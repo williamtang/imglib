@@ -8,8 +8,8 @@ import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.iterator.LocalizingIntervalIterator;
 import net.imglib2.outofbounds.OutOfBounds;
+import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
-import net.imglib2.view.Views;
 
 /**
  * Efficient, buffered method to slide an {@link Interval} over an
@@ -52,13 +52,13 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> impl
 	private LocalizingIntervalIterator m_cursor;
 
 	@SuppressWarnings( "unchecked" )
-	protected BufferedEfficientSlidingIntervalIterator( final RandomAccessibleInterval< T > interval, Interval roi )
+	protected BufferedEfficientSlidingIntervalIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, final RandomAccessibleInterval< T > rndAccess, Interval roi )
 	{
 
-		m_cursor = new LocalizingIntervalIterator( interval );
-		m_rndAccess = Views.extendMirrorSingle( interval ).randomAccess();
+		m_cursor = new LocalizingIntervalIterator( rndAccess );
+		m_rndAccess = fac.create( rndAccess );
 
-		m_dims = new long[ interval.numDimensions() ];
+		m_dims = new long[ rndAccess.numDimensions() ];
 		roi.dimensions( m_dims );
 
 		m_size = 1;
@@ -67,13 +67,13 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> impl
 		for ( int d = 0; d < roi.numDimensions(); d++ )
 			m_size *= m_dims[ d ];
 
-		m_bufferElements = new long[ interval.numDimensions() ];
+		m_bufferElements = new long[ rndAccess.numDimensions() ];
 		Arrays.fill( m_bufferElements, 1 );
 
-		m_currentPos = new long[ interval.numDimensions() ];
+		m_currentPos = new long[ rndAccess.numDimensions() ];
 
 		// Buffer and position offsets
-		m_positionOffsets = new long[ interval.numDimensions() ];
+		m_positionOffsets = new long[ rndAccess.numDimensions() ];
 
 		for ( int d = 0; d < m_positionOffsets.length; d++ )
 		{
@@ -87,7 +87,7 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> impl
 
 		}
 
-		T type = interval.randomAccess().get();
+		T type = rndAccess.randomAccess().get();
 		m_buffer = ( T[] ) Array.newInstance( type.getClass(), m_size );
 
 		for ( int t = 0; t < m_buffer.length; t++ )
@@ -155,6 +155,7 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> impl
 	@Override
 	public Iterable< T > getIterable()
 	{
+		m_fastRoiIterator.reset();
 		return m_fastIterable;
 	}
 
@@ -248,7 +249,11 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >> impl
 		{
 			m_idx = 0;
 			m_bufferPtr = 0;
-			Arrays.fill( m_doneSteps, 0 );
+			for ( int d = 0; d < m_cursor.numDimensions(); d++ )
+			{
+				m_rndAccess.move( -m_doneSteps[ d ] - 1, d );
+				m_doneSteps[ d ] = 0;
+			}
 		}
 	}
 

@@ -6,8 +6,8 @@ import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.iterator.LocalizingIntervalIterator;
 import net.imglib2.outofbounds.OutOfBounds;
+import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
-import net.imglib2.view.Views;
 
 public class EfficientSlidingIntervalIterator< T extends Type< T >> implements SlidingWindowIterator< T >
 {
@@ -24,10 +24,10 @@ public class EfficientSlidingIntervalIterator< T extends Type< T >> implements S
 
 	private long[] m_positionOffsets;
 
-	protected EfficientSlidingIntervalIterator( RandomAccessibleInterval< T > randomAccessible, Interval slidingInterval )
+	protected EfficientSlidingIntervalIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > randomAccessible, Interval slidingInterval )
 	{
 		m_cursor = new LocalizingIntervalIterator( randomAccessible );
-		m_rndAccess = Views.extendMirrorSingle( randomAccessible ).randomAccess();
+		m_rndAccess = fac.create( randomAccessible );
 
 		m_fastIterable = new Iterable< T >()
 		{
@@ -158,10 +158,6 @@ public class EfficientSlidingIntervalIterator< T extends Type< T >> implements S
 				m_rndAccess.move( -m_doneSteps[ d ] - 1, d );
 				m_doneSteps[ d ] = 0;
 			}
-
-			// Set one backward to start in negativ (cursor
-			// behaviour)
-			m_rndAccess.bck( 0 );
 		}
 
 		@Override

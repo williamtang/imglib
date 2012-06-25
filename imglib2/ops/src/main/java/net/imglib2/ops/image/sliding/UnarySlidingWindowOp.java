@@ -4,6 +4,7 @@ import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.ops.UnaryOperation;
+import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
@@ -27,11 +28,14 @@ public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN 
 	// Iterator over the input
 	private SlidingWindowIteratorProvider< T > m_provider;
 
+	private OutOfBoundsFactory< T, RandomAccessibleInterval< T >> m_fac;
+
 	//
-	public UnarySlidingWindowOp( SlidingWindowIteratorProvider< T > provider, UnaryOperation< Iterable< T >, V > op )
+	public UnarySlidingWindowOp( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, SlidingWindowIteratorProvider< T > provider, UnaryOperation< Iterable< T >, V > op )
 	{
 		m_provider = provider;
 		m_op = op;
+		m_fac = fac;
 	}
 
 	@Override
@@ -43,7 +47,7 @@ public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN 
 		if ( !iterable.iterationOrder().equals( output ) )
 			throw new IllegalArgumentException( "Iteration order doesn't fit in UnarySlidingWindowOp" );
 
-		SlidingWindowIterator< T > iterator = m_provider.createSlidingWindowIterator( input );
+		SlidingWindowIterator< T > iterator = m_provider.createSlidingWindowIterator( m_fac, input );
 		Cursor< V > resCursor = output.cursor();
 
 		while ( iterator.hasNext() )
@@ -58,7 +62,7 @@ public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN 
 	@Override
 	public UnaryOperation< IN, OUT > copy()
 	{
-		return new UnarySlidingWindowOp< T, V, IN, OUT >( m_provider, m_op );
+		return new UnarySlidingWindowOp< T, V, IN, OUT >( m_fac, m_provider, m_op );
 	}
 
 }
