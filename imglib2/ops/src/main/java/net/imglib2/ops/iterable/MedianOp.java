@@ -23,7 +23,7 @@ public class MedianOp< T extends RealType< T >> implements UnaryOperation< Itera
 			m_statistics.add( inputCursor.next().getRealDouble() );
 		}
 
-		output.setReal( select( m_statistics, 0, m_statistics.size(), m_statistics.size() / 2 ) );
+		output.setReal( select( m_statistics, 0, m_statistics.size() - 1, m_statistics.size() / 2 ) );
 		return output;
 	}
 
