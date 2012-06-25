@@ -2,56 +2,50 @@ package net.imglib2.ops.image.sliding;
 
 import java.util.Iterator;
 
-import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.subset.SubsetViews;
+import net.imglib2.iterator.LocalizingIntervalIterator;
 import net.imglib2.outofbounds.OutOfBounds;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
-/**
- * 
- * (Hopefully) more efficient method to slide an interval over a
- * RandomAccessibleInterval
- * 
- * @author dietzc, horm
- * 
- * @param <T>
- */
-public class EfficientSlidingIntervalOp< T extends Type< T >> implements SlidingWindowIterator< T >
+public class EfficientSlidingIntervalIterator< T extends Type< T >> implements SlidingWindowIterator< T >
 {
 
-	// Tmp
-	private final long[] m_currentPos;
+	private LocalizingIntervalIterator m_cursor;
 
-	private final long[] m_positionOffsets;
-
-	private final long[] m_dims;
-
-	// Iterations
-	private final CursorRegionOfInterest m_fastRoiIterator;
+	private CursorRegionOfInterest m_fastRoiIterator;
 
 	private Iterable< T > m_fastIterable;
 
-	// Accessors
 	private OutOfBounds< T > m_rndAccess;
 
-	private final Cursor< T > m_cursor;
+	private long[] m_roiDims;
 
-	public EfficientSlidingIntervalOp( final RandomAccessibleInterval< T > interval, Interval slidingInterval )
+	private long[] m_positionOffsets;
+
+	protected EfficientSlidingIntervalIterator( RandomAccessibleInterval< T > randomAccessible, Interval slidingInterval )
 	{
+		m_cursor = new LocalizingIntervalIterator( randomAccessible );
+		m_rndAccess = Views.extendMirrorSingle( randomAccessible ).randomAccess();
 
-		m_cursor = SubsetViews.iterableSubsetView( interval, interval, false ).cursor();
-		m_rndAccess = Views.extendMirrorSingle( interval ).randomAccess();
+		m_fastIterable = new Iterable< T >()
+		{
 
-		m_dims = new long[ interval.numDimensions() ];
-		slidingInterval.dimensions( m_dims );
+			@Override
+			public Iterator< T > iterator()
+			{
+				return m_fastRoiIterator;
+			}
+		};
+
+		m_roiDims = new long[ randomAccessible.numDimensions() ];
+		slidingInterval.dimensions( m_roiDims );
 
 		int size = 1;
 
 		for ( int d = 0; d < slidingInterval.numDimensions(); d++ )
-			size *= m_dims[ d ];
+			size *= m_roiDims[ d ];
 
 		m_fastRoiIterator = new CursorRegionOfInterest( size );
 
@@ -65,14 +59,12 @@ public class EfficientSlidingIntervalOp< T extends Type< T >> implements Sliding
 			}
 		};
 
-		m_currentPos = new long[ interval.numDimensions() ];
-		m_cursor.localize( m_currentPos );
-
-		m_positionOffsets = new long[ interval.numDimensions() ];
+		m_positionOffsets = new long[ randomAccessible.numDimensions() ];
 		for ( int d = 0; d < m_positionOffsets.length; d++ )
 		{
 			m_positionOffsets[ d ] = slidingInterval.max( d ) / 2;
 		}
+
 	}
 
 	@Override
@@ -127,8 +119,8 @@ public class EfficientSlidingIntervalOp< T extends Type< T >> implements Sliding
 		{
 			m_idx++;
 
-			for ( int d = 0; d < m_dims.length; d++ )
-				if ( m_doneSteps[ d ] < m_dims[ d ] )
+			for ( int d = 0; d < m_roiDims.length; d++ )
+				if ( m_doneSteps[ d ] < m_roiDims[ d ] )
 				{
 					m_doneSteps[ d ]++;
 					m_rndAccess.fwd( d );
@@ -164,4 +156,29 @@ public class EfficientSlidingIntervalOp< T extends Type< T >> implements Sliding
 		}
 
 	}
+
+	@Override
+	public void reset()
+	{
+		m_cursor.reset();
+		m_rndAccess.setPosition( m_cursor );
+	}
+
+	public class EfficientSlidingIntervalProvider implements SlidingWindowIteratorProvider< T >
+	{
+
+		private Interval m_roiInterval;
+
+		public EfficientSlidingIntervalProvider( Interval roiInterval )
+		{
+			m_roiInterval = roiInterval;
+		}
+
+		@Override
+		public SlidingWindowIterator< T > createSlidingWindowIterator( RandomAccessibleInterval< T > randomAccessible )
+		{
+			return new EfficientSlidingIntervalIterator< T >( randomAccessible, m_roiInterval );
+		}
+	}
+
 }

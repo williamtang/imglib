@@ -35,4 +35,7 @@ public interface SlidingWindowIterator< T extends Type< T >>
 	 * Get the current iterable over the sliding window
 	 */
 	Iterable< T > getIterable();
+
+	void reset();
+
 }
