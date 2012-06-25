@@ -27,12 +27,12 @@ public class IterableAndTypeSlidingWindowOp< T extends Type< T >, V extends Type
 	private BinaryOperation< Iterable< T >, T, V > m_op;
 
 	// Iterator over the input
-	private SlidingWindowIteratorProvider< T > m_provider;
+	private SlidingWindowIteratorProvider< T, IN1 > m_provider;
 
 	// Factory for out of bounds
-	private OutOfBoundsFactory< T, RandomAccessibleInterval< T >> m_fac;
+	private OutOfBoundsFactory< T, IN1 > m_fac;
 
-	public IterableAndTypeSlidingWindowOp( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, SlidingWindowIteratorProvider< T > provider, BinaryOperation< Iterable< T >, T, V > op )
+	public IterableAndTypeSlidingWindowOp( final OutOfBoundsFactory< T, IN1 > fac, SlidingWindowIteratorProvider< T, IN1 > provider, BinaryOperation< Iterable< T >, T, V > op )
 	{
 		m_provider = provider;
 		m_op = op;

@@ -14,7 +14,7 @@ import net.imglib2.view.Views;
  * Naive implementation of a sliding {@link Interval}.
  * 
  */
-public class NaiveSlidingIntervalIterator< T extends Type< T >> implements SlidingWindowIterator< T >
+public class NaiveSlidingIntervalIterator< T extends Type< T >, IN extends RandomAccessibleInterval< T >> implements SlidingWindowIterator< T >
 {
 
 	private final LocalizingIntervalIterator m_cursor;
@@ -31,11 +31,11 @@ public class NaiveSlidingIntervalIterator< T extends Type< T >> implements Slidi
 
 	private Interval m_interval;
 
-	private RandomAccessibleInterval< T > m_rndAccessible;
+	private IN m_rndAccessible;
 
-	private OutOfBoundsFactory< T, RandomAccessibleInterval< T >> m_fac;
+	private OutOfBoundsFactory< T, IN > m_fac;
 
-	protected NaiveSlidingIntervalIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > rndAccessible, final Interval interval )
+	protected NaiveSlidingIntervalIterator( final OutOfBoundsFactory< T, IN > fac, IN rndAccessible, final Interval interval )
 	{
 		m_cursor = new LocalizingIntervalIterator( rndAccessible );
 		m_fac = fac;

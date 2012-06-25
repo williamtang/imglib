@@ -26,12 +26,12 @@ public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN 
 	private UnaryOperation< Iterable< T >, V > m_op;
 
 	// Iterator over the input
-	private SlidingWindowIteratorProvider< T > m_provider;
+	private SlidingWindowIteratorProvider< T, IN > m_provider;
 
-	private OutOfBoundsFactory< T, RandomAccessibleInterval< T >> m_fac;
+	private OutOfBoundsFactory< T, IN > m_fac;
 
 	//
-	public UnarySlidingWindowOp( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, SlidingWindowIteratorProvider< T > provider, UnaryOperation< Iterable< T >, V > op )
+	public UnarySlidingWindowOp( final OutOfBoundsFactory< T, IN > fac, SlidingWindowIteratorProvider< T, IN > provider, UnaryOperation< Iterable< T >, V > op )
 	{
 		m_provider = provider;
 		m_op = op;

@@ -9,7 +9,7 @@ import net.imglib2.outofbounds.OutOfBounds;
 import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
 
-public class EfficientSlidingIntervalIterator< T extends Type< T >> implements SlidingWindowIterator< T >
+public class EfficientSlidingIntervalIterator< T extends Type< T >, IN extends RandomAccessibleInterval< T >> implements SlidingWindowIterator< T >
 {
 
 	private LocalizingIntervalIterator m_cursor;
@@ -24,7 +24,7 @@ public class EfficientSlidingIntervalIterator< T extends Type< T >> implements S
 
 	private long[] m_positionOffsets;
 
-	protected EfficientSlidingIntervalIterator( final OutOfBoundsFactory< T, RandomAccessibleInterval< T >> fac, RandomAccessibleInterval< T > randomAccessible, Interval slidingInterval )
+	protected EfficientSlidingIntervalIterator( final OutOfBoundsFactory< T, IN > fac, IN randomAccessible, Interval slidingInterval )
 	{
 		m_cursor = new LocalizingIntervalIterator( randomAccessible );
 		m_rndAccess = fac.create( randomAccessible );
