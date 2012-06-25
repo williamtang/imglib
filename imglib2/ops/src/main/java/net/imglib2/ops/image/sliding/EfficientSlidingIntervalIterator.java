@@ -83,6 +83,7 @@ public class EfficientSlidingIntervalIterator< T extends Type< T >> implements S
 	@Override
 	public Iterable< T > getIterable()
 	{
+		m_fastRoiIterator.reset();
 		return m_fastIterable;
 	}
 
@@ -149,6 +150,20 @@ public class EfficientSlidingIntervalIterator< T extends Type< T >> implements S
 			m_rndAccess.bck( 0 );
 		}
 
+		private void reset()
+		{
+			m_idx = 0;
+			for ( int d = 0; d < m_cursor.numDimensions(); d++ )
+			{
+				m_rndAccess.move( -m_doneSteps[ d ] - 1, d );
+				m_doneSteps[ d ] = 0;
+			}
+
+			// Set one backward to start in negativ (cursor
+			// behaviour)
+			m_rndAccess.bck( 0 );
+		}
+
 		@Override
 		public void remove()
 		{
@@ -162,7 +177,6 @@ public class EfficientSlidingIntervalIterator< T extends Type< T >> implements S
 	{
 		m_cursor.reset();
 		m_rndAccess.setPosition( m_cursor );
+		m_fastRoiIterator.reset();
 	}
-
-
 }
