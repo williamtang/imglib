@@ -43,7 +43,7 @@ public class SlidingSpeedTests
 
 		EfficientSlidingIntervalIterator< UnsignedByteType, Img< UnsignedByteType > > efficient = new EfficientSlidingIntervalIterator< UnsignedByteType, Img< UnsignedByteType >>( new OutOfBoundsMirrorFactory< UnsignedByteType, Img< UnsignedByteType >>( Boundary.SINGLE ), img, new FinalInterval( roiMin, roiMax ) );
 
-		MedianOp< UnsignedByteType > op = new MedianOp< UnsignedByteType >();
+		MedianOp< UnsignedByteType, UnsignedByteType > op = new MedianOp< UnsignedByteType, UnsignedByteType >();
 
 		long curr = System.nanoTime();
 		test( res, naive, op );
@@ -62,7 +62,7 @@ public class SlidingSpeedTests
 		System.out.println( "BufferedEfficient " + ( System.nanoTime() - curr ) / 1000 / 1000 );
 	}
 
-	private static void test( Img< UnsignedByteType > res, SlidingWindowIterator< UnsignedByteType > rect, MedianOp< UnsignedByteType > op )
+	private static void test( Img< UnsignedByteType > res, SlidingWindowIterator< UnsignedByteType > rect, MedianOp< UnsignedByteType, UnsignedByteType > op )
 	{
 		Cursor< UnsignedByteType > resCursor = res.cursor();
 		while ( rect.hasNext() )
