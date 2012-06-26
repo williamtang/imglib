@@ -12,8 +12,6 @@ import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.subset.IntervalComperator;
 import net.imglib2.ops.UnaryOutputOperation;
-import net.imglib2.ops.image.UnaryOperationAssignment;
-import net.imglib2.ops.operation.unary.real.RealConstant;
 import net.imglib2.type.numeric.RealType;
 
 /**
@@ -32,14 +30,8 @@ import net.imglib2.type.numeric.RealType;
 public final class MergeIterableIntervals< T extends RealType< T >> implements UnaryOutputOperation< IterableInterval< T >[], Img< T >>
 {
 
-	/* Type to fill the gaps */
-	private final T m_emptyType;
-
 	/* Factory to produce res img */
 	private final ImgFactory< T > m_factory;
-
-	/* Operation to fill res img with emptyType */
-	private final UnaryOperationAssignment< T, T > m_fill;
 
 	/*
 	 * True if dimensions of size one should be removed from resulting interval
@@ -54,10 +46,8 @@ public final class MergeIterableIntervals< T extends RealType< T >> implements U
 	 * @param factory
 	 *            factory to produce the resulting img
 	 */
-	public MergeIterableIntervals( T emptyType, ImgFactory< T > factory, boolean adjustDimensionality )
+	public MergeIterableIntervals( ImgFactory< T > factory, boolean adjustDimensionality )
 	{
-		m_emptyType = emptyType;
-		m_fill = new UnaryOperationAssignment< T, T >( new RealConstant< T, T >( emptyType.getRealDouble() ) );
 		m_factory = factory;
 		m_adjustDimensionality = adjustDimensionality;
 	}
@@ -110,14 +100,14 @@ public final class MergeIterableIntervals< T extends RealType< T >> implements U
 			resDims[ k++ ] = setDims[ d ].size();
 		}
 
-		return m_factory.create( resDims, m_emptyType );
+		return m_factory.create( resDims, src[ 0 ].firstElement().createVariable() );
 	}
 
 	@Override
 	public final Img< T > compute( final IterableInterval< T >[] intervals, final Img< T > res )
 	{
 
-		m_fill.compute( res, res );
+		// m_fill.compute( res, res );
 
 		RandomAccess< T > randomAccess = res.randomAccess();
 		Arrays.sort( intervals, new IntervalComperator() );
@@ -182,7 +172,7 @@ public final class MergeIterableIntervals< T extends RealType< T >> implements U
 	@Override
 	public UnaryOutputOperation< IterableInterval< T >[], Img< T >> copy()
 	{
-		return new MergeIterableIntervals< T >( m_emptyType.copy(), m_factory, m_adjustDimensionality );
+		return new MergeIterableIntervals< T >( m_factory, m_adjustDimensionality );
 	}
 
 	@Override
