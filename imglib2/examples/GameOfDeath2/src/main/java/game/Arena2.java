@@ -42,6 +42,7 @@ import ij.ImageStack;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 
+import java.text.NumberFormat;
 import java.util.Random;
 
 import net.imglib2.RandomAccess;
@@ -60,15 +61,19 @@ import net.imglib2.outofbounds.OutOfBoundsMirrorFactory.Boundary;
  */
 public class Arena2
 {
+	// export the simulation as a movie
 	final boolean exportAsStack = true;
+	
+	// number of frames for the movie
 	final int numFramesMovie = 1000;
 	
+	// we simulate with 3 races
+	final int maxRace = 3;
 	final static int raceA = 0;
 	final static int raceB = 1;
 	final static int raceC = 2;
 	
-	final int maxRace = 3;
-	
+	// the width and height of the image
 	final int width = 384;
 	final int height = 256;
 	
@@ -137,7 +142,7 @@ public class Arena2
 			double fps = numFrames*1000 / (double)time;
 			
 			if ( numFrames % 25 == 0 )
-				System.out.println( "fps: " + fps );
+				imp.setTitle( "fps: " + fps );
 			
 			//arena.getDisplay().setMinMax();
 			display.setMin( 0 );
@@ -159,6 +164,12 @@ public class Arena2
 		}
 	}
 	
+	/**
+	 * Compute the maximum weight of all pixels
+	 * 
+	 * @param img - the Img containing the state of the simulation
+	 * @return the maximum weight
+	 */
 	public float getMax( final Img< LifeForm > img )
 	{
 		final LifeForm max = img.firstElement();
@@ -170,22 +181,28 @@ public class Arena2
 		return max.getWeight();
 	}
 	
+	/**
+	 * Update the ImageJ display window with the current state of the simulation
+	 * 
+	 * @param imp - the displayed ImagePlus
+	 * @param img - the Img containing the state of the simulation
+	 * @param display - the LifeFormARGB converter that can convert a LifeForm into an ARGB representation 
+	 */
 	protected void updateDisplay( final ImagePlus imp, final Img<LifeForm> img, final LifeFormARGBConverter display )
 	{
-		final ImagePlus impNew = ImageJFunctions.wrapRGB( img, display, "Arena" ); //ImageJFunctions.copyToImagePlus( arena, ImageJFunctions.COLOR_RGB );
+		// create a new ImagePlus based on the current state of the simulation
+		final ImagePlus impNew = ImageJFunctions.wrapRGB( img, display, "Arena" );
 		
-		//final int[] pixels = ImageJVirtualStack.extractSliceRGB( img, img.getDisplay(), 0, 1, new int[ img.getNumDimensions() ] );
-		final int[] pixels = (int[])impNew.getProcessor().getPixels();
-		ColorProcessor cp = ((ColorProcessor)imp.getProcessor());
-		cp.setPixels(pixels);
+		// set the pixels of the new ImagePlus to the already displayed ImagePlus
+		imp.getProcessor().setPixels( impNew.getProcessor().getPixels() );
+		
+		// update the already displayed ImagePlus
 		imp.updateAndDraw();
 	}
 	
 	public static void main( String[] args )
 	{
 		/* initImageJWindow() */
-		//final String params[] = {""};
-		//ij.ImageJ.main( );
 		new ImageJ();
 		
 		/* Start the fight */
