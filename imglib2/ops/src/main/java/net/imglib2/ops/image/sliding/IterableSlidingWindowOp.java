@@ -19,7 +19,7 @@ import net.imglib2.view.Views;
  * @param <IN>
  * @param <OUT>
  */
-public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN extends RandomAccessibleInterval< T >, OUT extends IterableInterval< V >> implements UnaryOperation< IN, OUT >
+public class IterableSlidingWindowOp< T extends Type< T >, V extends Type< V >, IN extends RandomAccessibleInterval< T >, OUT extends IterableInterval< V >> implements UnaryOperation< IN, OUT >
 {
 
 	// the operation which is applied one each window
@@ -31,7 +31,7 @@ public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN 
 	private OutOfBoundsFactory< T, IN > m_fac;
 
 	//
-	public UnarySlidingWindowOp( final OutOfBoundsFactory< T, IN > fac, SlidingWindowIteratorProvider< T, IN > provider, UnaryOperation< Iterable< T >, V > op )
+	public IterableSlidingWindowOp( final OutOfBoundsFactory< T, IN > fac, SlidingWindowIteratorProvider< T, IN > provider, UnaryOperation< Iterable< T >, V > op )
 	{
 		m_provider = provider;
 		m_op = op;
@@ -44,7 +44,7 @@ public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN 
 
 		IterableInterval< T > iterable = Views.iterable( input );
 
-		if ( !iterable.iterationOrder().equals( output ) )
+		if ( !iterable.iterationOrder().equals( output.iterationOrder() ) )
 			throw new IllegalArgumentException( "Iteration order doesn't fit in UnarySlidingWindowOp" );
 
 		SlidingWindowIterator< T > iterator = m_provider.createSlidingWindowIterator( m_fac, input );
@@ -62,7 +62,7 @@ public class UnarySlidingWindowOp< T extends Type< T >, V extends Type< V >, IN 
 	@Override
 	public UnaryOperation< IN, OUT > copy()
 	{
-		return new UnarySlidingWindowOp< T, V, IN, OUT >( m_fac, m_provider, m_op );
+		return new IterableSlidingWindowOp< T, V, IN, OUT >( m_fac, m_provider, m_op );
 	}
 
 }
