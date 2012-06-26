@@ -28,9 +28,10 @@ public class IterableSlidingWindowOp< T extends Type< T >, V extends Type< V >, 
 	// Iterator over the input
 	private SlidingWindowIteratorProvider< T, IN > m_provider;
 
+	// OutOfBounds
 	private OutOfBoundsFactory< T, IN > m_fac;
 
-	//
+	// ...
 	public IterableSlidingWindowOp( final OutOfBoundsFactory< T, IN > fac, SlidingWindowIteratorProvider< T, IN > provider, UnaryOperation< Iterable< T >, V > op )
 	{
 		m_provider = provider;

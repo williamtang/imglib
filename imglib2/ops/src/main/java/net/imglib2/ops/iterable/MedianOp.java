@@ -7,13 +7,13 @@ import java.util.List;
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.type.numeric.RealType;
 
-public class MedianOp< T extends RealType< T >> implements UnaryOperation< Iterable< T >, T >
+public class MedianOp< T extends RealType< T >, V extends RealType< V >> implements UnaryOperation< Iterable< T >, V >
 {
 
 	private ArrayList< Double > m_statistics = new ArrayList< Double >();
 
 	@Override
-	public T compute( Iterable< T > input, T output )
+	public V compute( Iterable< T > input, V output )
 	{
 
 		m_statistics.clear();
@@ -28,9 +28,9 @@ public class MedianOp< T extends RealType< T >> implements UnaryOperation< Itera
 	}
 
 	@Override
-	public MedianOp< T > copy()
+	public MedianOp< T, V > copy()
 	{
-		return new MedianOp< T >();
+		return new MedianOp< T, V >();
 	}
 
 	/**
