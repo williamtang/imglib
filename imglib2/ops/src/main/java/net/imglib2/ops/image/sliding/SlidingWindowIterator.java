@@ -36,6 +36,9 @@ public interface SlidingWindowIterator< T extends Type< T >>
 	 */
 	Iterable< T > getIterable();
 
+	/**
+	 * 
+	 */
 	void reset();
 
 }

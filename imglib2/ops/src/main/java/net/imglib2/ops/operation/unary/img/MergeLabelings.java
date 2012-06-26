@@ -87,7 +87,7 @@ public final class MergeLabelings< L extends Comparable< L >> implements UnaryOu
 
 		long[] resDims = new long[ numMaxDims - m_invalidDims.size() ];
 		int k = 0;
-		for ( int d = 0; d < resDims.length; d++ )
+		for ( int d = 0; d < numMaxDims; d++ )
 		{
 			if ( m_invalidDims.contains( d ) )
 				continue;
