@@ -20,7 +20,7 @@ import net.imglib2.view.Views;
  * @param <IN>
  * @param <OUT>
  */
-public class IterableAndTypeWindowOp< T extends Type< T >, V extends Type< V >, IN1 extends RandomAccessibleInterval< T >, OUT extends IterableInterval< V >> implements UnaryOperation< IN1, OUT >
+public class IterableAndTypeSlidingWindowOp< T extends Type< T >, V extends Type< V >, IN1 extends RandomAccessibleInterval< T >, OUT extends IterableInterval< V >> implements UnaryOperation< IN1, OUT >
 {
 
 	// the operation which is applied one each window
@@ -32,7 +32,7 @@ public class IterableAndTypeWindowOp< T extends Type< T >, V extends Type< V >, 
 	// Factory for out of bounds
 	private OutOfBoundsFactory< T, IN1 > m_fac;
 
-	public IterableAndTypeWindowOp( final OutOfBoundsFactory< T, IN1 > fac, SlidingWindowIteratorProvider< T, IN1 > provider, BinaryOperation< Iterable< T >, T, V > op )
+	public IterableAndTypeSlidingWindowOp( final OutOfBoundsFactory< T, IN1 > fac, SlidingWindowIteratorProvider< T, IN1 > provider, BinaryOperation< Iterable< T >, T, V > op )
 	{
 		m_provider = provider;
 		m_op = op;
@@ -67,7 +67,7 @@ public class IterableAndTypeWindowOp< T extends Type< T >, V extends Type< V >, 
 	@Override
 	public UnaryOperation< IN1, OUT > copy()
 	{
-		return new IterableAndTypeWindowOp< T, V, IN1, OUT >( m_fac, m_provider, m_op );
+		return new IterableAndTypeSlidingWindowOp< T, V, IN1, OUT >( m_fac, m_provider, m_op.copy() );
 	}
 
 }
