@@ -83,7 +83,6 @@ public class EfficientSlidingIntervalIterator< T extends Type< T >, IN extends R
 	@Override
 	public Iterable< T > getIterable()
 	{
-		m_fastRoiIterator.reset();
 		return m_fastIterable;
 	}
 
