@@ -63,7 +63,7 @@ public class IterableSlidingWindowOp< T extends Type< T >, V extends Type< V >, 
 	@Override
 	public UnaryOperation< IN, OUT > copy()
 	{
-		return new IterableSlidingWindowOp< T, V, IN, OUT >( m_fac, m_provider, m_op );
+		return new IterableSlidingWindowOp< T, V, IN, OUT >( m_fac, m_provider, m_op.copy() );
 	}
 
 }
