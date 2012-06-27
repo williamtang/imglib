@@ -21,7 +21,7 @@ import net.imglib2.type.Type;
 /**
  * Applies a given Operation to each interval separately.
  * 
- * @author dietzc, hornm University of Konstanz
+ * @author dietzc, hornm, muethingc University of Konstanz
  */
 public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V >, S extends RandomAccessibleInterval< T >, U extends RandomAccessibleInterval< V >> implements UnaryOperation< S, U >
 {
@@ -35,6 +35,11 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 	private final Interval[] m_inIntervals;
 
 	private int m_numThreads;
+
+	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, int numThreads )
+	{
+		this( op, inIntervals, inIntervals, numThreads );
+	}
 
 	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, Interval[] outIntervals, int numThreads )
 	{
@@ -50,7 +55,14 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 
 	private ExecutorService createExecutionService()
 	{
-		return m_numThreads <= 1 ? Executors.newSingleThreadExecutor() : Executors.newFixedThreadPool( m_numThreads );
+
+		if ( m_numThreads <= 0 )
+			return Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
+		else if ( m_numThreads == 1 )
+			return Executors.newSingleThreadExecutor();
+		else
+			return Executors.newFixedThreadPool( m_numThreads );
+
 	}
 
 	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, Interval[] outIntervals )
@@ -81,9 +93,7 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 		{
 			for ( Future< ? > f : futures )
 			{
-
 				f.get();
-
 			}
 		}
 		catch ( InterruptedException e )
@@ -121,7 +131,7 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 	/**
 	 * Future task
 	 * 
-	 * @author muethingc, dietzc
+	 * @author dietzc, muethingc
 	 * 
 	 */
 	private class OperationTask implements Runnable
