@@ -155,7 +155,6 @@ public class BufferedEfficientSlidingIntervalIterator< T extends Type< T >, IN e
 	@Override
 	public Iterable< T > getIterable()
 	{
-		m_fastRoiIterator.reset();
 		return m_fastIterable;
 	}
 
