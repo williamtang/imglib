@@ -32,8 +32,7 @@ public class Variance< T extends RealType< T >, V extends RealType< V >> impleme
 			sumSqr += px * px;
 		}
 
-		double mean = sum/n;
-		output.setReal( ( sumSqr - ( sum * mean ) ) / ( n - 1 ) );
+		output.setReal( ( sumSqr - ( sum * sum / n ) ) / ( n - 1 ) );
 		return output;
 	}
 
