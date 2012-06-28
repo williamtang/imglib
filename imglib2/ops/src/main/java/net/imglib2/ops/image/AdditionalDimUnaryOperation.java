@@ -42,6 +42,7 @@ import net.imglib2.FinalInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
+import net.imglib2.img.subset.ImgView;
 import net.imglib2.img.subset.SubsetViews;
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.ops.UnaryOutputOperation;
@@ -54,13 +55,13 @@ import net.imglib2.type.Type;
 public class AdditionalDimUnaryOperation< T extends Type< T >, O extends Type< O >, IN extends RandomAccessibleInterval< T >> implements UnaryOutputOperation< IN, Img< O > >
 {
 
-	private UnaryOperation< IN, RandomAccessibleInterval< O > >[] m_operations;
+	private UnaryOperation< IN, Img< O > >[] m_operations;
 
 	private ImgFactory< O > m_fac;
 
 	private O m_resType;
 
-	public AdditionalDimUnaryOperation( O resType, ImgFactory< O > fac, UnaryOperation< IN, RandomAccessibleInterval< O > >... operations )
+	public AdditionalDimUnaryOperation( O resType, ImgFactory< O > fac, UnaryOperation< IN, Img< O > >... operations )
 	{
 		m_operations = operations;
 		m_fac = fac;
@@ -79,7 +80,7 @@ public class AdditionalDimUnaryOperation< T extends Type< T >, O extends Type< O
 		{
 			max[ max.length - 1 ] = i;
 			min[ min.length - 1 ] = i;
-			m_operations[ i ].compute( input, SubsetViews.iterableSubsetView( output, new FinalInterval( min, max ), false ) );
+			m_operations[ i ].compute( input, new ImgView< O >( SubsetViews.iterableSubsetView( output, new FinalInterval( min, max ), false ), output.factory() ) );
 		}
 
 		return output;
