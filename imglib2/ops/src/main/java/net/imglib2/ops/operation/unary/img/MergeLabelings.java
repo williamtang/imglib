@@ -50,6 +50,15 @@ public final class MergeLabelings< L extends Comparable< L >> implements UnaryOu
 	@Override
 	public final NativeImgLabeling< L, ? extends IntegerType< ? >> createEmptyOutput( final Labeling< L >[] src )
 	{
+		long[] resDims = initConstants( src );
+
+		@SuppressWarnings( "unchecked" )
+		NativeImgLabeling< L, ? extends IntegerType< ? >> res = new NativeImgLabeling( new ArrayImgFactory().create( resDims, ( NativeType ) m_resType ) );
+		return res;
+	}
+
+	private long[] initConstants( final Labeling< L >[] src )
+	{
 		int numMaxDims = 0;
 
 		for ( IterableInterval< LabelingType< L >> interval : src )
@@ -94,15 +103,14 @@ public final class MergeLabelings< L extends Comparable< L >> implements UnaryOu
 
 			resDims[ k++ ] = setDims[ d ].size();
 		}
-
-		@SuppressWarnings( "unchecked" )
-		NativeImgLabeling< L, ? extends IntegerType< ? >> res = new NativeImgLabeling( new ArrayImgFactory().create( resDims, ( NativeType ) m_resType ) );
-		return res;
+		return resDims;
 	}
 
 	@Override
 	public final NativeImgLabeling< L, ? extends IntegerType< ? >> compute( final Labeling< L >[] intervals, NativeImgLabeling< L, ? extends IntegerType< ? >> res )
 	{
+		if ( m_invalidDims == null )
+			initConstants( intervals );
 
 		RandomAccess< LabelingType< L >> randomAccess = res.randomAccess();
 		Arrays.sort( intervals, new IntervalComperator() );
@@ -152,7 +160,7 @@ public final class MergeLabelings< L extends Comparable< L >> implements UnaryOu
 			int offsetCtr = 0;
 			for ( int d = 0; d < interval.numDimensions(); d++ )
 			{
-				if ( interval.min( d ) - interval.max( d ) == 0 )
+				if ( m_invalidDims.contains( d ) )
 				{
 					offsetCtr++;
 					continue;
