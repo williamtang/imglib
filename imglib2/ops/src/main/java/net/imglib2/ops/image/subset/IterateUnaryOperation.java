@@ -2,7 +2,6 @@ package net.imglib2.ops.image.subset;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import net.imglib2.Interval;
@@ -34,14 +33,12 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 
 	private final Interval[] m_inIntervals;
 
-	private int m_numThreads;
-
-	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, int numThreads )
+	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, ExecutorService service )
 	{
-		this( op, inIntervals, inIntervals, numThreads );
+		this( op, inIntervals, inIntervals, service );
 	}
 
-	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, Interval[] outIntervals, int numThreads )
+	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, Interval[] outIntervals, ExecutorService service )
 	{
 
 		if ( inIntervals.length != outIntervals.length ) { throw new IllegalArgumentException( "In and out intervals do not match! Most likely an implementation error!" ); }
@@ -49,26 +46,7 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 		m_op = op;
 		m_inIntervals = inIntervals;
 		m_outIntervals = outIntervals;
-		m_numThreads = numThreads;
-		m_service = createExecutionService();
-	}
-
-	private ExecutorService createExecutionService()
-	{
-
-		if ( m_numThreads <= 0 )
-			return Executors.newFixedThreadPool( Runtime.getRuntime().availableProcessors() );
-		else if ( m_numThreads == 1 )
-			return Executors.newSingleThreadExecutor();
-		else
-			return Executors.newFixedThreadPool( m_numThreads );
-
-	}
-
-	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, Interval[] outIntervals )
-	{
-		this( op, inIntervals, outIntervals, 1 );
-
+		m_service = service;
 	}
 
 	/**
@@ -79,10 +57,6 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 	{
 
 		Future< ? >[] futures = new Future< ? >[ m_inIntervals.length ];
-		if ( m_service.isShutdown() )
-		{
-			m_service = createExecutionService();
-		}
 
 		for ( int i = 0; i < m_outIntervals.length; i++ )
 		{
@@ -98,13 +72,11 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 		}
 		catch ( InterruptedException e )
 		{
-			m_service.shutdownNow();
-			throw new RuntimeException( e.getMessage() );
+			// nothing to do here
 		}
 		catch ( ExecutionException e )
 		{
-			m_service.shutdownNow();
-			throw new RuntimeException( e.getMessage() );
+			// nothing to do here
 		}
 
 		return out;
@@ -125,7 +97,7 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 	@Override
 	public UnaryOperation< S, U > copy()
 	{
-		return new IterateUnaryOperation< T, V, S, U >( m_op.copy(), m_inIntervals, m_outIntervals, m_numThreads );
+		return new IterateUnaryOperation< T, V, S, U >( m_op.copy(), m_inIntervals, m_outIntervals, m_service );
 	}
 
 	/**
