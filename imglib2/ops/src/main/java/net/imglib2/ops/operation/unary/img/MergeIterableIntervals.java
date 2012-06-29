@@ -55,6 +55,13 @@ public final class MergeIterableIntervals< T extends RealType< T >> implements U
 	@Override
 	public final Img< T > createEmptyOutput( final IterableInterval< T >[] src )
 	{
+		long[] resDims = initConstants( src );
+
+		return m_factory.create( resDims, src[ 0 ].firstElement().createVariable() );
+	}
+
+	private long[] initConstants( final IterableInterval< T >[] src )
+	{
 		int numMaxDims = 0;
 
 		for ( IterableInterval< T > interval : src )
@@ -99,15 +106,15 @@ public final class MergeIterableIntervals< T extends RealType< T >> implements U
 
 			resDims[ k++ ] = setDims[ d ].size();
 		}
-
-		return m_factory.create( resDims, src[ 0 ].firstElement().createVariable() );
+		return resDims;
 	}
 
 	@Override
 	public final Img< T > compute( final IterableInterval< T >[] intervals, final Img< T > res )
 	{
 
-		// m_fill.compute( res, res );
+		if ( m_invalidDims == null )
+			initConstants( intervals );
 
 		RandomAccess< T > randomAccess = res.randomAccess();
 		Arrays.sort( intervals, new IntervalComperator() );
@@ -157,7 +164,7 @@ public final class MergeIterableIntervals< T extends RealType< T >> implements U
 			int offsetCtr = 0;
 			for ( int d = 0; d < interval.numDimensions(); d++ )
 			{
-				if ( interval.min( d ) - interval.max( d ) == 0 )
+				if ( m_invalidDims.contains( d ) )
 				{
 					offsetCtr++;
 					continue;
