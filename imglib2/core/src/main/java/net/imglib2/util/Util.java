@@ -702,6 +702,33 @@ public class Util
 		return out;
 	}
 
+	public static String printInterval( final Interval interval )
+	{
+		String out = "(Interval empty)";
+
+		if ( interval == null || interval.numDimensions() == 0 )
+			return out;
+
+		out = "[" + interval.min( 0 );
+
+		for ( int i = 1; i < interval.numDimensions(); i++ )
+			out += ", " + interval.min( i );
+
+		out += "] -> [" + interval.max( 0 );
+
+		for ( int i = 1; i < interval.numDimensions(); i++ )
+			out += ", " + interval.max( i );
+
+		out += "], dimensions (" + interval.dimension( 0 );
+
+		for ( int i = 1; i < interval.numDimensions(); i++ )
+			out += ", " + interval.dimension( i );
+
+		out += ")";
+		
+		return out;
+	}
+
 	public static String printCoordinates( final int[] value )
 	{
 		String out = "(Array empty)";
@@ -1011,7 +1038,9 @@ public class Util
 	/**
 	 * Test whether the {@code containing} interval completely contains the
 	 * {@code contained} interval.
-	 * 
+	 *
+	 * TODO: move to {@link Intervals}
+	 *
 	 * @param containing
 	 * @param contained
 	 * @return
@@ -1032,7 +1061,9 @@ public class Util
 	/**
 	 * Test whether the {@code containing} interval completely contains the
 	 * {@code contained} interval.
-	 * 
+	 *
+	 * TODO: move to {@link Intervals}.
+	 *
 	 * @param containing
 	 * @param contained
 	 * @return

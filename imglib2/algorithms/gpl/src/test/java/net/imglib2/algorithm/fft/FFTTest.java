@@ -34,29 +34,37 @@
  * #L%
  */
 
-package net.imglib2.roi;
+package net.imglib2.algorithm.fft;
 
-import net.imglib2.RealRandomAccessibleRealInterval;
-import net.imglib2.type.logic.BitType;
+import net.imglib2.Cursor;
+import net.imglib2.exception.IncompatibleTypeException;
+import net.imglib2.img.Img;
+import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.array.ArrayImgs;
+
+import net.imglib2.type.numeric.real.DoubleType;
+import net.imglib2.type.numeric.complex.ComplexDoubleType;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
- * A RegionOfInterest defines a set of points in a space. The "get" value from
- * BitType will tell you whether a point is in or out.
- * 
- * 
- * @author Lee Kamentsky
+ * Make sure that FFT works alright
+ *
+ * @author Johannes Schindelin
  */
-public interface RegionOfInterest extends RealRandomAccessibleRealInterval< BitType >
-{
+public class FFTTest {
 	/**
-	 * Determine whether a point is a member of the region of interest
-	 * 
-	 * @param position
-	 *            position in question
-	 * @return true if a member
+	 * Test the Fourier transformation with a known frequency
 	 */
-	boolean contains( double[] position );
-
-	void move(double displacement, int d);
-	void move(double[] displacement);
+	@Test
+	public void oneDimensional() throws IncompatibleTypeException {
+		double[] values = { 0, 1, 0, -1, 0 };
+		final Img< DoubleType > img = ArrayImgs.doubles(values, 5);
+		final FourierTransform< DoubleType, ComplexDoubleType > fft = new FourierTransform< DoubleType, ComplexDoubleType >( img, new ComplexDoubleType() );
+		fft.process();
+		Img<ComplexDoubleType> convolved = fft.getResult();
+		assertEquals( convolved.numDimensions(), 1 );
+	}
 }

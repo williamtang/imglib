@@ -34,83 +34,80 @@
  * #L%
  */
 
-package game;
-
-import net.imglib2.converter.Converter;
-import net.imglib2.display.AbstractLinearRange;
-import net.imglib2.type.numeric.ARGBType;
+package net.imglib2;
 
 /**
- * Create an ARGB representation of a {@link LifeForm}. LifeForms with name=0 will
- * be displayed as red, name=1 as green and name=2 as blue. The weight will represent
- * its intensity scaling float values between min...max to 0...255
- *
+ * An implementation of dimensionality that can wrap a long[] array. The same principle
+ * for wrapping as in Point is used.
+ * 
  * @author Stephan Preibisch
- * @author Stephan Saalfeld
  */
-public class LifeFormARGBConverter extends AbstractLinearRange implements Converter< LifeForm, ARGBType >
+public class FinalDimensions implements Dimensions
 {
-	/**
-	 * Instantiate a new LifeFormARGBConverter where min=0 and max=1
-	 */
-	public LifeFormARGBConverter()
-	{
-		super();
-	}
+	final long[] dimensions;
 	
 	/**
-	 * Instantiate a new LifeFormARGBConverter
-	 * @param min - the minimal weight for display (will map to intensity 0)
-	 * @param max - the maximal weight for display (will map to intensity 255)
+	 * Protected constructor that can re-use the passed position array.
+	 *
+	 * @param dimensions - array used to store the position.
+	 * @param copy - flag indicating whether position array should be duplicated.
 	 */
-	public LifeFormARGBConverter( final double min, final double max )
+	protected FinalDimensions( final long[] dimensions, final boolean copy )
 	{
-		super( min, max );
-	}
-	
-	/** 
-	 * Convert the LifeForm to an ARGB value
-	 * @param input - the LifeForm to convert
-	 * @param output - the ARGBType that will contain the RGB representation 
-	 */
-	@Override
-	public void convert( final LifeForm input, final ARGBType output )
-	{
-		final int col = (short)Math.round( normFloat( input.getWeight() ) * 255 );
-		
-		final int name = input.getName();
-		
-		if ( name == 0 )
-			output.set( col<<16 );
-		else if ( name == 1 )
-			output.set( col<<8 );
-		else if ( name == 2 )
-			output.set( col );
-		else if ( name == 3 )
-			output.set( (col<<16) + (col<<8) );
-		else if ( name == 4 )
-			output.set( (col<<16) + (col<<8) + col );
-		else if ( name == 5 )
-			output.set( (col<<16) + col );
-		else if ( name == 6 )
-			output.set( (col<<8) + col );
-	}
-	
-	/**
-	 * norm the weight of the LifeForm to 0...255 using min and max
-	 * @param c
-	 * @return
-	 */
-	public float normFloat( final float c )
-	{
-		double value = ( c - min ) / ( max - min );
-		
-		if ( value < 0 )
-			value = 0;
-		else if ( value > 1 )
-			value = 1;
-		
-		return (float)value;
+		if ( copy ) 
+			this.dimensions = dimensions.clone();
+		else
+			this.dimensions = dimensions;
 	}
 
+	/**
+	 * Creates a FinalDimensions object with size zero in all dimensions
+	 * 
+	 * @param n - number of dimensions
+	 */
+	public FinalDimensions( final int n ) { this.dimensions = new long[ n ]; }
+	
+	/**
+	 * Create a FinalDimensions with a defined size
+	 * 
+	 * @param dimensions - the size
+	 */
+	public FinalDimensions( final long... dimensions ) { this( dimensions, true ); }
+
+	/**
+	 * Create a FinalDimensions with a defined size
+	 * 
+	 * @param dimensions - the size
+	 */
+	public FinalDimensions( final int... dimensions )
+	{
+		this.dimensions = new long[ dimensions.length ];
+		
+		for ( int d = 0; d < dimensions.length; ++d )
+			this.dimensions[ d ] = dimensions[ d ];
+	}
+
+	@Override
+	public int numDimensions() { return dimensions.length; }
+
+	@Override
+	public void dimensions( final long[] dimensions )
+	{
+		for ( int d = 0; d < dimensions.length; ++d )
+			this.dimensions[ d ] = dimensions[ d ];
+	}
+
+	@Override
+	public long dimension( final int d ) { return dimensions[ d ]; }
+	
+	/**
+	 * Create a FinalDimensions object that stores its coordinates in the provided position
+	 * array.
+	 *
+	 * @param dimensions -array to use for storing the position.
+	 */
+	public static FinalDimensions wrap( final long[] dimensions )
+	{
+		return new FinalDimensions( dimensions, false );
+	}
 }
