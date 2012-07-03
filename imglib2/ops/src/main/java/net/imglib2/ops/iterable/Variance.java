@@ -12,21 +12,19 @@ import net.imglib2.type.numeric.RealType;
  * @param <T>
  * @param <V>
  */
-public class Variance< T extends RealType< T >, V extends RealType< V >> implements UnaryOperation< Iterable< T >, V >
+public class Variance< T extends RealType< T >, V extends RealType< V >> implements UnaryOperation< Iterator< T >, V >
 {
 
 	@Override
-	public V compute( Iterable< T > input, V output )
+	public V compute( Iterator< T > input, V output )
 	{
 		double sum = 0;
 		double sumSqr = 0;
 		int n = 0;
 
-		Iterator< T > iter = input.iterator();
-
-		while ( iter.hasNext() )
+		while ( input.hasNext() )
 		{
-			double px = iter.next().getRealDouble();
+			double px = input.next().getRealDouble();
 			n++;
 			sum += px;
 			sumSqr += px * px;
@@ -37,7 +35,7 @@ public class Variance< T extends RealType< T >, V extends RealType< V >> impleme
 	}
 
 	@Override
-	public UnaryOperation< Iterable< T >, V > copy()
+	public UnaryOperation< Iterator< T >, V > copy()
 	{
 		return new Variance< T, V >();
 	}
