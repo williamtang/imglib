@@ -6,7 +6,7 @@ import net.imglib2.ops.BinaryOperation;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 
-public class MeanLocalThreshold< T extends RealType< T >, IN extends Iterable< T >> implements BinaryOperation< IN, T, BitType >
+public class MeanLocalThreshold< T extends RealType< T >, IN extends Iterator< T >> implements BinaryOperation< IN, T, BitType >
 {
 
 	private double m_c;
@@ -22,10 +22,9 @@ public class MeanLocalThreshold< T extends RealType< T >, IN extends Iterable< T
 		int numElements = 0;
 		double mean = 0;
 
-		Iterator< T > iterator = input.iterator();
-		while ( iterator.hasNext() )
+		while ( input.hasNext() )
 		{
-			mean += iterator.next().getRealDouble();
+			mean += input.next().getRealDouble();
 			numElements++;
 		}
 

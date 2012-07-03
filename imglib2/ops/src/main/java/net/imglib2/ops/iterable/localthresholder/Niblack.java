@@ -6,7 +6,7 @@ import net.imglib2.ops.BinaryOperation;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 
-public class Niblack< T extends RealType< T >, IN extends Iterable< T >> implements BinaryOperation< IN, T, BitType >
+public class Niblack< T extends RealType< T >, IN extends Iterator< T >> implements BinaryOperation< IN, T, BitType >
 {
 
 	private double m_c;
@@ -22,27 +22,22 @@ public class Niblack< T extends RealType< T >, IN extends Iterable< T >> impleme
 	@Override
 	public BitType compute( IN input, T px, BitType output )
 	{
-		int numElements = 0;
-		double mean = 0;
-		double variance = 0;
 
-		Iterator< T > iterator = input.iterator();
-		while ( iterator.hasNext() )
+		double sum = 0;
+		double sumSqr = 0;
+		int n = 0;
+
+		while ( input.hasNext() )
 		{
-			mean += iterator.next().getRealDouble();
-			numElements++;
+			double val = input.next().getRealDouble();
+			n++;
+			sum += val;
+			sumSqr += val * val;
 		}
 
-		mean /= numElements;
+		double mean = sum / n;
+		double variance = ( sumSqr - ( sum * mean ) ) / ( n - 1 );
 
-		iterator = input.iterator();
-		while ( iterator.hasNext() )
-		{
-			double diff = ( mean - iterator.next().getRealDouble() );
-			variance += diff * diff;
-		}
-
-		variance /= ( numElements - 1 );
 		output.set( px.getRealDouble() > mean + m_k * Math.sqrt( variance ) - m_c );
 
 		return output;
