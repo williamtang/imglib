@@ -46,11 +46,13 @@ public class RectangularNeighborhood< T extends Type< T > > extends AbstractRect
 	public RectangularNeighborhood( Localizable center, long[] span )
 	{
 		super( center, span );
+
 	}
 
 	@Override
 	protected NeighborhoodCursor< T > neighborhodCursor()
 	{
+
 		return new RectangularNeighborhoodCursor< T >( source.randomAccess(), span );
 	}
 
