@@ -25,13 +25,23 @@ import net.imglib2.type.Type;
 public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V >, S extends RandomAccessibleInterval< T >, U extends RandomAccessibleInterval< V >> implements UnaryOperation< S, U >
 {
 
-	private ExecutorService m_service;
+	private final ExecutorService m_service;
 
 	private final UnaryOperation< S, U > m_op;
 
 	private final Interval[] m_outIntervals;
 
 	private final Interval[] m_inIntervals;
+
+	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals )
+	{
+		this( op, inIntervals, inIntervals, null );
+	}
+
+	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, Interval[] outIntervals )
+	{
+		this( op, inIntervals, outIntervals, null );
+	}
 
 	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, ExecutorService service )
 	{
@@ -61,22 +71,31 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 		for ( int i = 0; i < m_outIntervals.length; i++ )
 		{
 			OperationTask t = new OperationTask( m_op, createSubType( m_inIntervals[ i ], in ), createSubType( m_outIntervals[ i ], out ) );
-			futures[ i ] = m_service.submit( t );
+
+			if ( m_service != null )
+				futures[ i ] = m_service.submit( t );
+			else
+				t.run();
 		}
-		try
+
+		if ( m_service != null )
 		{
-			for ( Future< ? > f : futures )
+			try
 			{
-				f.get();
+
+				for ( Future< ? > f : futures )
+				{
+					f.get();
+				}
 			}
-		}
-		catch ( InterruptedException e )
-		{
-			// nothing to do here
-		}
-		catch ( ExecutionException e )
-		{
-			// nothing to do here
+			catch ( InterruptedException e )
+			{
+				// nothing to do here
+			}
+			catch ( ExecutionException e )
+			{
+
+			}
 		}
 
 		return out;
