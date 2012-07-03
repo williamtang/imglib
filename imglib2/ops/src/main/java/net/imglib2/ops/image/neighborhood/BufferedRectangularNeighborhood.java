@@ -41,24 +41,31 @@ import net.imglib2.Point;
 import net.imglib2.RandomAccessible;
 import net.imglib2.type.Type;
 
-public class RectangularNeighborhood< T extends Type< T > > extends AbstractRectangularNeighborhood< T >
+/**
+ * 
+ * 
+ */
+public class BufferedRectangularNeighborhood< T extends Type< T > > extends AbstractRectangularNeighborhood< T >
 {
 
-	public RectangularNeighborhood( RandomAccessible< T > source, Localizable center, long[] span )
+	private T type;
+
+	public BufferedRectangularNeighborhood( T type, RandomAccessible< T > source, Localizable center, long[] span )
 	{
 		super( source, center, span );
+		this.type = type;
 	}
 
 	@Override
 	protected NeighborhoodCursor< T > neighborhodCursor()
 	{
-		return new RectangularNeighborhoodCursor< T >( source.randomAccess(), span );
+		return new BufferedRectangularNeighborhoodCursor< T >( type, source.randomAccess(), span );
 	}
 
 	@Override
 	public Neighborhood< T > copy()
 	{
-		return new RectangularNeighborhood< T >( source, new Point( center.clone() ), span );
+		return new BufferedRectangularNeighborhood< T >( type.copy(), source, new Point( center ), span );
 	}
 
 }

@@ -1,8 +1,7 @@
-package net.imglib2.ops.image.sliding;
+package net.imglib2.ops.image.neighborhood.deprecated;
 
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.ops.image.sliding.buffered.BufferedEfficientSlidingIntervalIterator;
 import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.roi.IterableRegionOfInterest;
 import net.imglib2.type.Type;
