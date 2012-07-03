@@ -36,13 +36,13 @@ package net.imglib2.ops.image.neighborhood;
  * #L%
  */
 
+import java.lang.reflect.Array;
+
 import net.imglib2.AbstractCursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.type.Type;
 
 /**
- * Iterates all pixels in a 3 by 3 by .... by 3 neighborhood of a certain
- * location but skipping the central pixel
  * 
  * @param <T>
  * 
@@ -50,45 +50,73 @@ import net.imglib2.type.Type;
  * @author Stephan Saalfeld
  * @author Benjamin Schmid
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
- * @author Christian Dietz
+ * @author Christian Dietz <christian.dietz@uni-konstanz.de>
  */
-public class RectangularNeighborhoodCursor< T extends Type< T >> extends AbstractCursor< T > implements NeighborhoodCursor< T >
+public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends AbstractCursor< T > implements NeighborhoodCursor< T >
 {
-	final RandomAccess< T > source;
+	private final RandomAccess< T > source;
 
-	private long[] center;
+	private int bufferOffset;
+
+	private final long[] bufferElements;
+
+	private final long[] center;
 
 	private final long[] min;
 
 	private final long[] max;
 
-	private final long span;
+	private final long[] span;
 
-	private final long maxCount;
+	private final long[] bck;
 
-	private long count;
+	private final T[] buffer;
 
-	private long bck;
+	private int maxCount;
 
-	public RectangularNeighborhoodCursor( final RandomAccess< T > source, final long[] center, final long span )
+	private int m_activeDim;
+
+	private int bufferPtr;
+
+	private int count;
+
+	@SuppressWarnings( "unchecked" )
+	public BufferedRectangularNeighborhoodCursor( final T type, final RandomAccess< T > source, final long[] span )
 	{
 		super( source.numDimensions() );
 		this.source = source;
-		this.center = center;
+
+		center = new long[ n ];
 		max = new long[ n ];
 		min = new long[ n ];
+		bufferElements = new long[ n ];
+		bck = new long[ n ];
+
 		this.span = span;
-		maxCount = ( long ) Math.pow( span + 1 + span, n );
-		bck = ( -2 * span ) - 1;
-		reset();
+
+		maxCount = 1;
+
+		for ( int d = 0; d < span.length; d++ )
+		{
+			maxCount *= span[ d ];
+			bck[ d ] = ( -2 * span[ d ] ) - 1;
+		}
+
+		for ( int d = 0; d < n; d++ )
+			for ( int dd = 0; dd < n; dd++ )
+				if ( dd != d )
+					bufferElements[ d ] *= span[ d ];
+
+		buffer = ( T[] ) Array.newInstance( type.getClass(), maxCount );
+
+		for ( int t = 0; t < buffer.length; t++ )
+		{
+			buffer[ t ] = type.copy();
+		}
+
 	}
 
-	public RectangularNeighborhoodCursor( final RandomAccess< T > source, final long[] center )
-	{
-		this( source, center, 1 );
-	}
-
-	protected RectangularNeighborhoodCursor( final RectangularNeighborhoodCursor< T > c )
+	protected BufferedRectangularNeighborhoodCursor( final BufferedRectangularNeighborhoodCursor< T > c )
 	{
 		super( c.numDimensions() );
 		this.source = c.source.copyRandomAccess();
@@ -96,29 +124,42 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 		max = c.max.clone();
 		min = c.min.clone();
 		span = c.span;
+		bck = c.bck;
 		maxCount = c.maxCount;
+		buffer = c.buffer.clone();
+		bufferElements = c.bufferElements.clone();
 	}
 
 	@Override
 	public T get()
 	{
-		return source.get();
+		return buffer[ bufferPtr++ ];
 	}
 
 	@Override
 	public void fwd()
 	{
-
-		for ( int d = 0; d < n; ++d )
+		if ( m_activeDim < 0 || count >= buffer.length - bufferElements[ m_activeDim ] )
 		{
-			source.fwd( d );
-			if ( source.getLongPosition( d ) > max[ d ] )
-				source.move( bck, d );
-			else
-				break;
+			for ( int d = n - 1; d > -1; d-- )
+			{
+				if ( d == m_activeDim )
+					continue;
+
+				if ( source.getLongPosition( d ) < max[ d ] )
+				{
+					source.fwd( d );
+					break;
+				}
+				else
+					source.move( bck[ d ], d );
+
+				buffer[ bufferPtr ].set( source.get() );
+
+			}
 		}
 
-		++count;
+		count++;
 	}
 
 	@Override
@@ -126,8 +167,8 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 	{
 		for ( int d = 0; d < n; ++d )
 		{
-			min[ d ] = center[ d ] - span;
-			max[ d ] = center[ d ] + span;
+			min[ d ] = center[ d ] - span[ d ];
+			max[ d ] = center[ d ] + span[ d ];
 		}
 		source.setPosition( min );
 		source.bck( 0 );
@@ -189,21 +230,45 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 	}
 
 	@Override
-	public RectangularNeighborhoodCursor< T > copy()
+	public BufferedRectangularNeighborhoodCursor< T > copy()
 	{
-		return new RectangularNeighborhoodCursor< T >( this );
+		return new BufferedRectangularNeighborhoodCursor< T >( this );
 	}
 
 	@Override
-	public RectangularNeighborhoodCursor< T > copyCursor()
+	public BufferedRectangularNeighborhoodCursor< T > copyCursor()
 	{
 		return copy();
 	}
 
 	@Override
-	public void updateCenter( long[] center )
+	public void updateCenter( long[] newPos )
 	{
-		this.center = center;
+
+		// Current pos is always the upper left corner!
+		for ( int d = 0; d < center.length; d++ )
+		{
+			long tmp = center[ d ];
+			center[ d ] = newPos[ d ];
+
+			if ( center[ d ] - tmp != 0 )
+			{
+				if ( m_activeDim != -1 )
+				{
+					m_activeDim = -1;
+					break;
+				}
+				m_activeDim = d;
+			}
+		}
+
+		if ( m_activeDim >= 0 && bufferOffset + bufferElements[ m_activeDim ] < buffer.length )
+			bufferOffset += bufferElements[ m_activeDim ];
+		else
+			bufferOffset = 0;
+
+		bufferPtr = bufferOffset;
+
 		reset();
 	}
 }

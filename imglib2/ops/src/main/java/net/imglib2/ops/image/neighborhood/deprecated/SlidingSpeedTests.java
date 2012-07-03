@@ -1,4 +1,4 @@
-package net.imglib2.ops.image.sliding;
+package net.imglib2.ops.image.neighborhood.deprecated;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -9,7 +9,6 @@ import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.ops.UnaryOperation;
-import net.imglib2.ops.image.sliding.buffered.BufferedEfficientSlidingIntervalIterator;
 import net.imglib2.outofbounds.OutOfBoundsMirrorFactory;
 import net.imglib2.outofbounds.OutOfBoundsMirrorFactory.Boundary;
 import net.imglib2.type.numeric.integer.UnsignedByteType;

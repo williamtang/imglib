@@ -1,4 +1,4 @@
-package net.imglib2.ops.image.neighborhood;
+package net.imglib2.ops.image.neighborhood.deprecated;
 
 /*
  * #%L
@@ -38,7 +38,6 @@ package net.imglib2.ops.image.neighborhood;
 
 import net.imglib2.AbstractCursor;
 import net.imglib2.RandomAccess;
-import net.imglib2.type.Type;
 
 /**
  * Iterates all pixels in a 3 by 3 by .... by 3 neighborhood of a certain
@@ -50,13 +49,12 @@ import net.imglib2.type.Type;
  * @author Stephan Saalfeld
  * @author Benjamin Schmid
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
- * @author Christian Dietz
  */
-public class RectangularNeighborhoodCursor< T extends Type< T >> extends AbstractCursor< T > implements NeighborhoodCursor< T >
+public class LocalNeighborhoodCursor2< T > extends AbstractCursor< T >
 {
 	final RandomAccess< T > source;
 
-	private long[] center;
+	private final long[] center;
 
 	private final long[] min;
 
@@ -70,7 +68,7 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 
 	private long bck;
 
-	public RectangularNeighborhoodCursor( final RandomAccess< T > source, final long[] center, final long span )
+	public LocalNeighborhoodCursor2( final RandomAccess< T > source, final long[] center, final long span )
 	{
 		super( source.numDimensions() );
 		this.source = source;
@@ -83,12 +81,12 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 		reset();
 	}
 
-	public RectangularNeighborhoodCursor( final RandomAccess< T > source, final long[] center )
+	public LocalNeighborhoodCursor2( final RandomAccess< T > source, final long[] center )
 	{
 		this( source, center, 1 );
 	}
 
-	protected RectangularNeighborhoodCursor( final RectangularNeighborhoodCursor< T > c )
+	protected LocalNeighborhoodCursor2( final LocalNeighborhoodCursor2< T > c )
 	{
 		super( c.numDimensions() );
 		this.source = c.source.copyRandomAccess();
@@ -189,21 +187,112 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 	}
 
 	@Override
-	public RectangularNeighborhoodCursor< T > copy()
+	public LocalNeighborhoodCursor2< T > copy()
 	{
-		return new RectangularNeighborhoodCursor< T >( this );
+		return new LocalNeighborhoodCursor2< T >( this );
 	}
 
 	@Override
-	public RectangularNeighborhoodCursor< T > copyCursor()
+	public LocalNeighborhoodCursor2< T > copyCursor()
 	{
 		return copy();
 	}
 
-	@Override
-	public void updateCenter( long[] center )
-	{
-		this.center = center;
-		reset();
-	}
+	/**
+	 * Some performance tests
+	 * 
+	 * @param args
+	 */
+
+	// public static void main( String[] args )
+	// {
+	//
+	// long[] imgDims = new long[] { 1000, 1000, 3 };
+	//
+	// ImgFactory< UnsignedByteType > fac = new ArrayImgFactory<
+	// UnsignedByteType >();
+	//
+	// Img< UnsignedByteType > img = fac.create( imgDims, new UnsignedByteType()
+	// );
+	// Img< UnsignedByteType > res = fac.create( imgDims, new UnsignedByteType()
+	// );
+	//
+	// final Cursor< UnsignedByteType > resCursor = res.cursor();
+	//
+	// LocalNeighborhood2< UnsignedByteType > neighborhood = new
+	// LocalNeighborhood2< UnsignedByteType >( Views.extendMirrorSingle( img ),
+	// new Point( new long[ img.numDimensions() ] ) );
+	//
+	// UnaryOperation< Iterable< UnsignedByteType >, UnsignedByteType > op = new
+	// UnaryOperation< Iterable< UnsignedByteType >, UnsignedByteType >()
+	// {
+	//
+	// @Override
+	// public UnsignedByteType compute( Iterable< UnsignedByteType > input,
+	// UnsignedByteType output )
+	// {
+	// Iterator< UnsignedByteType > it = input.iterator();
+	// while ( it.hasNext() )
+	// {
+	// it.next();
+	// }
+	// return output;
+	// }
+	//
+	// @Override
+	// public UnaryOperation< Iterable< UnsignedByteType >, UnsignedByteType >
+	// copy()
+	// {
+	// return null;
+	// }
+	// };
+	//
+	// final LocalNeighborhoodCursor2< UnsignedByteType > cursor =
+	// neighborhood.cursor();
+	//
+	// Iterable< UnsignedByteType > iterable = new Iterable< UnsignedByteType
+	// >()
+	// {
+	//
+	// @Override
+	// public Iterator< UnsignedByteType > iterator()
+	// {
+	// return new Iterator< UnsignedByteType >()
+	// {
+	//
+	// @Override
+	// public boolean hasNext()
+	// {
+	// return cursor.hasNext();
+	// }
+	//
+	// @Override
+	// public UnsignedByteType next()
+	// {
+	// cursor.fwd();
+	// return null;
+	// }
+	//
+	// @Override
+	// public void remove()
+	// {
+	//
+	// }
+	//
+	// };
+	// }
+	//
+	// };
+	//
+	// long curr = System.nanoTime();
+	// while ( resCursor.hasNext() )
+	// {
+	// resCursor.fwd();
+	// neighborhood.updateCenter( resCursor );
+	// cursor.reset();
+	// op.compute( iterable, resCursor.get() );
+	// }
+	//
+	// System.out.println( ( System.nanoTime() - curr ) / 1000 / 1000 );
+	// }
 }

@@ -7,20 +7,19 @@ import java.util.List;
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.type.numeric.RealType;
 
-public class MedianOp< T extends RealType< T >, V extends RealType< V >> implements UnaryOperation< Iterable< T >, V >
+public class MedianOp< T extends RealType< T >, V extends RealType< V >> implements UnaryOperation< Iterator< T >, V >
 {
 
 	private ArrayList< Double > m_statistics = new ArrayList< Double >();
 
 	@Override
-	public V compute( Iterable< T > input, V output )
+	public V compute( Iterator< T > input, V output )
 	{
 
 		m_statistics.clear();
-		Iterator< T > inputCursor = input.iterator();
-		while ( inputCursor.hasNext() )
+		while ( input.hasNext() )
 		{
-			m_statistics.add( inputCursor.next().getRealDouble() );
+			m_statistics.add( input.next().getRealDouble() );
 		}
 
 		output.setReal( select( m_statistics, 0, m_statistics.size() - 1, m_statistics.size() / 2 ) );

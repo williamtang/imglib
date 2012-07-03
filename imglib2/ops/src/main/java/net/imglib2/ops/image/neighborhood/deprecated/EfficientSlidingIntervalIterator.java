@@ -1,4 +1,4 @@
-package net.imglib2.ops.image.sliding;
+package net.imglib2.ops.image.neighborhood.deprecated;
 
 import java.util.Iterator;
 

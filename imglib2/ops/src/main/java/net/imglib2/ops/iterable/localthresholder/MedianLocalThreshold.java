@@ -1,12 +1,14 @@
 package net.imglib2.ops.iterable.localthresholder;
 
+import java.util.Iterator;
+
 import net.imglib2.ops.BinaryOperation;
 import net.imglib2.ops.iterable.MedianOp;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.DoubleType;
 
-public class MedianLocalThreshold< T extends RealType< T >, IN extends Iterable< T >> implements BinaryOperation< IN, T, BitType >
+public class MedianLocalThreshold< T extends RealType< T >, IN extends Iterator< T >> implements BinaryOperation< IN, T, BitType >
 {
 
 	private double m_c;

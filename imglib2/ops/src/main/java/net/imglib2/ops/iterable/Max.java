@@ -1,17 +1,21 @@
 package net.imglib2.ops.iterable;
 
+import java.util.Iterator;
+
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.type.numeric.RealType;
 
-public class Max< T extends RealType< T >, V extends RealType< V >> implements UnaryOperation< Iterable< T >, V >
+public class Max< T extends RealType< T >, V extends RealType< V >> implements UnaryOperation< Iterator< T >, V >
 {
 
 	@Override
-	public V compute( Iterable< T > input, V output )
+	public V compute( Iterator< T > input, V output )
 	{
 		T max = null;
-		for ( T in : input )
+		while ( input.hasNext() )
 		{
+			T in = input.next();
+
 			if ( max == null || in.compareTo( max ) > 0 )
 				max = in;
 		}
@@ -21,7 +25,7 @@ public class Max< T extends RealType< T >, V extends RealType< V >> implements U
 	}
 
 	@Override
-	public UnaryOperation< Iterable< T >, V > copy()
+	public UnaryOperation< Iterator< T >, V > copy()
 	{
 		return new Max< T, V >();
 	}
