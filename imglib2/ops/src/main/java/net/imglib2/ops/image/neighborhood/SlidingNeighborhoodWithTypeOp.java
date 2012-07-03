@@ -5,6 +5,7 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.ops.BinaryOperation;
 import net.imglib2.ops.UnaryOperation;
+import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
@@ -15,8 +16,16 @@ public class SlidingNeighborhoodWithTypeOp< T extends Type< T >, V extends Type<
 
 	private BinaryOperation< Iterable< T >, T, V > op;
 
+	private OutOfBoundsFactory< T, IN > fac;
+
 	public SlidingNeighborhoodWithTypeOp( Neighborhood< T > neighborhood, BinaryOperation< Iterable< T >, T, V > op )
 	{
+		this( null, neighborhood, op );
+	}
+
+	public SlidingNeighborhoodWithTypeOp( OutOfBoundsFactory< T, IN > fac, Neighborhood< T > neighborhood, BinaryOperation< Iterable< T >, T, V > op )
+	{
+		this.fac = fac;
 		this.op = op;
 		this.neighborhood = neighborhood;
 	}
@@ -31,11 +40,12 @@ public class SlidingNeighborhoodWithTypeOp< T extends Type< T >, V extends Type<
 			throw new IllegalArgumentException( "Iteration order doesn't fit in SlidingNeighborhoodOp" );
 
 		// Update neighborhood
-		neighborhood.updateSource( Views.extendBorder( input ) );
+		neighborhood.updateSource( fac != null ? Views.extend( input, fac ) : input );
 
 		// Cursors are created.
 		Cursor< V > resCursor = output.cursor();
 		Cursor< T > inCursor = iterable.cursor();
+
 		// Sliding
 		while ( resCursor.hasNext() )
 		{
