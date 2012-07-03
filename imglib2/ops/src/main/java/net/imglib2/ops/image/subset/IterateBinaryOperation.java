@@ -34,7 +34,7 @@ public final class IterateBinaryOperation< T extends Type< T >, V extends Type< 
 
 	private final Interval[] m_outIntervals;
 
-	private ExecutorService m_service;
+	private final ExecutorService m_service;
 
 	/**
 	 * Intervals are different
@@ -53,6 +53,30 @@ public final class IterateBinaryOperation< T extends Type< T >, V extends Type< 
 	}
 
 	/**
+	 * Intervals are different
+	 * 
+	 * @param op
+	 * @param intervals
+	 * @param service
+	 */
+	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] in0InIntervals, Interval[] in1Intervals, Interval[] outIntervals )
+	{
+		this( op, in0InIntervals, in1Intervals, outIntervals, null );
+	}
+
+	/**
+	 * Intervals for in0, in1 are the same.
+	 * 
+	 * @param op
+	 * @param intervals
+	 * @param service
+	 */
+	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] inInIntervals, Interval[] outIntervals )
+	{
+		this( op, inInIntervals, inInIntervals, outIntervals, null );
+	}
+
+	/**
 	 * Intervals for in0, in1 are the same.
 	 * 
 	 * @param op
@@ -62,6 +86,18 @@ public final class IterateBinaryOperation< T extends Type< T >, V extends Type< 
 	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] inInIntervals, Interval[] outIntervals, ExecutorService service )
 	{
 		this( op, inInIntervals, inInIntervals, outIntervals, service );
+	}
+
+	/**
+	 * Intervals for in0, in1 and out are the same.
+	 * 
+	 * @param op
+	 * @param intervals
+	 * @param service
+	 */
+	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] intervals )
+	{
+		this( op, intervals, intervals, intervals, null );
 	}
 
 	/**
@@ -90,22 +126,30 @@ public final class IterateBinaryOperation< T extends Type< T >, V extends Type< 
 		for ( int i = 0; i < m_outIntervals.length; i++ )
 		{
 			OperationTask t = new OperationTask( m_op, createSubType( in0, m_in0Intervals[ i ] ), createSubType( in1, m_in1Intervals[ i ] ), createSubType( out, m_outIntervals[ i ] ) );
-			futures[ i ] = m_service.submit( t );
+
+			if ( m_service != null )
+				futures[ i ] = m_service.submit( t );
+			else
+				t.run();
 		}
-		try
+
+		if ( m_service != null )
 		{
-			for ( Future< ? > f : futures )
+			try
 			{
-				f.get();
+				for ( Future< ? > f : futures )
+				{
+					f.get();
+				}
 			}
-		}
-		catch ( InterruptedException e )
-		{
-			// nothing to do here
-		}
-		catch ( ExecutionException e )
-		{
-			// nothing to do here
+			catch ( InterruptedException e )
+			{
+				// nothing to do here
+			}
+			catch ( ExecutionException e )
+			{
+				// nothing to do here
+			}
 		}
 
 		return out;
