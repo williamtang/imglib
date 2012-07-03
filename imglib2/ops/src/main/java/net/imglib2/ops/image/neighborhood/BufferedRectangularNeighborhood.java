@@ -38,7 +38,6 @@ package net.imglib2.ops.image.neighborhood;
 
 import net.imglib2.Localizable;
 import net.imglib2.Point;
-import net.imglib2.RandomAccessible;
 import net.imglib2.type.Type;
 
 /**
@@ -50,7 +49,7 @@ public class BufferedRectangularNeighborhood< T extends Type< T > > extends Abst
 
 	private T type;
 
-	public BufferedRectangularNeighborhood( T type, RandomAccessible< T > source, Localizable center, long[] span )
+	public BufferedRectangularNeighborhood( T type, Localizable center, long[] span )
 	{
 		super( center, span );
 		this.type = type;
@@ -65,7 +64,7 @@ public class BufferedRectangularNeighborhood< T extends Type< T > > extends Abst
 	@Override
 	public Neighborhood< T > copy()
 	{
-		return new BufferedRectangularNeighborhood< T >( type.copy(), source, new Point( center ), span );
+		return new BufferedRectangularNeighborhood< T >( type.copy(), new Point( center ), span );
 	}
 
 }
