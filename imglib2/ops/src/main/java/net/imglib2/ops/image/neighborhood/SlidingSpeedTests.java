@@ -7,6 +7,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.ops.UnaryOperation;
+import net.imglib2.outofbounds.OutOfBoundsBorderFactory;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 
 public class SlidingSpeedTests
@@ -24,7 +25,7 @@ public class SlidingSpeedTests
 
 		long[] roiDim = new long[ img.numDimensions() ];
 
-		BufferedRectangularNeighborhood< UnsignedByteType > neighborhood = new BufferedRectangularNeighborhood< UnsignedByteType >( img.firstElement().createVariable(), res, new Point( new long[] { 0, 0, 0 } ), roiDim );
+		BufferedRectangularNeighborhood< UnsignedByteType > neighborhood = new BufferedRectangularNeighborhood< UnsignedByteType >( img.firstElement().createVariable(), new Point( new long[] { 0, 0, 0 } ), roiDim );
 
 		UnaryOperation< Iterator< UnsignedByteType >, UnsignedByteType > op = new UnaryOperation< Iterator< UnsignedByteType >, UnsignedByteType >()
 		{
@@ -47,7 +48,7 @@ public class SlidingSpeedTests
 			}
 		};
 
-		SlidingNeighborhoodOp< UnsignedByteType, UnsignedByteType, Img< UnsignedByteType >, Img< UnsignedByteType >> slidingOp = new SlidingNeighborhoodOp< UnsignedByteType, UnsignedByteType, Img< UnsignedByteType >, Img< UnsignedByteType >>( neighborhood, op );
+		SlidingNeighborhoodOp< UnsignedByteType, UnsignedByteType, Img< UnsignedByteType >, Img< UnsignedByteType >> slidingOp = new SlidingNeighborhoodOp< UnsignedByteType, UnsignedByteType, Img< UnsignedByteType >, Img< UnsignedByteType >>( new OutOfBoundsBorderFactory< UnsignedByteType, Img< UnsignedByteType > >(), neighborhood, op );
 
 		long curr = System.nanoTime();
 		slidingOp.compute( img, res );
