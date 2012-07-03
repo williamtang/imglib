@@ -52,7 +52,7 @@ public class BufferedRectangularNeighborhood< T extends Type< T > > extends Abst
 
 	public BufferedRectangularNeighborhood( T type, RandomAccessible< T > source, Localizable center, long[] span )
 	{
-		super( source, center, span );
+		super( center, span );
 		this.type = type;
 	}
 

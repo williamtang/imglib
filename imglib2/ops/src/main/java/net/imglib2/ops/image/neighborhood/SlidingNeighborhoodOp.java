@@ -1,5 +1,7 @@
 package net.imglib2.ops.image.neighborhood;
 
+import java.util.Iterator;
+
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
@@ -12,9 +14,9 @@ public class SlidingNeighborhoodOp< T extends Type< T >, V extends Type< V >, IN
 
 	private Neighborhood< T > neighborhood;
 
-	private UnaryOperation< Iterable< T >, V > op;
+	private UnaryOperation< Iterator< T >, V > op;
 
-	public SlidingNeighborhoodOp( Neighborhood< T > neighborhood, UnaryOperation< Iterable< T >, V > op )
+	public SlidingNeighborhoodOp( Neighborhood< T > neighborhood, UnaryOperation< Iterator< T >, V > op )
 	{
 		this.op = op;
 		this.neighborhood = neighborhood;
@@ -31,6 +33,9 @@ public class SlidingNeighborhoodOp< T extends Type< T >, V extends Type< V >, IN
 		// Update neighborhood
 		neighborhood.updateSource( Views.extendBorder( input ) );
 
+		// Cursor
+		Cursor< T > neighborhoodCursor = neighborhood.cursor();
+
 		// Cursors are created.
 		Cursor< V > resCursor = output.cursor();
 
@@ -44,7 +49,7 @@ public class SlidingNeighborhoodOp< T extends Type< T >, V extends Type< V >, IN
 			neighborhood.setPosition( resCursor );
 
 			// Neighborhood is iterable at the moment as center was updated
-			op.compute( neighborhood, resCursor.get() );
+			op.compute( neighborhoodCursor, resCursor.get() );
 		}
 
 		return output;

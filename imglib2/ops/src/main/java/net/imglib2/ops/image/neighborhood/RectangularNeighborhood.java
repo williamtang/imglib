@@ -38,15 +38,14 @@ package net.imglib2.ops.image.neighborhood;
 
 import net.imglib2.Localizable;
 import net.imglib2.Point;
-import net.imglib2.RandomAccessible;
 import net.imglib2.type.Type;
 
 public class RectangularNeighborhood< T extends Type< T > > extends AbstractRectangularNeighborhood< T >
 {
 
-	public RectangularNeighborhood( RandomAccessible< T > source, Localizable center, long[] span )
+	public RectangularNeighborhood( Localizable center, long[] span )
 	{
-		super( source, center, span );
+		super( center, span );
 	}
 
 	@Override
@@ -58,7 +57,7 @@ public class RectangularNeighborhood< T extends Type< T > > extends AbstractRect
 	@Override
 	public Neighborhood< T > copy()
 	{
-		return new RectangularNeighborhood< T >( source, new Point( center.clone() ), span );
+		return new RectangularNeighborhood< T >( new Point( center.clone() ), span );
 	}
 
 }

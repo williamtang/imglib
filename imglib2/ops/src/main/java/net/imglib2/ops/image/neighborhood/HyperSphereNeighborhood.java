@@ -42,7 +42,6 @@ import net.imglib2.IterableRealInterval;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.Positionable;
-import net.imglib2.RandomAccessible;
 import net.imglib2.RealPositionable;
 import net.imglib2.type.Type;
 
@@ -57,9 +56,9 @@ public class HyperSphereNeighborhood< T extends Type< T > > extends AbstractNeig
 
 	long radius;
 
-	public HyperSphereNeighborhood( final RandomAccessible< T > source, final Localizable center, final long radius )
+	public HyperSphereNeighborhood( final Localizable center, final long radius )
 	{
-		super( source, center );
+		super( center );
 		this.radius = radius;
 	}
 
@@ -222,7 +221,7 @@ public class HyperSphereNeighborhood< T extends Type< T > > extends AbstractNeig
 	@Override
 	public Neighborhood< T > copy()
 	{
-		return new HyperSphereNeighborhood< T >( source, new Point( center.clone() ), radius );
+		return new HyperSphereNeighborhood< T >( new Point( center.clone() ), radius );
 	}
 
 }

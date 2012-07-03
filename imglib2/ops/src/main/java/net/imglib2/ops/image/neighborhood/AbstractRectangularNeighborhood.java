@@ -42,7 +42,6 @@ import net.imglib2.Cursor;
 import net.imglib2.IterableRealInterval;
 import net.imglib2.Localizable;
 import net.imglib2.Positionable;
-import net.imglib2.RandomAccessible;
 import net.imglib2.RealPositionable;
 import net.imglib2.type.Type;
 
@@ -58,10 +57,10 @@ public abstract class AbstractRectangularNeighborhood< T extends Type< T > > ext
 
 	final long[] span;
 
-	public AbstractRectangularNeighborhood( final RandomAccessible< T > source, final Localizable center, final long[] span )
+	public AbstractRectangularNeighborhood( final Localizable center, final long[] span )
 	{
-		super( source, center );
-		this.numDimensions = source.numDimensions();
+		super( center );
+		this.numDimensions = span.length;
 
 		this.span = span;
 

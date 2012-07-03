@@ -21,11 +21,10 @@ public abstract class AbstractNeighborhood< T extends Type< T >> implements Neig
 	// The source random accessible
 	protected RandomAccessible< T > source;
 
-	public AbstractNeighborhood( final RandomAccessible< T > source, final Localizable center )
+	public AbstractNeighborhood( final Localizable center )
 	{
 		this.numDimensions = center.numDimensions();
-		this.source = source;
-		this.center = new long[ source.numDimensions() ];
+		this.center = new long[ center.numDimensions() ];
 		center.localize( this.center );
 
 		this.cursors = new ArrayList< NeighborhoodCursor< T >>();
