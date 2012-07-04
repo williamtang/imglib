@@ -167,7 +167,6 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 					source.move( bck[ d ], d );
 
 			}
-			System.out.println( "Set buffer at " + bufferPtr + " with source (" + source.getIntPosition( 0 ) + "," + source.getIntPosition( 1 ) + ")" );
 			buffer[ bufferPtr ].set( source.get() );
 		}
 
@@ -179,7 +178,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 	{
 		m_activeDim = -1;
 
-		// Current pos is always the upper left corner!
+
 		for ( int d = 0; d < center.length; d++ )
 		{
 			long tmp = currentPos[ d ];
