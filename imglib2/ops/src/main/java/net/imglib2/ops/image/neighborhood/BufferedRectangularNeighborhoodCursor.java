@@ -104,14 +104,13 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 		{
 			tmp *= ( span[ d ] * 2 ) + 1;
 			bck[ d ] = ( -2 * span[ d ] ) - 1;
-		}
 
-		maxCount = tmp;
-
-		for ( int d = 0; d < n; d++ )
 			for ( int dd = 0; dd < n; dd++ )
 				if ( dd != d )
 					bufferElements[ d ] *= ( span[ d ] * 2 ) + 1;
+		}
+
+		maxCount = tmp;
 
 		buffer = ( T[] ) Array.newInstance( type.getClass(), maxCount );
 
@@ -119,6 +118,8 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 		{
 			buffer[ t ] = type.copy();
 		}
+
+		m_activeDim = -1;
 
 	}
 
@@ -161,9 +162,9 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 				else
 					source.move( bck[ d ], d );
 
-				buffer[ bufferPtr ].set( source.get() );
-
 			}
+
+			buffer[ bufferPtr ].set( source.get() );
 		}
 
 		count++;
