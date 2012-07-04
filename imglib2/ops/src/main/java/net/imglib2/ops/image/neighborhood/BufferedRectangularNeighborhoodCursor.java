@@ -105,7 +105,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 		for ( int d = 0; d < span.length; d++ )
 		{
 			tmp *= ( span[ d ] * 2 ) + 1;
-			bck[ d ] = ( -2 * span[ d ] ) - 1;
+			bck[ d ] = ( -2 * span[ d ] );
 
 			for ( int dd = 0; dd < n; dd++ )
 				if ( dd != d )
@@ -141,13 +141,14 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 	@Override
 	public T get()
 	{
-		return buffer[ bufferPtr++ ];
+		return buffer[ bufferPtr ];
 	}
 
 	@Override
 	public void fwd()
 	{
-		if ( bufferPtr >= buffer.length )
+
+		if ( ++bufferPtr >= buffer.length )
 			bufferPtr = 0;
 
 		if ( m_activeDim < 0 || count >= buffer.length - bufferElements[ m_activeDim ] )
@@ -157,7 +158,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 				if ( d == m_activeDim )
 					continue;
 
-				if ( source.getLongPosition( d ) <= max[ d ] )
+				if ( source.getLongPosition( d ) < max[ d ] )
 				{
 					source.fwd( d );
 					break;
@@ -166,7 +167,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 					source.move( bck[ d ], d );
 
 			}
-
+			System.out.println( "Set buffer at " + bufferPtr + " with source (" + source.getIntPosition( 0 ) + "," + source.getIntPosition( 1 ) + ")" );
 			buffer[ bufferPtr ].set( source.get() );
 		}
 
@@ -203,10 +204,17 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 		else
 			bufferOffset = 0;
 
-		bufferPtr = bufferOffset;
+		bufferPtr = bufferOffset - 1;
 
-		source.setPosition( min );
-		source.bck( 0 );
+		for ( int d = 0; d < n; d++ )
+		{
+			if ( d == m_activeDim )
+				source.setPosition( max[ d ], d );
+			else
+				source.setPosition( min[ d ], d );
+		}
+
+		source.bck( source.numDimensions() - 1 );
 		count = 0;
 	}
 

@@ -1,5 +1,6 @@
 package net.imglib2.ops.image.neighborhood;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import net.imglib2.Point;
@@ -16,16 +17,17 @@ public class SlidingSpeedTests
 	public static void main( String[] args )
 	{
 
-		long[] imgDims = new long[] { 1000, 1000, 3 };
+		long[] imgDims = new long[] { 20, 20 };
 
 		ImgFactory< UnsignedByteType > fac = new ArrayImgFactory< UnsignedByteType >();
 
 		Img< UnsignedByteType > img = fac.create( imgDims, new UnsignedByteType() );
 		Img< UnsignedByteType > res = fac.create( imgDims, new UnsignedByteType() );
 
-		long[] roiDim = new long[ img.numDimensions() ];
+		long[] span = new long[ img.numDimensions() ];
+		Arrays.fill( span, 1 );
 
-		BufferedRectangularNeighborhood< UnsignedByteType > neighborhood = new BufferedRectangularNeighborhood< UnsignedByteType >( img.firstElement().createVariable(), new Point( new long[] { 0, 0, 0 } ), roiDim );
+		BufferedRectangularNeighborhood< UnsignedByteType > neighborhood = new BufferedRectangularNeighborhood< UnsignedByteType >( img.firstElement().createVariable(), new Point( new long[ img.numDimensions() ] ), span );
 
 		UnaryOperation< Iterator< UnsignedByteType >, UnsignedByteType > op = new UnaryOperation< Iterator< UnsignedByteType >, UnsignedByteType >()
 		{
@@ -36,7 +38,7 @@ public class SlidingSpeedTests
 
 				while ( input.hasNext() )
 				{
-					input.next().getRealDouble();
+					input.next();
 				}
 				return output;
 			}
