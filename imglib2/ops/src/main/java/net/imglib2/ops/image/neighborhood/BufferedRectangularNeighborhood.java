@@ -71,8 +71,7 @@ public class BufferedRectangularNeighborhood< T extends Type< T > > extends Abst
 	@Override
 	public Cursor< T > localizingCursor()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return cursor();
 	}
 
 }

@@ -54,7 +54,7 @@ public class RectangularNeighborhood< T extends Type< T > > extends AbstractRect
 	public Cursor< T > cursor()
 	{
 
-		return new RectangularNeighborhoodCursor< T >( source.randomAccess(), span );
+		return new RectangularNeighborhoodCursor< T >( source.randomAccess(), center, span );
 	}
 
 	@Override

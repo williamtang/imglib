@@ -56,8 +56,6 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 {
 	private final RandomAccess< T > source;
 
-	private int bufferOffset;
-
 	private final long[] bufferElements;
 
 	private final long[] center;
@@ -74,7 +72,9 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 
 	private final T[] buffer;
 
-	private int maxCount;
+	private final int maxCount;
+
+	private int bufferOffset;
 
 	private int m_activeDim;
 
@@ -98,13 +98,15 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 
 		this.span = span;
 
-		maxCount = 1;
+		int tmp = 1;
 
 		for ( int d = 0; d < span.length; d++ )
 		{
-			maxCount *= ( span[ d ] * 2 ) + 1;
+			tmp *= ( span[ d ] * 2 ) + 1;
 			bck[ d ] = ( -2 * span[ d ] ) - 1;
 		}
+
+		maxCount = tmp;
 
 		for ( int d = 0; d < n; d++ )
 			for ( int dd = 0; dd < n; dd++ )

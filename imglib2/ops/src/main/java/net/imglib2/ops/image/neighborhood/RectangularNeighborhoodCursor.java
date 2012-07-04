@@ -62,30 +62,36 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 
 	private final long[] max;
 
-	private final long span;
+	private final long[] span;
+
+	private final long[] bck;
 
 	private final long maxCount;
 
 	private long count;
 
-	private long bck;
-
-	public RectangularNeighborhoodCursor( final RandomAccess< T > source, final long[] center, final long span )
+	public RectangularNeighborhoodCursor( final RandomAccess< T > source, final long[] center, final long[] span )
 	{
 		super( source.numDimensions() );
 		this.source = source;
 		this.center = center;
+		this.span = span;
+
 		max = new long[ n ];
 		min = new long[ n ];
-		this.span = span;
-		maxCount = ( long ) Math.pow( span + 1 + span, n );
-		bck = ( -2 * span ) - 1;
-		reset();
-	}
+		bck = new long[ n ];
 
-	public RectangularNeighborhoodCursor( final RandomAccess< T > source, final long[] center )
-	{
-		this( source, center, 1 );
+		int tmp = 1;
+
+		for ( int d = 0; d < span.length; d++ )
+		{
+			tmp *= ( span[ d ] * 2 ) + 1;
+			bck[ d ] = ( -2 * span[ d ] ) - 1;
+		}
+
+		maxCount = tmp;
+
+		reset();
 	}
 
 	protected RectangularNeighborhoodCursor( final RectangularNeighborhoodCursor< T > c )
@@ -97,6 +103,7 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 		min = c.min.clone();
 		span = c.span;
 		maxCount = c.maxCount;
+		bck = c.bck;
 	}
 
 	@Override
@@ -113,7 +120,7 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 		{
 			source.fwd( d );
 			if ( source.getLongPosition( d ) > max[ d ] )
-				source.move( bck, d );
+				source.move( bck[ d ], d );
 			else
 				break;
 		}
@@ -126,8 +133,8 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 	{
 		for ( int d = 0; d < n; ++d )
 		{
-			min[ d ] = center[ d ] - span;
-			max[ d ] = center[ d ] + span;
+			min[ d ] = center[ d ] - span[ d ];
+			max[ d ] = center[ d ] + span[ d ];
 		}
 		source.setPosition( min );
 		source.bck( 0 );
