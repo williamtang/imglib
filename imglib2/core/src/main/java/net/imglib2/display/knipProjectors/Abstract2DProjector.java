@@ -1,20 +1,21 @@
-package net.imglib2.display;
+package net.imglib2.display.knipProjectors;
 
 import net.imglib2.Localizable;
 import net.imglib2.Positionable;
 import net.imglib2.RandomAccessible;
+import net.imglib2.display.Projector;
 
 public abstract class Abstract2DProjector < A, B > implements Projector< A, B >, Positionable, Localizable {
-	
-		final protected RandomAccessible< A > source;
-		final protected long[] position;
-		final long[] min;
-		final long[] max;
-		
+
+		protected final RandomAccessible< A > source;
+		protected final long[] position;
+		protected final long[] min;
+		protected final long[] max;
+
 		public Abstract2DProjector( final RandomAccessible< A > source)
 		{
 			this.source = source;
-		
+
 			// as this is an 2D projector, we need at least two dimensions,
 			// even if the source is one-dimensional
 			position = new long[ Math.max( 2, source.numDimensions() ) ];
