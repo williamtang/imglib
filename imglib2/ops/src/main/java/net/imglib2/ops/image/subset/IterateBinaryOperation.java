@@ -1,5 +1,9 @@
 package net.imglib2.ops.image.subset;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
 import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
@@ -12,7 +16,6 @@ import net.imglib2.img.subset.SubsetViews;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.NativeImgLabeling;
 import net.imglib2.ops.BinaryOperation;
-import net.imglib2.ops.operation.unary.img.IntervalsFromDimSelection;
 import net.imglib2.type.Type;
 
 /**
@@ -25,16 +28,88 @@ public final class IterateBinaryOperation< T extends Type< T >, V extends Type< 
 
 	private final BinaryOperation< S, U, R > m_op;
 
-	private final int[] m_selectedDims;
+	private final Interval[] m_in0Intervals;
 
-	private final IntervalsFromDimSelection m_intervalOp;
+	private final Interval[] m_in1Intervals;
 
-	public IterateBinaryOperation( BinaryOperation< S, U, R > op, int[] selectedDims )
+	private final Interval[] m_outIntervals;
+
+	private final ExecutorService m_service;
+
+	/**
+	 * Intervals are different
+	 * 
+	 * @param op
+	 * @param intervals
+	 * @param service
+	 */
+	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] in0InIntervals, Interval[] in1Intervals, Interval[] outIntervals, ExecutorService service )
 	{
 		m_op = op;
-		m_selectedDims = selectedDims;
-		m_intervalOp = new IntervalsFromDimSelection();
+		m_in0Intervals = in0InIntervals;
+		m_in1Intervals = in1Intervals;
+		m_outIntervals = outIntervals;
+		m_service = service;
+	}
 
+	/**
+	 * Intervals are different
+	 * 
+	 * @param op
+	 * @param intervals
+	 * @param service
+	 */
+	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] in0InIntervals, Interval[] in1Intervals, Interval[] outIntervals )
+	{
+		this( op, in0InIntervals, in1Intervals, outIntervals, null );
+	}
+
+	/**
+	 * Intervals for in0, in1 are the same.
+	 * 
+	 * @param op
+	 * @param intervals
+	 * @param service
+	 */
+	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] inInIntervals, Interval[] outIntervals )
+	{
+		this( op, inInIntervals, inInIntervals, outIntervals, null );
+	}
+
+	/**
+	 * Intervals for in0, in1 are the same.
+	 * 
+	 * @param op
+	 * @param intervals
+	 * @param service
+	 */
+	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] inInIntervals, Interval[] outIntervals, ExecutorService service )
+	{
+		this( op, inInIntervals, inInIntervals, outIntervals, service );
+	}
+
+	/**
+	 * Intervals for in0, in1 and out are the same.
+	 * 
+	 * @param op
+	 * @param intervals
+	 * @param service
+	 */
+	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] intervals )
+	{
+		this( op, intervals, intervals, intervals, null );
+	}
+
+	/**
+	 * Intervals for in0, in1 and out are the same.
+	 * 
+	 * @param op
+	 * @param intervals
+	 * @param service
+	 */
+	public IterateBinaryOperation( BinaryOperation< S, U, R > op, Interval[] intervals, ExecutorService service )
+	{
+		this( op, intervals, intervals, intervals, service );
 	}
 
 	/**
@@ -44,35 +119,89 @@ public final class IterateBinaryOperation< T extends Type< T >, V extends Type< 
 	public final R compute( final S in0, U in1, R out )
 	{
 
-		Interval[] inIntervals0 = m_intervalOp.compute( m_selectedDims, new Interval[] { in0 } );
+		if ( m_in0Intervals.length != m_outIntervals.length || m_in0Intervals.length != m_in1Intervals.length ) { throw new IllegalArgumentException( "In and out intervals do not match! Most likely an implementation error!" ); }
 
-		Interval[] inIntervals1 = m_intervalOp.compute( m_selectedDims, new Interval[] { in1 } );
+		Future< ? >[] futures = new Future< ? >[ m_in0Intervals.length ];
 
-		Interval[] outIntervals = m_intervalOp.compute( m_selectedDims, new Interval[] { out } );
-
-		if ( inIntervals0.length != outIntervals.length || inIntervals0.length != inIntervals1.length ) { throw new IllegalArgumentException( "In and out intervals do not match! Most likely an implementation error!" ); }
-
-		for ( int i = 0; i < inIntervals0.length; i++ )
+		for ( int i = 0; i < m_outIntervals.length; i++ )
 		{
-			m_op.compute( createSubType( in0, inIntervals0[ i ] ), createSubType( in1, inIntervals1[ i ] ), createSubType( out, outIntervals[ i ] ) );
+			OperationTask t = new OperationTask( m_op, createSubType( in0, m_in0Intervals[ i ] ), createSubType( in1, m_in1Intervals[ i ] ), createSubType( out, m_outIntervals[ i ] ) );
+
+			if ( m_service != null )
+				futures[ i ] = m_service.submit( t );
+			else
+				t.run();
+		}
+
+		if ( m_service != null )
+		{
+			try
+			{
+				for ( Future< ? > f : futures )
+				{
+					f.get();
+				}
+			}
+			catch ( InterruptedException e )
+			{
+				// nothing to do here
+			}
+			catch ( ExecutionException e )
+			{
+				// nothing to do here
+			}
 		}
 
 		return out;
 	}
 
 	@SuppressWarnings( { "rawtypes", "unchecked" } )
-	private static synchronized < K extends Interval > K createSubType( final K in, final Interval i )
+	private static synchronized < T extends Type< T >, II extends RandomAccessibleInterval< T > > II createSubType( final II in, final Interval i )
 	{
-		if ( in instanceof Labeling ) { return ( K ) new LabelingView( SubsetViews.subsetView( ( NativeImgLabeling ) in, i, false ), ( ( NativeImgLabeling ) in ).factory() ); }
-		if ( in instanceof ImgPlus ) { return ( K ) new ImgPlusView( SubsetViews.subsetView( ( ImgPlus ) in, i, false ), ( ( ImgPlus ) in ).factory(), ( ImgPlus ) in ); }
+		if ( in instanceof Labeling ) { return ( II ) new LabelingView( SubsetViews.subsetView( ( NativeImgLabeling ) in, i, false ), ( ( NativeImgLabeling ) in ).factory() ); }
+		if ( in instanceof ImgPlus ) { return ( II ) new ImgPlusView( SubsetViews.subsetView( ( ImgPlus ) in, i, false ), ( ( ImgPlus ) in ).factory(), ( ImgPlus ) in ); }
 
-		if ( in instanceof Img ) { return ( K ) new ImgView( SubsetViews.subsetView( ( Img ) in, i, false ), ( ( Img ) in ).factory() ); }
-		throw new IllegalArgumentException( "Not implemented yet (IntervalWiseOperation)" );
+		if ( in instanceof Img ) { return ( II ) new ImgView( SubsetViews.subsetView( ( Img ) in, i, false ), ( ( Img ) in ).factory() ); }
+
+		return ( II ) SubsetViews.iterableSubsetView( in, i, false );
 	}
 
 	@Override
 	public BinaryOperation< S, U, R > copy()
 	{
-		return new IterateBinaryOperation< T, V, O, S, U, R >( m_op.copy(), m_selectedDims );
+		return new IterateBinaryOperation< T, V, O, S, U, R >( m_op.copy(), m_in0Intervals, m_in1Intervals, m_outIntervals, m_service );
+	}
+
+	/**
+	 * Future task
+	 * 
+	 * @author dietzc, muethingc
+	 * 
+	 */
+	private class OperationTask implements Runnable
+	{
+
+		private final BinaryOperation< S, U, R > m_op;
+
+		private final S m_in1;
+
+		private final U m_in2;
+
+		private final R m_out;
+
+		public OperationTask( final BinaryOperation< S, U, R > op, final S in1, final U in2, final R out )
+		{
+			m_in1 = in1;
+			m_in2 = in2;
+			m_out = out;
+			m_op = op.copy();
+		}
+
+		@Override
+		public void run()
+		{
+			m_op.compute( m_in1, m_in2, m_out );
+		}
+
 	}
 }

@@ -1,7 +1,10 @@
 package net.imglib2.ops.image.subset;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
 import net.imglib2.Interval;
-import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgPlus;
@@ -12,28 +15,48 @@ import net.imglib2.img.subset.SubsetViews;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.NativeImgLabeling;
 import net.imglib2.ops.UnaryOperation;
-import net.imglib2.ops.operation.unary.img.IntervalsFromDimSelection;
 import net.imglib2.type.Type;
 
 /**
  * Applies a given Operation to each interval separately.
  * 
- * @author dietzc, hornm University of Konstanz
+ * @author dietzc, hornm, muethingc University of Konstanz
  */
-public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V >, S extends RandomAccessibleInterval< T > & IterableInterval< T >, U extends RandomAccessibleInterval< V > & IterableInterval< V >> implements UnaryOperation< S, U >
+public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V >, S extends RandomAccessibleInterval< T >, U extends RandomAccessibleInterval< V >> implements UnaryOperation< S, U >
 {
+
+	private final ExecutorService m_service;
 
 	private final UnaryOperation< S, U > m_op;
 
-	private final int[] m_selectedDims;
+	private final Interval[] m_outIntervals;
 
-	private final IntervalsFromDimSelection m_intervalOp;
+	private final Interval[] m_inIntervals;
 
-	public IterateUnaryOperation( UnaryOperation< S, U > op, int[] selectedDims )
+	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals )
 	{
+		this( op, inIntervals, inIntervals, null );
+	}
+
+	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, Interval[] outIntervals )
+	{
+		this( op, inIntervals, outIntervals, null );
+	}
+
+	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, ExecutorService service )
+	{
+		this( op, inIntervals, inIntervals, service );
+	}
+
+	public IterateUnaryOperation( UnaryOperation< S, U > op, Interval[] inIntervals, Interval[] outIntervals, ExecutorService service )
+	{
+
+		if ( inIntervals.length != outIntervals.length ) { throw new IllegalArgumentException( "In and out intervals do not match! Most likely an implementation error!" ); }
+
 		m_op = op;
-		m_selectedDims = selectedDims;
-		m_intervalOp = new IntervalsFromDimSelection();
+		m_inIntervals = inIntervals;
+		m_outIntervals = outIntervals;
+		m_service = service;
 	}
 
 	/**
@@ -43,33 +66,86 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 	public final U compute( final S in, final U out )
 	{
 
-		Interval[] inIntervals = m_intervalOp.compute( m_selectedDims, new Interval[] { in } );
+		Future< ? >[] futures = new Future< ? >[ m_inIntervals.length ];
 
-		Interval[] outIntervals = m_intervalOp.compute( m_selectedDims, new Interval[] { out } );
-
-		if ( inIntervals.length != outIntervals.length ) { throw new IllegalArgumentException( "In and out intervals do not match! Most likely an implementation error!" ); }
-
-		for ( int i = 0; i < inIntervals.length; i++ )
+		for ( int i = 0; i < m_outIntervals.length; i++ )
 		{
-			m_op.compute( createSubType( inIntervals[ i ], in ), createSubType( outIntervals[ i ], out ) );
+			OperationTask t = new OperationTask( m_op, createSubType( m_inIntervals[ i ], in ), createSubType( m_outIntervals[ i ], out ) );
+
+			if ( m_service != null )
+				futures[ i ] = m_service.submit( t );
+			else
+				t.run();
+		}
+
+		if ( m_service != null )
+		{
+			try
+			{
+
+				for ( Future< ? > f : futures )
+				{
+					f.get();
+				}
+			}
+			catch ( InterruptedException e )
+			{
+				// nothing to do here
+			}
+			catch ( ExecutionException e )
+			{
+
+			}
 		}
 
 		return out;
 	}
 
 	@SuppressWarnings( { "rawtypes", "unchecked" } )
-	private synchronized < TT > TT createSubType( final Interval i, final TT in )
+	private synchronized < TT extends Type< TT >, II extends RandomAccessibleInterval< TT > > II createSubType( final Interval i, final II in )
 	{
-		if ( in instanceof Labeling ) { return ( TT ) new LabelingView( SubsetViews.subsetView( ( NativeImgLabeling ) in, i, false ), ( ( NativeImgLabeling ) in ).factory() ); }
-		if ( in instanceof ImgPlus ) { return ( TT ) new ImgPlusView( SubsetViews.subsetView( ( ImgPlus ) in, i, false ), ( ( ImgPlus ) in ).factory(), ( ImgPlus ) in ); }
+		if ( in instanceof Labeling ) { return ( II ) new LabelingView( SubsetViews.subsetView( ( NativeImgLabeling ) in, i, false ), ( ( NativeImgLabeling ) in ).factory() ); }
 
-		if ( in instanceof Img ) { return ( TT ) new ImgView( SubsetViews.subsetView( ( Img ) in, i, false ), ( ( Img ) in ).factory() ); }
-		throw new IllegalArgumentException( "Not implemented yet (IntervalWiseOperation)" );
+		if ( in instanceof ImgPlus ) { return ( II ) new ImgPlusView( SubsetViews.subsetView( ( ImgPlus ) in, i, false ), ( ( ImgPlus ) in ).factory(), ( ImgPlus ) in ); }
+
+		if ( in instanceof Img ) { return ( II ) new ImgView( SubsetViews.subsetView( ( Img ) in, i, false ), ( ( Img ) in ).factory() ); }
+
+		return ( II ) SubsetViews.iterableSubsetView( in, i, false );
 	}
 
 	@Override
 	public UnaryOperation< S, U > copy()
 	{
-		return new IterateUnaryOperation< T, V, S, U >( m_op.copy(), m_selectedDims );
+		return new IterateUnaryOperation< T, V, S, U >( m_op.copy(), m_inIntervals, m_outIntervals, m_service );
+	}
+
+	/**
+	 * Future task
+	 * 
+	 * @author dietzc, muethingc
+	 * 
+	 */
+	private class OperationTask implements Runnable
+	{
+
+		private final UnaryOperation< S, U > m_op;
+
+		private final S m_in;
+
+		private final U m_out;
+
+		public OperationTask( final UnaryOperation< S, U > op, final S in, final U out )
+		{
+			m_in = in;
+			m_out = out;
+			m_op = op.copy();
+		}
+
+		@Override
+		public void run()
+		{
+			m_op.compute( m_in, m_out );
+		}
+
 	}
 }
