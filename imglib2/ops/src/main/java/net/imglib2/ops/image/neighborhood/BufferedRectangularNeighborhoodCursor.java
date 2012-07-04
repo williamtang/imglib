@@ -37,6 +37,7 @@ package net.imglib2.ops.image.neighborhood;
  */
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 import net.imglib2.AbstractCursor;
 import net.imglib2.RandomAccess;
@@ -98,8 +99,9 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 
 		this.span = span;
 
-		int tmp = 1;
+		Arrays.fill( bufferElements, 1 );
 
+		int tmp = 1;
 		for ( int d = 0; d < span.length; d++ )
 		{
 			tmp *= ( span[ d ] * 2 ) + 1;
@@ -118,8 +120,6 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 		{
 			buffer[ t ] = type.copy();
 		}
-
-		m_activeDim = -1;
 
 	}
 
@@ -147,6 +147,9 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 	@Override
 	public void fwd()
 	{
+		if ( bufferPtr >= buffer.length )
+			bufferPtr = 0;
+
 		if ( m_activeDim < 0 || count >= buffer.length - bufferElements[ m_activeDim ] )
 		{
 			for ( int d = n - 1; d > -1; d-- )
@@ -154,7 +157,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 				if ( d == m_activeDim )
 					continue;
 
-				if ( source.getLongPosition( d ) < max[ d ] )
+				if ( source.getLongPosition( d ) <= max[ d ] )
 				{
 					source.fwd( d );
 					break;
@@ -173,6 +176,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 	@Override
 	public void reset()
 	{
+		m_activeDim = -1;
 
 		// Current pos is always the upper left corner!
 		for ( int d = 0; d < center.length; d++ )
