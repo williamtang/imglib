@@ -61,11 +61,12 @@ public class SlidingNeighborhoodWithTypeOp< T extends Type< T >, V extends Type<
 			// NeighborhoodCursor is reseted
 			neighborhood.setPosition( resCursor );
 
+			// reset the cursor
+			neighborhoodCursor.reset();
+
 			// Neighborhood is iterable at the moment as center was updated
 			op.compute( neighborhoodCursor, inCursor.get(), resCursor.get() );
 
-			// reset the cursor
-			neighborhoodCursor.reset();
 		}
 
 		return output;
