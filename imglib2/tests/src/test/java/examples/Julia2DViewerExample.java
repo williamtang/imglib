@@ -53,7 +53,8 @@ public class Julia2DViewerExample
 			oX = e.getX();
 			oY = e.getY();
 		}
-	};
+	}
+	
 	private final int width = 800;
 	private final int height = 600;
 
