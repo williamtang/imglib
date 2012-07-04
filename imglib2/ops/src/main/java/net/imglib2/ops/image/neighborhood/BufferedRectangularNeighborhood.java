@@ -36,6 +36,7 @@ package net.imglib2.ops.image.neighborhood;
  * #L%
  */
 
+import net.imglib2.Cursor;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.type.Type;
@@ -56,15 +57,22 @@ public class BufferedRectangularNeighborhood< T extends Type< T > > extends Abst
 	}
 
 	@Override
-	protected NeighborhoodCursor< T > neighborhodCursor()
+	public Cursor< T > cursor()
 	{
-		return new BufferedRectangularNeighborhoodCursor< T >( type, source.randomAccess(), span );
+		return new BufferedRectangularNeighborhoodCursor< T >( type, source.randomAccess(), center, span );
 	}
 
 	@Override
 	public Neighborhood< T > copy()
 	{
 		return new BufferedRectangularNeighborhood< T >( type.copy(), new Point( center ), span );
+	}
+
+	@Override
+	public Cursor< T > localizingCursor()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

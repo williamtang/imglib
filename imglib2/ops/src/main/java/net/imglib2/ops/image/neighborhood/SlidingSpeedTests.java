@@ -36,7 +36,7 @@ public class SlidingSpeedTests
 
 				while ( input.hasNext() )
 				{
-					input.next();
+					input.next().getRealDouble();
 				}
 				return output;
 			}

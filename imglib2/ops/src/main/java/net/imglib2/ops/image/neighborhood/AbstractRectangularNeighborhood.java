@@ -38,7 +38,6 @@ package net.imglib2.ops.image.neighborhood;
 
 import java.util.Iterator;
 
-import net.imglib2.Cursor;
 import net.imglib2.IterableRealInterval;
 import net.imglib2.Localizable;
 import net.imglib2.Positionable;
@@ -69,12 +68,6 @@ public abstract class AbstractRectangularNeighborhood< T extends Type< T > > ext
 			tmp *= span[ d ];
 
 		this.size = tmp;
-	}
-
-	@Override
-	public Cursor< T > localizingCursor()
-	{
-		return cursor();
 	}
 
 	@Override

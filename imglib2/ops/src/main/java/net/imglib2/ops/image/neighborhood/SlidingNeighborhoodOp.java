@@ -59,6 +59,9 @@ public class SlidingNeighborhoodOp< T extends Type< T >, V extends Type< V >, IN
 
 			// Neighborhood is iterable at the moment as center was updated
 			op.compute( neighborhoodCursor, resCursor.get() );
+
+			// reset the cursor
+			neighborhoodCursor.reset();
 		}
 
 		return output;

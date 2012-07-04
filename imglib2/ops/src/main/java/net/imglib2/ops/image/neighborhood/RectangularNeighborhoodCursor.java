@@ -200,10 +200,4 @@ public class RectangularNeighborhoodCursor< T extends Type< T >> extends Abstrac
 		return copy();
 	}
 
-	@Override
-	public void updateCenter( long[] center )
-	{
-		this.center = center;
-		reset();
-	}
 }

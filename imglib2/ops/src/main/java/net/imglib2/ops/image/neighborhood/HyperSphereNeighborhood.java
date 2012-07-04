@@ -38,6 +38,7 @@ package net.imglib2.ops.image.neighborhood;
 
 import java.util.Iterator;
 
+import net.imglib2.Cursor;
 import net.imglib2.IterableRealInterval;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
@@ -213,9 +214,15 @@ public class HyperSphereNeighborhood< T extends Type< T > > extends AbstractNeig
 	}
 
 	@Override
-	protected NeighborhoodCursor< T > neighborhodCursor()
+	public Cursor< T > cursor()
 	{
 		return new HyperSphereNeighborhoodCursor< T >( source, center, radius );
+	}
+
+	@Override
+	public Cursor< T > localizingCursor()
+	{
+		return cursor();
 	}
 
 	@Override

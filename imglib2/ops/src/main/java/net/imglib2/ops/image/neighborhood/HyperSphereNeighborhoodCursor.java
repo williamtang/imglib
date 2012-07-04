@@ -231,11 +231,4 @@ public class HyperSphereNeighborhoodCursor< T extends Type< T >> implements Neig
 	{
 		return copyCursor();
 	}
-
-	@Override
-	public void updateCenter( long[] center )
-	{
-		this.center = center;
-		reset();
-	}
 }

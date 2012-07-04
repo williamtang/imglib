@@ -5,5 +5,4 @@ import net.imglib2.type.Type;
 
 public interface NeighborhoodCursor< T extends Type< T >> extends Cursor< T >
 {
-	void updateCenter( long[] center );
 }

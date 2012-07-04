@@ -36,6 +36,7 @@ package net.imglib2.ops.image.neighborhood;
  * #L%
  */
 
+import net.imglib2.Cursor;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.type.Type;
@@ -50,10 +51,16 @@ public class RectangularNeighborhood< T extends Type< T > > extends AbstractRect
 	}
 
 	@Override
-	protected NeighborhoodCursor< T > neighborhodCursor()
+	public Cursor< T > cursor()
 	{
 
 		return new RectangularNeighborhoodCursor< T >( source.randomAccess(), span );
+	}
+
+	@Override
+	public Cursor< T > localizingCursor()
+	{
+		return cursor();
 	}
 
 	@Override

@@ -70,6 +70,8 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 
 	private final long[] bck;
 
+	private final long[] currentPos;
+
 	private final T[] buffer;
 
 	private int maxCount;
@@ -81,12 +83,14 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 	private int count;
 
 	@SuppressWarnings( "unchecked" )
-	public BufferedRectangularNeighborhoodCursor( final T type, final RandomAccess< T > source, final long[] span )
+	public BufferedRectangularNeighborhoodCursor( final T type, final RandomAccess< T > source, final long[] center, final long[] span )
 	{
 		super( source.numDimensions() );
 		this.source = source;
+		this.center = center;
 
-		center = new long[ n ];
+		currentPos = center.clone();
+
 		max = new long[ n ];
 		min = new long[ n ];
 		bufferElements = new long[ n ];
@@ -128,6 +132,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 		maxCount = c.maxCount;
 		buffer = c.buffer.clone();
 		bufferElements = c.bufferElements.clone();
+		currentPos = c.currentPos.clone();
 	}
 
 	@Override
@@ -165,11 +170,34 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 	@Override
 	public void reset()
 	{
-		for ( int d = 0; d < n; ++d )
+
+		// Current pos is always the upper left corner!
+		for ( int d = 0; d < center.length; d++ )
 		{
+			long tmp = currentPos[ d ];
+			currentPos[ d ] = center[ d ];
+
 			min[ d ] = center[ d ] - span[ d ];
 			max[ d ] = center[ d ] + span[ d ];
+
+			if ( center[ d ] - tmp != 0 )
+			{
+				if ( m_activeDim != -1 )
+				{
+					m_activeDim = -1;
+					break;
+				}
+				m_activeDim = d;
+			}
 		}
+
+		if ( m_activeDim >= 0 && bufferOffset + bufferElements[ m_activeDim ] < buffer.length )
+			bufferOffset += bufferElements[ m_activeDim ];
+		else
+			bufferOffset = 0;
+
+		bufferPtr = bufferOffset;
+
 		source.setPosition( min );
 		source.bck( 0 );
 		count = 0;
@@ -239,36 +267,5 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 	public BufferedRectangularNeighborhoodCursor< T > copyCursor()
 	{
 		return copy();
-	}
-
-	@Override
-	public void updateCenter( long[] newPos )
-	{
-
-		// Current pos is always the upper left corner!
-		for ( int d = 0; d < center.length; d++ )
-		{
-			long tmp = center[ d ];
-			center[ d ] = newPos[ d ];
-
-			if ( center[ d ] - tmp != 0 )
-			{
-				if ( m_activeDim != -1 )
-				{
-					m_activeDim = -1;
-					break;
-				}
-				m_activeDim = d;
-			}
-		}
-
-		if ( m_activeDim >= 0 && bufferOffset + bufferElements[ m_activeDim ] < buffer.length )
-			bufferOffset += bufferElements[ m_activeDim ];
-		else
-			bufferOffset = 0;
-
-		bufferPtr = bufferOffset;
-
-		reset();
 	}
 }
