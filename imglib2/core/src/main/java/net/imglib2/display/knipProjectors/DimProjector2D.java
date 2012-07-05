@@ -13,13 +13,13 @@ public class DimProjector2D<A, B> extends Abstract2DProjector<A, B> {
 
         protected final Converter<ProjectedDimSampler<A>, B> converter;
         protected final IterableInterval<B> target;
-
+        protected final RandomAccessible<A> source;
+        
         protected final int dimX;
         protected final int dimY;
 
         private final int X = 0;
         private final int Y = 1;
-        private final int numDimensions;
         private final int projectedDimension;
 
         private final ProjectedDimSamplerImpl<A> projectionSampler;
@@ -35,13 +35,14 @@ public class DimProjector2D<A, B> extends Abstract2DProjector<A, B> {
                         final int projectedDimension,
                         final long[] projectedPositions) {
 
-                super(source);
+                super(source.numDimensions());
 
+                
                 this.dimX = dimX;
                 this.dimY = dimY;
                 this.target = target;
+                this.source = source;
                 this.converter = converter;
-                this.numDimensions = source.numDimensions();
                 this.projectedDimension = projectedDimension;
 
                 // get min and max of the USED part of the projection dim
@@ -66,14 +67,14 @@ public class DimProjector2D<A, B> extends Abstract2DProjector<A, B> {
                         final IterableInterval<B> target,
                         final Converter<ProjectedDimSampler<A>, B> converter,
                         final int projectedDimension) {
-
-                super(source);
+        	
+        		super(source.numDimensions());
 
                 this.dimX = dimX;
                 this.dimY = dimY;
                 this.target = target;
+                this.source = source;
                 this.converter = converter;
-                this.numDimensions = source.numDimensions();
                 this.projectedDimension = projectedDimension;
 
                 // set min and max of the projection dim
