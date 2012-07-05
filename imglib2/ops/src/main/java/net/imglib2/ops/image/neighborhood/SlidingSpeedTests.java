@@ -17,7 +17,7 @@ public class SlidingSpeedTests
 	public static void main( String[] args )
 	{
 
-		long[] imgDims = new long[] { 2000, 2000, 50 };
+		long[] imgDims = new long[] { 2000, 2000, 5 };
 
 		ImgFactory< UnsignedByteType > fac = new ArrayImgFactory< UnsignedByteType >();
 
@@ -27,7 +27,7 @@ public class SlidingSpeedTests
 		long[] span = new long[ img.numDimensions() ];
 		Arrays.fill( span, 1 );
 
-		RectangularNeighborhood< UnsignedByteType > neighborhood = new RectangularNeighborhood< UnsignedByteType >( new Point( new long[ img.numDimensions() ] ), span );
+		BufferedRectangularNeighborhood< UnsignedByteType > neighborhood = new BufferedRectangularNeighborhood< UnsignedByteType >( img.firstElement().createVariable(), new Point( new long[ img.numDimensions() ] ), span );
 
 		UnaryOperation< Iterator< UnsignedByteType >, UnsignedByteType > op = new UnaryOperation< Iterator< UnsignedByteType >, UnsignedByteType >()
 		{
