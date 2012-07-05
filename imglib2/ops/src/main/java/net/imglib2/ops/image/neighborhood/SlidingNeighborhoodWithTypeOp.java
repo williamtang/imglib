@@ -76,6 +76,6 @@ public class SlidingNeighborhoodWithTypeOp< T extends Type< T >, V extends Type<
 	@Override
 	public UnaryOperation< IN, OUT > copy()
 	{
-		return new SlidingNeighborhoodWithTypeOp< T, V, IN, OUT >( neighborhood.copy(), op.copy() );
+		return new SlidingNeighborhoodWithTypeOp< T, V, IN, OUT >( fac, neighborhood.copy(), op.copy() );
 	}
 }
