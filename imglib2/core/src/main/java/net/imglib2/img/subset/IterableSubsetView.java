@@ -2,6 +2,7 @@ package net.imglib2.img.subset;
 
 import net.imglib2.Cursor;
 import net.imglib2.FinalInterval;
+import net.imglib2.FlatIterationOrder;
 import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
@@ -26,6 +27,7 @@ public class IterableSubsetView< T extends Type< T >> extends IterableRandomAcce
 
 	private int m_numPlaneDims;
 
+	@SuppressWarnings( "unchecked" )
 	public IterableSubsetView( RandomAccessibleInterval< T > src, Interval interval, boolean keepSizeOneDims )
 	{
 		super( SubsetViews.subsetView( src, interval, keepSizeOneDims ) );
@@ -39,7 +41,7 @@ public class IterableSubsetView< T extends Type< T >> extends IterableRandomAcce
 		if ( SubsetViews.intervalEquals( src, interval ) )
 			return;
 
-		if ( ( src instanceof IterableInterval ) )
+		if ( ( src instanceof IterableInterval ) && ( ( IterableInterval< T > ) src ).iterationOrder() instanceof FlatIterationOrder )
 		{
 			m_isOptimizable = true;
 			for ( int d = 0; d < interval.numDimensions(); d++ )
