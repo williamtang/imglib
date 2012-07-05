@@ -38,6 +38,8 @@ package game;
 
 import ij.ImageJ;
 import ij.ImagePlus;
+import ij.ImageStack;
+import ij.process.ImageProcessor;
 
 import java.text.NumberFormat;
 import java.util.Random;
@@ -52,48 +54,40 @@ import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.outofbounds.OutOfBoundsPeriodicFactory;
 
 /**
- * In order to illustrate the level of generality ImgLib2 offers, we developed a program that 
- * efficiently simulates the growth and death of life forms in a certain area, the so-called 
- * Arena. Several life forms grow and fight to become the dominant race.
+ * In order to show the power of generality ImgLib2 offers, we develop a program that
+ * simulates the growth of life forms (i.e. bacteria) in a certain area, called arena.
  * 
- * The simulation seeds the Arena with several races of a life forms. Each life form has a 
- * certain name (i.e. its race) and a weight representing its population at a spot. They grow 
- * every round by a certain percentage (e.g. 10%) and die of hunger if the population at a 
- * spot becomes too large. Every round each race at each spot tries to spread into their local 
- * neighborhood, trying to invade new space. If a neighboring spot is empty they will simply 
- * occpy it and start growing. If the same race is present in their vicinity, their population 
- * simply adds up. If another race is present they will fight for the spot. The race with the 
- * higher population at this spot will survive, however their population will decrease by the 
- * amount of population the defeated race lost.
+ * The simulation seeds the ground with several races of life forms. Each life form has
+ * a certain name (race) and a weight representing its population at a spot. They grow
+ * every round by a certain percentage (e.g. 10%) and die of hunger if the population becomes
+ * too large. In every round they spread to their local neighborhood, trying to invade new
+ * space. If the same race is present in their vicinity, their population simply adds up. If 
+ * another race is present they will fight for the spot. The race with higher population 
+ * will survive, however they will loose as much population as the attacking (loosing)
+ * race lost.
  * 
- * Using only these parameters, the simulation always converges to a point where one race wins. 
- * Therefore, we added the possibility of a epidemic which kills 90% of the dominating race, 
- * keeping the entire system in an equilibrium.
+ * This complex behaviour can be simulated by gaussian convolution on a new NumericType
+ * called LifeForm. Both operations, growth and fight can be simulated by implementing 
+ * specialized mul() and add() methods, respectively (see LifeForm.java). 
+ * Multiplying a LifeForm with a certain value represent growth (or shrinkage) while
+ * addition of two LifeForms represents the fight for a certain spot.
  * 
- * In order to simulate this relatively complex behaviour we implemented a new NumericType called
- * LifeForm. Both operations, growth and fight can be simulated by implementing specialized 
- * multiplication and addition methods, respectively (see LifeForm.java). Multiplying a 
- * LifeForm with a floating-point value represent growth (or shrinkage in case of an epidemic) 
- * while addition of two LifeForms represents the fight for a certain spot. The actual dynamics 
- * in the Arena, i.e. the spreading and the fight for every spot are very efficiently simulated 
- * running the generic implementation of the Gaussian Convolution, treating each spot of the Arena
- *  as a pixel in a RandomAccessibleInterval (or simply Img).
- *  
- * The entire source code for the simulation consists of three classes. Arena.java is the main class 
- * running the simulation, LifeForm implements the specialized mathematical operations required for 
- * the simulation, and LifeFormARGBConverter implements methods to map the state of a Life Form into
- * an ARGB value for display.
+ * The simulation always converges to a point where one race wins at the end. Therefore, we
+ * added the possibility of a epidemic which kills 90% of the dominating race, keeping the
+ * entire system in a equilibrium.
  *
  * @author Stephan Preibisch
  * @author Stephan Saalfeld
  */
-public class Arena
+public class ArenaMovie
 {
+	final int numFramesMovie = 1000;
+	
 	// a central random number generator
 	final static Random rnd = new Random( System.currentTimeMillis() );
 	
 	// number of seeds for LifeForms
-	final int numSeeds = 100000;
+	final int numSeeds = 400000;
 	
 	// we simulate with 5 races
 	final int numRaces = 5;
@@ -118,8 +112,10 @@ public class Arena
 	// makes a significant difference to the result
 	final OutOfBoundsFactory< LifeForm, RandomAccessibleInterval< LifeForm > > outofbounds = new OutOfBoundsPeriodicFactory< LifeForm, RandomAccessibleInterval< LifeForm > >();
 	
-	public Arena( )
+	public ArenaMovie( )
 	{
+		ImageStack stack = new ImageStack( width, height );
+		
 		// create a new ArrayImgFactory for LifeForm
 		final ArrayImgFactory< LifeForm > factory = new ArrayImgFactory< LifeForm >();
 		
@@ -135,6 +131,8 @@ public class Arena
 		// show the initial image (will be updated in each step)
 		final ImagePlus imp = ImageJFunctions.wrapRGB( arena, display, "Arena" );
 		imp.show();
+		
+		stack.addSlice( "", (ImageProcessor)imp.getProcessor().clone() );		
 
 		// for computing the frames per second
 		final long start = System.currentTimeMillis();
@@ -161,7 +159,8 @@ public class Arena
 			imp.setTitle( "fps: " +  NumberFormat.getInstance().format( fps ) + " frame: " + numFrames );
 			
 			// we regularly have an epidemic
-			epidemic( arena, epidemic, numRaces );
+			if ( numFrames == 600 || numFrames == 800 || numFrames == 400 )
+				epidemic( arena, epidemic, numRaces );
 			
 			// update the LifeFormARGBConverter to the current min and max value of the weight
 			display.setMin( 0 );
@@ -169,6 +168,15 @@ public class Arena
 
 			// update the ImageJ display to the current state of the simulation
 			updateDisplay( imp, arena, display );
+			
+			if ( numFrames <= numFramesMovie )
+			{
+				ImageProcessor ip = (ImageProcessor)imp.getProcessor().clone();
+				stack.addSlice( "", ip );
+			}
+			
+			if ( numFrames == numFramesMovie )
+				new ImagePlus( "movie", stack ).show();			
 		}
 	}
 
@@ -182,7 +190,7 @@ public class Arena
 	protected void epidemic( final Img< LifeForm > arena, final float chance, final int numRaces )
 	{
 		// is there an epedemic?
-		if ( rnd.nextFloat() * 100 < chance )
+		// if ( rnd.nextFloat() * 100 < chance )
 		{
 			// which race does it hit?
 			final int race = dominantLifeForm( arena, numRaces );
@@ -282,6 +290,6 @@ public class Arena
 		new ImageJ();
 		
 		// Start the fight
-		new Arena();		
+		new ArenaMovie();		
 	}
 }
