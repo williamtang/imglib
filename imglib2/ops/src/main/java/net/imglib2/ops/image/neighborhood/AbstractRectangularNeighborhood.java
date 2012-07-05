@@ -190,7 +190,7 @@ public abstract class AbstractRectangularNeighborhood< T extends Type< T > > ext
 	public void dimensions( final long[] dimensions )
 	{
 		for ( int d = 0; d < numDimensions; ++d )
-			dimensions[ d ] = 3;
+			dimensions[ d ] = span[ d ];
 	}
 
 	@Override

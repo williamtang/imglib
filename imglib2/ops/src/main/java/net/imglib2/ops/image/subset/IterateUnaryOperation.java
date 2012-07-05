@@ -71,6 +71,7 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 		for ( int i = 0; i < m_outIntervals.length; i++ )
 		{
 
+			System.out.println( "Processing interval " + i );
 			if ( Thread.interrupted() )
 				return out;
 

@@ -280,7 +280,7 @@ public class LabelingMapping< T extends Comparable< T >>
 	 * @param src
 	 * @return
 	 */
-	public List< T > intern( final List< T > src )
+	public synchronized List< T > intern( final List< T > src )
 	{
 		return internImpl( src );
 	}

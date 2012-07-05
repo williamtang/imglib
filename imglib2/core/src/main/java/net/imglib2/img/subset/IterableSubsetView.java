@@ -1,15 +1,11 @@
 package net.imglib2.img.subset;
 
 import net.imglib2.Cursor;
-import net.imglib2.FinalInterval;
 import net.imglib2.FlatIterationOrder;
 import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
-import net.imglib2.img.planar.PlanarImgFactory;
 import net.imglib2.type.Type;
-import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.IntervalIndexer;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
@@ -48,6 +44,15 @@ public class IterableSubsetView< T extends Type< T >> extends IterableRandomAcce
 			{
 				if ( interval.dimension( d ) > 1 )
 				{
+
+					// TODO: this can be handled in the IterableSubsetViewCursor
+					// (hasNext and fwd must be generalized)
+					if ( interval.dimension( d ) != src.dimension( d ) )
+					{
+						m_isOptimizable = false;
+						break;
+					}
+
 					m_numPlaneDims++;
 
 					if ( m_numPlaneDims != d + 1 )
@@ -102,87 +107,6 @@ public class IterableSubsetView< T extends Type< T >> extends IterableRandomAcce
 			return new IterableSubsetViewCursor< T >( m_iterableIntervalSource.localizingCursor(), ( int ) super.size(), m_planeOffset, m_numPlaneDims );
 		else
 			return m_iterableIntervalView.localizingCursor();
-	}
-
-	public static void main( String[] args )
-	{
-
-		callTest( true, 10 );
-		callTest( false, 10 );
-
-	}
-
-	private static void callTest( boolean std, int numRuns )
-	{
-		int numPlaneDims = 2;
-
-		long[] dims = new long[] { 1000, 1000, 1 };
-		long[] iterationDims = new long[ dims.length - numPlaneDims ];
-
-		for ( int d = 0; d < iterationDims.length; d++ )
-		{
-			iterationDims[ d ] = dims[ d + numPlaneDims ];
-		}
-
-		int numPlanes = 1;
-		for ( int i = numPlaneDims; i < dims.length; i++ )
-		{
-			numPlanes *= dims[ i ];
-		}
-
-		Img< IntType > srcImg = new PlanarImgFactory< IntType >().create( dims, new IntType() );
-		long curr = System.nanoTime();
-
-		for ( int k = 0; k < numRuns; k++ )
-			for ( int i = 0; i < numPlanes; i++ )
-			{
-				long[] pos = new long[ dims.length - numPlaneDims ];
-				IntervalIndexer.indexToPosition( i, iterationDims, pos );
-
-				long[] min = new long[ dims.length ];
-				long[] max = new long[ dims.length ];
-
-				for ( int d = 0; d < dims.length; d++ )
-				{
-					if ( d < numPlaneDims )
-						max[ d ] = dims[ d ] - 1;
-					else
-					{
-						min[ d ] = pos[ d - numPlaneDims ];
-						max[ d ] = pos[ d - numPlaneDims ];
-					}
-
-				}
-
-				Interval subsetInterval = new FinalInterval( min, max );
-
-				Cursor< IntType > cursor = SubsetViews.iterableSubsetView( srcImg, subsetInterval, false ).cursor();
-
-				while ( cursor.hasNext() )
-				{
-					cursor.fwd();
-					cursor.get().get();
-				}
-
-				cursor.reset();
-
-				while ( cursor.hasNext() )
-				{
-					cursor.next();
-					// cursor.get().getRealDouble();
-					// long[] pos2 = new long[ cursor.numDimensions() ];
-					// cursor.localize( pos2 );
-				}
-
-			}
-
-		long diff = System.nanoTime() - curr;
-
-		if ( std )
-			System.out.println( "Standard took " + diff / 1000 / 1000 );
-		else
-			System.out.println( "Optimized took " + diff / 1000 / 1000 );
-
 	}
 
 }
