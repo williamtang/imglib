@@ -125,12 +125,24 @@ public final class IterateBinaryOperation< T extends Type< T >, V extends Type< 
 
 		for ( int i = 0; i < m_outIntervals.length; i++ )
 		{
+
+			if ( Thread.interrupted() )
+				return out;
+
 			OperationTask t = new OperationTask( m_op, createSubType( in0, m_in0Intervals[ i ] ), createSubType( in1, m_in1Intervals[ i ] ), createSubType( out, m_outIntervals[ i ] ) );
 
 			if ( m_service != null )
+			{
+				if ( m_service.isShutdown() )
+					return out;
+
 				futures[ i ] = m_service.submit( t );
+			}
 			else
+			{
 				t.run();
+			}
+
 		}
 
 		if ( m_service != null )
@@ -139,6 +151,9 @@ public final class IterateBinaryOperation< T extends Type< T >, V extends Type< 
 			{
 				for ( Future< ? > f : futures )
 				{
+					if ( f.isCancelled() )
+						return out;
+
 					f.get();
 				}
 			}

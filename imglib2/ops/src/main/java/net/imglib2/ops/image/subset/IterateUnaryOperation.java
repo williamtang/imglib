@@ -70,34 +70,47 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 
 		for ( int i = 0; i < m_outIntervals.length; i++ )
 		{
+
+			if ( Thread.interrupted() )
+				return out;
+
 			OperationTask t = new OperationTask( m_op, createSubType( m_inIntervals[ i ], in ), createSubType( m_outIntervals[ i ], out ) );
 
 			if ( m_service != null )
-				futures[ i ] = m_service.submit( t );
+			{
+				if ( m_service.isShutdown() )
+					return out;
+				else
+					futures[ i ] = m_service.submit( t );
+			}
 			else
+			{
 				t.run();
+			}
 		}
 
 		if ( m_service != null )
 		{
 			try
 			{
-
 				for ( Future< ? > f : futures )
 				{
+					if ( f.isCancelled() ) { return out; }
 					f.get();
 				}
 			}
 			catch ( InterruptedException e )
 			{
-				// nothing to do here
+				e.printStackTrace();
+				return out;
+
 			}
 			catch ( ExecutionException e )
 			{
-
+				e.printStackTrace();
+				return out;
 			}
 		}
-
 		return out;
 	}
 
