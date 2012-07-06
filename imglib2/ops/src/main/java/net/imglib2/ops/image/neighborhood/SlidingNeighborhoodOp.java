@@ -67,6 +67,11 @@ public class SlidingNeighborhoodOp< T extends Type< T >, V extends Type< V >, IN
 
 	}
 
+	public void updateOperation( UnaryOperation< Iterator< T >, V > op )
+	{
+		this.op = op;
+	}
+
 	@Override
 	public UnaryOperation< IN, OUT > copy()
 	{
