@@ -1,41 +1,5 @@
 package net.imglib2.ops.image.neighborhood;
 
-/*
- * #%L
- * ImgLib2: a general-purpose, multidimensional image processing library.
- * %%
- * Copyright (C) 2009 - 2012 Stephan Preibisch, Stephan Saalfeld, Tobias
- * Pietzsch, Albert Cardona, Barry DeZonia, Curtis Rueden, Lee Kamentsky, Larry
- * Lindsey, Johannes Schindelin, Christian Dietz, Grant Harris, Jean-Yves
- * Tinevez, Steffen Jaensch, Mark Longair, Nick Perry, and Jan Funke.
- * %%
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
- * #L%
- */
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
@@ -77,7 +41,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 
 	private int bufferOffset;
 
-	private int m_activeDim;
+	private int activeDim;
 
 	private int bufferPtr;
 
@@ -136,6 +100,10 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 		buffer = c.buffer.clone();
 		bufferElements = c.bufferElements.clone();
 		currentPos = c.currentPos.clone();
+		bufferOffset = c.bufferOffset;
+		activeDim = c.activeDim;
+		bufferPtr = c.bufferPtr;
+		count = c.count;
 	}
 
 	@Override
@@ -151,11 +119,11 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 		if ( ++bufferPtr >= buffer.length )
 			bufferPtr = 0;
 
-		if ( m_activeDim < 0 || count >= buffer.length - bufferElements[ m_activeDim ] )
+		if ( activeDim < 0 || count >= buffer.length - bufferElements[ activeDim ] )
 		{
 			for ( int d = n - 1; d > -1; d-- )
 			{
-				if ( d == m_activeDim )
+				if ( d == activeDim )
 					continue;
 
 				if ( source.getLongPosition( d ) < max[ d ] )
@@ -176,8 +144,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 	@Override
 	public void reset()
 	{
-		m_activeDim = -1;
-
+		activeDim = -1;
 
 		for ( int d = 0; d < center.length; d++ )
 		{
@@ -189,17 +156,17 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 
 			if ( center[ d ] - tmp != 0 )
 			{
-				if ( m_activeDim != -1 )
+				if ( activeDim != -1 )
 				{
-					m_activeDim = -1;
+					activeDim = -1;
 					break;
 				}
-				m_activeDim = d;
+				activeDim = d;
 			}
 		}
 
-		if ( m_activeDim >= 0 && bufferOffset + bufferElements[ m_activeDim ] < buffer.length )
-			bufferOffset += bufferElements[ m_activeDim ];
+		if ( activeDim >= 0 && bufferOffset + bufferElements[ activeDim ] < buffer.length )
+			bufferOffset += bufferElements[ activeDim ];
 		else
 			bufferOffset = 0;
 
@@ -207,7 +174,7 @@ public class BufferedRectangularNeighborhoodCursor< T extends Type< T >> extends
 
 		for ( int d = 0; d < n; d++ )
 		{
-			if ( d == m_activeDim )
+			if ( d == activeDim )
 				source.setPosition( max[ d ], d );
 			else
 				source.setPosition( min[ d ], d );
