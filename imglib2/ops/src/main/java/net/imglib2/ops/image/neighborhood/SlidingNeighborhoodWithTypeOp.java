@@ -20,9 +20,19 @@ public class SlidingNeighborhoodWithTypeOp< T extends Type< T >, V extends Type<
 
 	private OutOfBoundsFactory< T, IN > fac;
 
+	public SlidingNeighborhoodWithTypeOp( Neighborhood< T > neighborhood )
+	{
+		this( null, neighborhood, null );
+	}
+
 	public SlidingNeighborhoodWithTypeOp( Neighborhood< T > neighborhood, BinaryOperation< Iterator< T >, T, V > op )
 	{
 		this( null, neighborhood, op );
+	}
+
+	public SlidingNeighborhoodWithTypeOp( OutOfBoundsFactory< T, IN > fac, Neighborhood< T > neighborhood )
+	{
+		this( fac, neighborhood, null );
 	}
 
 	public SlidingNeighborhoodWithTypeOp( OutOfBoundsFactory< T, IN > fac, Neighborhood< T > neighborhood, BinaryOperation< Iterator< T >, T, V > op )
@@ -81,6 +91,6 @@ public class SlidingNeighborhoodWithTypeOp< T extends Type< T >, V extends Type<
 	@Override
 	public UnaryOperation< IN, OUT > copy()
 	{
-		return new SlidingNeighborhoodWithTypeOp< T, V, IN, OUT >( fac, neighborhood.copy(), op.copy() );
+		return new SlidingNeighborhoodWithTypeOp< T, V, IN, OUT >( fac, neighborhood.copy(), op != null ? op.copy() : null );
 	}
 }
