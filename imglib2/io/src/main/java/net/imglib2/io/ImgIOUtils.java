@@ -159,38 +159,37 @@ public final class ImgIOUtils {
 	}
 
 	/** Converts SCIFIO pixel type to ImgLib2 Type object. */
-	@SuppressWarnings("unchecked")
-	public static <T extends RealType<T>> T makeType(final int pixelType) {
-		final RealType<?> type;
+	public static ImgCreator< ? > makeType(final int pixelType) {
+		final ImgCreator<?> type;
 		switch (pixelType) {
 			case FormatTools.UINT8:
-				type = new UnsignedByteType();
+				type = new ImgCreator<UnsignedByteType>( new UnsignedByteType() );
 				break;
 			case FormatTools.INT8:
-				type = new ByteType();
+				type = new ImgCreator<ByteType>( new ByteType() );
 				break;
 			case FormatTools.UINT16:
-				type = new UnsignedShortType();
+				type = new ImgCreator<UnsignedShortType>( new UnsignedShortType() );
 				break;
 			case FormatTools.INT16:
-				type = new ShortType();
+				type = new ImgCreator<ShortType>( new ShortType() );
 				break;
 			case FormatTools.UINT32:
-				type = new UnsignedIntType();
+				type = new ImgCreator<UnsignedIntType>( new UnsignedIntType() );
 				break;
 			case FormatTools.INT32:
-				type = new IntType();
+				type = new ImgCreator<IntType>( new IntType() );
 				break;
 			case FormatTools.FLOAT:
-				type = new FloatType();
+				type = new ImgCreator<FloatType>( new FloatType() );
 				break;
 			case FormatTools.DOUBLE:
-				type = new DoubleType();
+				type = new ImgCreator<DoubleType>( new DoubleType() );
 				break;
 			default:
 				type = null;
 		}
-		return (T) type;
+		return type;
 	}
 
 	/**
