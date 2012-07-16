@@ -23,7 +23,7 @@
  * #L%
  */
 
-package net.imglib2.algorithm.fft;
+package net.imglib2.algorithm.legacy.fft;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +34,9 @@ import net.imglib2.ExtendedRandomAccessibleInterval;
 import net.imglib2.algorithm.Algorithm;
 import net.imglib2.algorithm.Benchmark;
 import net.imglib2.algorithm.MultiThreaded;
+import net.imglib2.algorithm.fft.FourierTransform;
+import net.imglib2.algorithm.fft.InverseFourierTransform;
+import net.imglib2.algorithm.fft.LocalNeighborhoodCursor;
 import net.imglib2.algorithm.fft.FourierTransform.Rearrangement;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
@@ -272,8 +275,11 @@ public class PhaseCorrelation<T extends RealType<T>, S extends RealType<S>> impl
 						else
 							peakPosition[ d ] -= dimInvPCM[ d ];
 					}
-				}				
-				newPeakList.add( new PhaseCorrelationPeak( peakPosition, peak.getPhaseCorrelationPeak() ) );
+				}
+				
+				final PhaseCorrelationPeak newPeak = new PhaseCorrelationPeak( peakPosition, peak.getPhaseCorrelationPeak() );
+				newPeak.setOriginalInvPCMPosition( peak.getOriginalInvPCMPosition() );
+				newPeakList.add( newPeak );
 			}			
 		}
 		

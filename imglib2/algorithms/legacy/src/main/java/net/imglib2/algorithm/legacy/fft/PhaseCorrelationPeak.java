@@ -23,7 +23,7 @@
  * #L%
  */
 
-package net.imglib2.algorithm.fft;
+package net.imglib2.algorithm.legacy.fft;
 
 import net.imglib2.util.Util;
 
