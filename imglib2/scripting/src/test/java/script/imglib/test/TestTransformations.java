@@ -50,7 +50,7 @@ public class TestTransformations {
 		try {
 			// Open a color image with dimensions X,Y,Color
 			//Img<UnsignedByteType> img = ImgLib.open("/home/albert/Desktop/t2/clown.png");
-			Img<UnsignedByteType> img = ImgLib.open("http://imagej.nih.gov/ij/images/clown.png");
+			Img<UnsignedByteType> img = (Img)ImgLib.open("http://imagej.nih.gov/ij/images/clown.png");
 			long width = img.max(0) + 1;
 			long height = img.max(1) + 1;
 			long colors = img.max(2) + 1;

@@ -53,7 +53,7 @@ public class ImgLib {
 	/** Open an image from a file path or a web URL. 
 	 * @throws IncompatibleTypeException 
 	 * @throws ImgIOException */
-	public static<T extends RealType<T> & NativeType<T>> Img<T> open(final String pathOrURL) throws ImgIOException, IncompatibleTypeException {
+	public static Img<RealType> open(final String pathOrURL) throws ImgIOException, IncompatibleTypeException {
 		return new ImgOpener().openImg(pathOrURL);
 		// Old:
 		//return wrap(IJ.openImage(pathOrURL));
