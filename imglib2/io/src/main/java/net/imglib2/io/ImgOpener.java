@@ -77,6 +77,7 @@ import net.imglib2.meta.AxisType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 import ome.xml.model.primitives.PositiveFloat;
@@ -222,6 +223,49 @@ public class ImgOpener implements StatusReporter {
 				try
 				{
 					img = opener.openImg( id, new CellImgFactory< DoubleType >( 256 ), tmp );
+				}
+				catch ( Exception e )
+				{
+					throw new ImgIOException( "Cannot open file '"+ id + "': " + e );
+				}
+			}
+		}
+		
+		return img;
+	}
+
+	/**
+	 * Opens an {@link Img} as {@link UnsignedByteType}. It returns an {@link ImgPlus} which contains the Calibration and name.
+	 * 
+	 * The {@link Img} containing the data could be either {@link ArrayImg}, {@link PlanarImg} or {@link CellImg}. It
+	 * tries opening it in exactly this order.
+	 * 
+	 * @param id - the location of the file/http address to open
+	 * @return - the {@link ImgPlus} or null 
+	 * 
+	 * @throws ImgIOException - if file could not be found or is too big for the memory
+	 */
+	public static ImgPlus< UnsignedByteType > openUnsignedByte( final String id ) throws ImgIOException
+	{
+		final UnsignedByteType tmp = new UnsignedByteType();
+		ImgPlus< UnsignedByteType > img = null;
+		ImgOpener opener = new ImgOpener();
+		
+		try
+		{
+			img = opener.openImg( id, new ArrayImgFactory< UnsignedByteType >(), tmp );
+		} 
+		catch ( NegativeArraySizeException e1 )
+		{
+			try
+			{
+				img = opener.openImg( id, new PlanarImgFactory< UnsignedByteType >(), tmp );
+			}
+			catch ( NegativeArraySizeException e2 )
+			{
+				try
+				{
+					img = opener.openImg( id, new CellImgFactory< UnsignedByteType >( 256 ), tmp );
 				}
 				catch ( Exception e )
 				{
