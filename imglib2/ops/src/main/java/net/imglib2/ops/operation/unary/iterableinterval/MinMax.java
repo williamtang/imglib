@@ -117,8 +117,8 @@ public final class MinMax< T extends RealType< T >> implements UnaryOutputOperat
 				break;
 			}
 		}
-		r.a.setReal( histMin + r.a.getMinValue() );
-		r.b.setReal( histMax + r.a.getMinValue() );
+		r.a.setReal( ( histMin * ( ( r.a.getMaxValue() - r.a.getMinValue() ) / hist.numBins() ) ) + r.a.getMinValue() );
+		r.b.setReal( ( histMax * ( ( r.a.getMaxValue() - r.a.getMinValue() ) / hist.numBins() ) ) + r.a.getMinValue() );
 	}
 
 	@Override
