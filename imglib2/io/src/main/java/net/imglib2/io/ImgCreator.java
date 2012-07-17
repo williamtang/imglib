@@ -24,6 +24,6 @@ public class ImgCreator < T extends RealType< T > & NativeType< T > >
 	
 	public void setImageFactory( final ImgFactory< ? > imgFactory ) throws IncompatibleTypeException
 	{
-		this.factory = factory.imgFactory( type );
+		this.factory = imgFactory.imgFactory( type );
 	}
 }
