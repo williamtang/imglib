@@ -2,7 +2,6 @@ package net.imglib2.io;
 
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.ImgFactory;
-import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
 /**
@@ -12,7 +11,7 @@ import net.imglib2.type.numeric.RealType;
  *
  * @param <T>
  */
-public class ImgCreator < T extends RealType< T > & NativeType< T > >
+public class ImgCreator < T extends RealType< T > >
 {
 	public ImgFactory< T > factory;
 	public T type;

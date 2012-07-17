@@ -389,7 +389,7 @@ public class ImgOpener implements StatusReporter {
 	 * @param type - The {@link Type} T of the output {@link ImgPlus}
 	 * @throws ImgIOException if there is a problem reading the image data.
 	 */
-	protected <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	protected <T extends RealType<T> > ImgPlus<T> openImg(
 		final IFormatReader r, final ImgCreator<T> creator, boolean computeMinMax )
 		throws ImgIOException
 		{
@@ -407,7 +407,7 @@ public class ImgOpener implements StatusReporter {
 	 *          match the typing of the {@link ImgFactory}.
 	 * @throws ImgIOException if there is a problem reading the image data.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public <T extends RealType<T> > ImgPlus<T> openImg(
 		final String id, final ImgFactory<T> imgFactory, final T type)
 		throws ImgIOException
 	{
@@ -428,7 +428,7 @@ public class ImgOpener implements StatusReporter {
 	 *          actual pixel values.
 	 * @throws ImgIOException if there is a problem reading the image data.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public <T extends RealType<T> > ImgPlus<T> openImg(
 		final String id, final ImgFactory<T> imgFactory, final T type,
 		final boolean computeMinMax) throws ImgIOException
 	{
@@ -457,7 +457,7 @@ public class ImgOpener implements StatusReporter {
 	 *          match the typing of the {@link ImgFactory}.
 	 * @throws ImgIOException if there is a problem reading the image data.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public <T extends RealType<T>> ImgPlus<T> openImg(
 		final IFormatReader r, final ImgFactory<T> imgFactory, final T type)
 		throws ImgIOException
 	{
@@ -480,7 +480,7 @@ public class ImgOpener implements StatusReporter {
 	 *          actual pixel values.
 	 * @throws ImgIOException if there is a problem reading the image data.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public <T extends RealType<T> > ImgPlus<T> openImg(
 		final IFormatReader r, final ImgFactory<T> imgFactory, final T type,
 		final boolean computeMinMax) throws ImgIOException
 	{
