@@ -15,7 +15,9 @@ import net.imglib2.img.subset.SubsetViews;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.NativeImgLabeling;
 import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.unary.img.CopyMetadata;
 import net.imglib2.type.Type;
+import net.imglib2.view.IterableRandomAccessibleInterval;
 
 /**
  * Applies a given Operation to each interval separately.
@@ -117,11 +119,16 @@ public final class IterateUnaryOperation< T extends Type< T >, V extends Type< V
 	@SuppressWarnings( { "rawtypes", "unchecked" } )
 	private synchronized < TT extends Type< TT >, II extends RandomAccessibleInterval< TT > > II createSubType( final Interval i, final II in )
 	{
-		if ( in instanceof Labeling ) { return ( II ) new LabelingView( SubsetViews.subsetView( ( NativeImgLabeling ) in, i, false ), ( ( NativeImgLabeling ) in ).factory() ); }
+		if ( in instanceof Labeling ) { return ( II ) new LabelingView( SubsetViews.iterableSubsetView( ( NativeImgLabeling ) in, i, false ), ( ( NativeImgLabeling ) in ).factory() ); }
 
-		if ( in instanceof ImgPlus ) { return ( II ) new ImgPlusView( SubsetViews.subsetView( ( ImgPlus ) in, i, false ), ( ( ImgPlus ) in ).factory(), ( ImgPlus ) in ); }
+		if ( in instanceof ImgPlus )
+		{
+			ImgPlusView< T > imgPlusView = new ImgPlusView< T >( SubsetViews.iterableSubsetView( ( ImgPlus ) in, i, false ), ( ( ImgPlus ) in ).factory() );
+			new CopyMetadata( i, false ).compute( ( ImgPlus ) in, imgPlusView );
+			return ( II ) imgPlusView;
+		}
 
-		if ( in instanceof Img ) { return ( II ) new ImgView( SubsetViews.subsetView( ( Img ) in, i, false ), ( ( Img ) in ).factory() ); }
+		if ( in instanceof Img ) { return ( II ) new ImgView( SubsetViews.iterableSubsetView( ( Img ) in, i, false ), ( ( Img ) in ).factory() ); }
 
 		return ( II ) SubsetViews.iterableSubsetView( in, i, false );
 	}

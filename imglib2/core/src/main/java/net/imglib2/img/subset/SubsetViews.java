@@ -23,21 +23,19 @@ public class SubsetViews
 		return new IterableSubsetView< T >( src, interval, keepDimsWithSizeOne );
 	}
 
-	
 	public static < T > MixedTransformView< T > permutate( final RandomAccessible< T > randomAccessible, final int fromAxis, final int toAxis )
-    {
-            final int n = randomAccessible.numDimensions();
-            final int[] component = new int[ n ];
-            for ( int e = 0; e < n; ++e )
-                    component[ e ] = e;
-            component[ fromAxis ] = toAxis;
-            component[ toAxis ] = fromAxis;
-            final MixedTransform t = new MixedTransform( n, n );
-            t.setComponentMapping( component );
-            return new MixedTransformView< T >( randomAccessible, t );
-    }
-	
-	
+	{
+		final int n = randomAccessible.numDimensions();
+		final int[] component = new int[ n ];
+		for ( int e = 0; e < n; ++e )
+			component[ e ] = e;
+		component[ fromAxis ] = toAxis;
+		component[ toAxis ] = fromAxis;
+		final MixedTransform t = new MixedTransform( n, n );
+		t.setComponentMapping( component );
+		return new MixedTransformView< T >( randomAccessible, t );
+	}
+
 	/**
 	 * View on interval of a source. If wanted, dims with size 1 are removed.
 	 * 
@@ -58,9 +56,9 @@ public class SubsetViews
 		if ( !keepDimsWithSizeOne )
 		{
 
-			for ( int d = 0; d < res.numDimensions(); d++ )
+			for ( int d = 0; d < interval.numDimensions(); d++ )
 			{
-				if ( res.dimension( d ) == 1 )
+				if ( interval.dimension( d ) == 1 )
 				{
 					oneSizedDims = true;
 					break;

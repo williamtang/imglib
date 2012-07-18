@@ -34,7 +34,7 @@ public class IterableSubsetView< T extends Type< T >> extends IterableRandomAcce
 		m_isOptimizable = false;
 		m_planeOffset = 1;
 
-		if ( SubsetViews.intervalEquals( src, interval ) )
+		if ( SubsetViews.intervalEquals( super.interval, interval ) )
 			return;
 
 		if ( ( src instanceof IterableInterval ) && ( ( IterableInterval< T > ) src ).iterationOrder() instanceof FlatIterationOrder )

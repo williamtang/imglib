@@ -116,7 +116,7 @@ public class IterableSubsetViewCursor< T extends Type< T >> implements Cursor< T
 	@Override
 	public void remove()
 	{
-		// NO action
+		throw new UnsupportedOperationException( "Remove not supported in class: SubsetViewCursor" );
 	}
 
 	@Override
