@@ -470,7 +470,7 @@ public class TestRelativeIterationPerformance<T extends RealType<T>> implements 
 	}
 
 
-	public static <T extends RealType<T> & NativeType< T >> void benchmark( final IterationMethod method, final String msg, final int niter, final Img< T > image )
+	public static <T extends RealType<T>> void benchmark( final IterationMethod method, final String msg, final int niter, final Img< T > image )
 	{
 		// Init algo
 		final TestRelativeIterationPerformance<T> algo = new TestRelativeIterationPerformance<T>(image);
@@ -495,15 +495,15 @@ public class TestRelativeIterationPerformance<T extends RealType<T>> implements 
 	 * MAIN METHOD
 	 */
 
-	public static <T extends RealType<T> & NativeType< T >> void  main(final String[] args) throws ImgIOException, IncompatibleTypeException {
+	public static void  main(final String[] args) throws ImgIOException, IncompatibleTypeException {
 
 //		File file = new File( "E:/Users/JeanYves/Desktop/Data/Y.tif");
 		final File file = new File( "/home/tobias/Desktop/Y.tif");
 		final int niter = 1000;
 
 		// Open file in imglib2
-		final ImgFactory< ? > imgFactory = new ArrayImgFactory< T >();
-		final Img< T > image = new ImgOpener().openImg( file.getAbsolutePath(), imgFactory );
+		final ImgFactory< ? > imgFactory = new ArrayImgFactory< FloatType >();
+		final Img< RealType > image = new ImgOpener().openImg( file.getAbsolutePath(), imgFactory );
 
 		// Display it via ImgLib using ImageJ
 		new ImageJ();

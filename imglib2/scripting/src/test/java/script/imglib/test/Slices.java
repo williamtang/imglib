@@ -45,7 +45,7 @@ public class Slices {
 		try {
 			String src = "http://imagej.nih.gov/ij/images/bat-cochlea-volume.zip";
 			//String src = "/home/albert/Desktop/t2/bat-cochlea-volume.tif";	
-			Img<UnsignedByteType> img = ImgLib.open(src);
+			Img<UnsignedByteType> img = (Img)ImgLib.open(src);
 			
 			Img<UnsignedByteType> s = new SliceXY<UnsignedByteType>(img, 23);
 
