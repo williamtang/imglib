@@ -24,9 +24,9 @@ public class IterableSubsetView< T extends Type< T >> extends IterableRandomAcce
 	private int m_numPlaneDims;
 
 	@SuppressWarnings( "unchecked" )
-	public IterableSubsetView( RandomAccessibleInterval< T > src, Interval interval, boolean keepSizeOneDims )
+	public IterableSubsetView( RandomAccessibleInterval< T > src, Interval interval )
 	{
-		super( SubsetViews.subsetView( src, interval, keepSizeOneDims ) );
+		super( SubsetViews.subsetView( src, interval ) );
 
 		m_iterableIntervalSource = Views.iterable( src );
 		m_iterableIntervalView = Views.iterable( super.interval );

@@ -18,9 +18,9 @@ import net.imglib2.view.Views;
 public class SubsetViews
 {
 
-	public static final < T extends Type< T >> IterableRandomAccessibleInterval< T > iterableSubsetView( final RandomAccessibleInterval< T > src, final Interval interval, final boolean keepDimsWithSizeOne )
+	public static final < T extends Type< T >> IterableRandomAccessibleInterval< T > iterableSubsetView( final RandomAccessibleInterval< T > src, final Interval interval )
 	{
-		return new IterableSubsetView< T >( src, interval, keepDimsWithSizeOne );
+		return new IterableSubsetView< T >( src, interval );
 	}
 
 	public static < T > MixedTransformView< T > permutate( final RandomAccessible< T > randomAccessible, final int fromAxis, final int toAxis )
@@ -48,36 +48,32 @@ public class SubsetViews
 	 *            from the resulting view
 	 * @return
 	 */
-	public static final < T extends Type< T > > RandomAccessibleInterval< T > subsetView( final RandomAccessibleInterval< T > src, final Interval interval, final boolean keepDimsWithSizeOne )
+	public static final < T extends Type< T > > RandomAccessibleInterval< T > subsetView( final RandomAccessibleInterval< T > src, final Interval interval )
 	{
-		RandomAccessibleInterval< T > res = src;
 
 		boolean oneSizedDims = false;
-		if ( !keepDimsWithSizeOne )
-		{
 
-			for ( int d = 0; d < interval.numDimensions(); d++ )
+		for ( int d = 0; d < interval.numDimensions(); d++ )
+		{
+			if ( interval.dimension( d ) == 1 )
 			{
-				if ( interval.dimension( d ) == 1 )
-				{
-					oneSizedDims = true;
-					break;
-				}
+				oneSizedDims = true;
+				break;
 			}
 		}
 
 		if ( intervalEquals( src, interval ) && !oneSizedDims )
-			return res;
+			return src;
 
-		if ( Util.contains( res, interval ) )
-			res = Views.offsetInterval( res, interval );
+		RandomAccessibleInterval< T > res;
+		if ( Util.contains( src, interval ) )
+			res = Views.offsetInterval( src, interval );
 		else
 			throw new IllegalArgumentException( "Interval must fit into src in SubsetViews.subsetView(...)" );
 
-		if ( !keepDimsWithSizeOne )
-			for ( int d = interval.numDimensions() - 1; d >= 0; --d )
-				if ( interval.dimension( d ) == 1 && res.numDimensions() > 1 )
-					res = Views.hyperSlice( res, d, 0 );
+		for ( int d = interval.numDimensions() - 1; d >= 0; --d )
+			if ( interval.dimension( d ) == 1 && res.numDimensions() > 1 )
+				res = Views.hyperSlice( res, d, 0 );
 
 		return res;
 	}

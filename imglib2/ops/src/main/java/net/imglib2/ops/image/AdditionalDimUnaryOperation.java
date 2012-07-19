@@ -80,7 +80,7 @@ public class AdditionalDimUnaryOperation< T extends Type< T >, O extends Type< O
 		{
 			max[ max.length - 1 ] = i;
 			min[ min.length - 1 ] = i;
-			m_operations[ i ].compute( input, new ImgView< O >( SubsetViews.iterableSubsetView( output, new FinalInterval( min, max ), false ), output.factory() ) );
+			m_operations[ i ].compute( input, new ImgView< O >( SubsetViews.iterableSubsetView( output, new FinalInterval( min, max ) ), output.factory() ) );
 		}
 
 		return output;

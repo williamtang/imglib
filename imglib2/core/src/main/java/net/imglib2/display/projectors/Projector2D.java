@@ -47,7 +47,7 @@ public class Projector2D<A extends Type<A>, B extends Type<B>> extends
 		final FinalInterval sourceInterval = new FinalInterval(min, max);
 
 		IterableRandomAccessibleInterval<A> iterableSubsetView = SubsetViews
-				.iterableSubsetView(source, sourceInterval, false);
+				.iterableSubsetView(source, sourceInterval);
 
 		final Cursor<B> targetCursor = target.cursor();
 		final Cursor<A> sourceCursor = iterableSubsetView.cursor();

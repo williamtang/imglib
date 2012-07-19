@@ -39,7 +39,6 @@ package net.imglib2.io;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -71,6 +70,7 @@ import net.imglib2.img.ImgPlus;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.basictypeaccess.PlanarAccess;
+import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.img.cell.CellImg;
 import net.imglib2.img.cell.CellImgFactory;
 import net.imglib2.img.planar.PlanarImg;
@@ -84,6 +84,7 @@ import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.IntervalIndexer;
+import net.imglib2.util.Pair;
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -92,6 +93,7 @@ import ome.xml.model.primitives.PositiveFloat;
  * @author Curtis Rueden
  * @author Stephan Preibisch
  * @author Stephan Saalfeld
+ * @author Christian Dietz
  */
 public class ImgOpener implements StatusReporter
 {
@@ -560,9 +562,9 @@ public class ImgOpener implements StatusReporter
 	public < T extends RealType< T > > ImgPlus< T > openImg( final IFormatReader r, final ImgFactory< T > imgFactory, final T type, final boolean computeMinMax, int... includedPlanes ) throws ImgIOException
 	{
 
-		long[] resDims = dimLengths( r, includedPlanes );
-		final Img< T > img = imgFactory.create( resDims, type );
-		final ImgPlus< T > imgPlus = makeImgPlus( img, r );
+		Pair< long[], int[] > info = dimLengths( r, includedPlanes );
+		final Img< T > img = imgFactory.create( info.a, type );
+		final ImgPlus< T > imgPlus = makeImgPlus( img, r, info.b );
 
 		// read pixels
 		final long startTime = System.currentTimeMillis();
@@ -589,13 +591,16 @@ public class ImgOpener implements StatusReporter
 
 	}
 
-	/* Calculate dimensionality of resulting img */
-	private long[] dimLengths( IFormatReader r, int... includedPlanes )
+	/*
+	 * Calculate dimensionality of resulting img and returns the resulting
+	 * dimensionality and the invalid dimensions (which are size one)
+	 */
+	private Pair< long[], int[] > dimLengths( IFormatReader r, int... includedPlanes )
 	{
 
 		long[] srcDimLengths = getDimLengths( r );
 
-		if ( includedPlanes.length == 0 ) { return srcDimLengths; }
+		if ( includedPlanes.length == 0 ) { return new Pair< long[], int[] >( srcDimLengths, new int[ 0 ] ); }
 
 		@SuppressWarnings( "unchecked" )
 		HashSet< Long >[] dims = new HashSet[ srcDimLengths.length - 2 ];
@@ -614,13 +619,35 @@ public class ImgOpener implements StatusReporter
 			}
 		}
 
-		long[] resDims = srcDimLengths.clone();
+		ArrayList< Integer > invalidDimsList = new ArrayList< Integer >();
+		ArrayList< Long > resDimensionsList = new ArrayList< Long >();
 		for ( int d = 0; d < dims.length; d++ )
 		{
-			resDims[ d + 2 ] = ( long ) dims[ d ].size();
+			if ( dims[ d ].size() > 1 )
+				resDimensionsList.add( ( long ) dims[ d ].size() );
+			else
+				invalidDimsList.add( d );
 		}
 
-		return resDims;
+		// Invalid dims are written into array
+		int[] invalidDims = new int[ invalidDimsList.size() ];
+		for ( int i = 0; i < invalidDimsList.size(); i++ )
+		{
+			invalidDims[ i ] = invalidDimsList.get( i );
+		}
+
+		// add two (X,Y) to result
+		long[] resDims = new long[ resDimensionsList.size() + 2 ];
+
+		resDims[ 0 ] = srcDimLengths[ 0 ];
+		resDims[ 1 ] = srcDimLengths[ 1 ];
+
+		for ( int d = 0; d < resDimensionsList.size(); d++ )
+		{
+			resDims[ d + 2 ] = resDimensionsList.get( d );
+		}
+
+		return new Pair< long[], int[] >( resDims, invalidDims );
 	}
 
 	// -- StatusReporter methods --
@@ -901,12 +928,32 @@ public class ImgOpener implements StatusReporter
 	 * Wraps the given {@link Img} in an {@link ImgPlus} with metadata
 	 * corresponding to the specified initialized {@link IFormatReader}.
 	 */
-	private < T extends RealType< T >> ImgPlus< T > makeImgPlus( final Img< T > img, final IFormatReader r ) throws ImgIOException
+	private < T extends RealType< T >> ImgPlus< T > makeImgPlus( final Img< T > img, final IFormatReader r, int[] invalidDims ) throws ImgIOException
 	{
 		final String name = getName( r );
 
-		final AxisType[] dimTypes = getDimTypes( r );
-		final double[] cal = getCalibration( r );
+		AxisType[] dimTypes = getDimTypes( r );
+		double[] cal = getCalibration( r );
+
+		// Reduce axistypes and calibration for dims of size1
+		if ( invalidDims.length > 0 )
+		{
+			double[] finalCal = new double[ img.numDimensions() ];
+			AxisType[] finalDimTypes = new AxisType[ img.numDimensions() ];
+
+			int inner = 0;
+			for ( int d = 0; d < dimTypes.length; d++ )
+			{
+				if ( !contains( invalidDims, d ) )
+				{
+					finalDimTypes[ inner ] = dimTypes[ d ];
+					finalCal[ inner ] = cal[ d ];
+					inner++;
+				}
+			}
+			dimTypes = finalDimTypes;
+			cal = finalCal;
+		}
 
 		final IFormatReader base;
 		try
@@ -921,6 +968,7 @@ public class ImgOpener implements StatusReporter
 		{
 			throw new ImgIOException( exc );
 		}
+
 		final int rgbChannelCount = base.getRGBChannelCount();
 		final int validBits = r.getBitsPerPixel();
 
@@ -939,7 +987,28 @@ public class ImgOpener implements StatusReporter
 		}
 		imgPlus.setCompositeChannelCount( compositeChannelCount );
 
+//		// HACK if channel is not selected as dimension to be read
+//		for ( int d = 0; d < dimTypes.length; d++ )
+//		{
+//			if ( dimTypes[ d ].getLabel().equals( Axes.CHANNEL ) )
+//			{
+//				if ( contains( invalidDims, d ) )
+//					compositeChannelCount = 1;
+//				else
+//					compositeChannelCount = ( int ) imgPlus.dimension( d );
+//			}
+//		}
+
 		return imgPlus;
+	}
+
+	private boolean contains( int[] invalidDims, int d )
+	{
+		for ( int i = 0; i < invalidDims.length; i++ )
+			if ( invalidDims[ i ] == d )
+				return true;
+
+		return false;
 	}
 
 	/**
@@ -984,7 +1053,7 @@ public class ImgOpener implements StatusReporter
 		// #3 is useful for efficient memory use
 
 		// get container
-		final PlanarAccess< ? > planarAccess = ImgIOUtils.getPlanarAccess( imgPlus );
+		final PlanarAccess< ArrayDataAccess< ? > > planarAccess = ImgIOUtils.getPlanarAccess( imgPlus );
 		final RealType< ? > inputType = ImgIOUtils.makeType( r.getPixelType() ).type;
 		final T outputType = type;
 		final boolean compatibleTypes = outputType.getClass().isAssignableFrom( inputType.getClass() );
@@ -1002,6 +1071,7 @@ public class ImgOpener implements StatusReporter
 			int no = includedPlanes.length == 0 ? n : includedPlanes[ n ];
 
 			notifyListeners( new StatusEvent( n, planeCount, "Reading plane " + ( n + 1 ) + "/" + planeCount ) );
+
 			if ( plane == null )
 				plane = r.openBytes( no );
 			else
@@ -1025,22 +1095,13 @@ public class ImgOpener implements StatusReporter
 	}
 
 	/** Populates plane by reference using {@link PlanarAccess} interface. */
-	@SuppressWarnings( { "rawtypes", "unchecked" } )
-	private void populatePlane( final IFormatReader r, final int no, final byte[] plane, final PlanarAccess planarAccess )
+	private void populatePlane( final IFormatReader r, final int no, final byte[] plane, final PlanarAccess< ArrayDataAccess< ? >> planarAccess )
 	{
 		final int pixelType = r.getPixelType();
 		final int bpp = FormatTools.getBytesPerPixel( pixelType );
 		final boolean fp = FormatTools.isFloatingPoint( pixelType );
 		final boolean little = r.isLittleEndian();
-		Object planeArray = DataTools.makeDataArray( plane, bpp, fp, little );
-		if ( planeArray == plane )
-		{
-			// array was returned by reference; make a copy
-			final byte[] planeCopy = new byte[ plane.length ];
-			System.arraycopy( plane, 0, planeCopy, 0, plane.length );
-			planeArray = planeCopy;
-		}
-		planarAccess.setPlane( no, ImgIOUtils.makeArray( planeArray ) );
+		fillDataArray( planarAccess.getPlane( no ).getCurrentStorageArray(), plane, bpp, fp, little );
 	}
 
 	/**
@@ -1179,6 +1240,90 @@ public class ImgOpener implements StatusReporter
 			value = Double.NaN;
 		}
 		return value;
+	}
+
+	/**
+	 * Helper
+	 */
+	private static void fillDataArray( Object alloc, byte[] b, int bpp, boolean fp, boolean little )
+	{
+
+		if ( alloc instanceof byte[] )
+		{
+			System.arraycopy( b, 0, alloc, 0, b.length );
+			return;
+		}
+
+		if ( alloc instanceof int[] )
+		{
+			if ( bpp != 4 || fp )
+				throw new RuntimeException( "Incompatible types in makeDataArray" );
+
+			int[] i = ( int[] ) alloc;
+			for ( int j = 0; j < i.length; j++ )
+			{
+				i[ j ] = DataTools.bytesToInt( b, j * 4, 4, little );
+			}
+
+			return;
+		}
+
+		if ( alloc instanceof long[] )
+		{
+			if ( bpp != 8 || fp )
+				throw new RuntimeException( "Incompatible types in makeDataArray" );
+
+			long[] l = ( long[] ) alloc;
+			for ( int i = 0; i < l.length; i++ )
+			{
+				l[ i ] = DataTools.bytesToLong( b, i * 8, 8, little );
+			}
+			return;
+		}
+
+		if ( alloc instanceof double[] )
+		{
+			if ( bpp != 8 || !fp )
+				throw new RuntimeException( "Incompatible types in makeDataArray" );
+
+			double[] d = ( double[] ) alloc;
+			for ( int i = 0; i < d.length; i++ )
+			{
+				d[ i ] = Double.longBitsToDouble( DataTools.bytesToLong( b, i * 8, 8, little ) );
+			}
+
+			return;
+		}
+
+		if ( alloc instanceof float[] )
+		{
+			if ( bpp != 4 || !fp )
+				throw new RuntimeException( "Incompatible types in makeDataArray" );
+
+			float[] f = ( float[] ) alloc;
+			for ( int i = 0; i < f.length; i++ )
+			{
+				f[ i ] = Float.intBitsToFloat( DataTools.bytesToInt( b, i * 4, 4, little ) );
+			}
+
+			return;
+		}
+
+		if ( alloc instanceof short[] )
+		{
+			if ( bpp != 2 || fp )
+				throw new RuntimeException( "Incompatible types in makeDataArray" );
+
+			short[] s = ( short[] ) alloc;
+			for ( int i = 0; i < s.length; i++ )
+			{
+				s[ i ] = DataTools.bytesToShort( b, i * 2, 2, little );
+			}
+
+			return;
+		}
+
+		throw new RuntimeException( "No compatible type found in makeDataArray" );
 	}
 
 }
