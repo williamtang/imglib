@@ -603,6 +603,7 @@ public class ImgOpener implements StatusReporter
 		if ( includedPlanes.length == 0 ) { return new Pair< long[], int[] >( srcDimLengths, new int[ 0 ] ); }
 
 		@SuppressWarnings( "unchecked" )
+		// Dims has only dim.length -2 size (XY excluded)
 		HashSet< Long >[] dims = new HashSet[ srcDimLengths.length - 2 ];
 
 		for ( int d = 0; d < dims.length; d++ )
@@ -626,7 +627,8 @@ public class ImgOpener implements StatusReporter
 			if ( dims[ d ].size() > 1 )
 				resDimensionsList.add( ( long ) dims[ d ].size() );
 			else
-				invalidDimsList.add( d );
+				// Must be +2 as we start after XY
+				invalidDimsList.add( d + 2 );
 		}
 
 		// Invalid dims are written into array
@@ -987,17 +989,17 @@ public class ImgOpener implements StatusReporter
 		}
 		imgPlus.setCompositeChannelCount( compositeChannelCount );
 
-//		// HACK if channel is not selected as dimension to be read
-//		for ( int d = 0; d < dimTypes.length; d++ )
-//		{
-//			if ( dimTypes[ d ].getLabel().equals( Axes.CHANNEL ) )
-//			{
-//				if ( contains( invalidDims, d ) )
-//					compositeChannelCount = 1;
-//				else
-//					compositeChannelCount = ( int ) imgPlus.dimension( d );
-//			}
-//		}
+		// // HACK if channel is not selected as dimension to be read
+		// for ( int d = 0; d < dimTypes.length; d++ )
+		// {
+		// if ( dimTypes[ d ].getLabel().equals( Axes.CHANNEL ) )
+		// {
+		// if ( contains( invalidDims, d ) )
+		// compositeChannelCount = 1;
+		// else
+		// compositeChannelCount = ( int ) imgPlus.dimension( d );
+		// }
+		// }
 
 		return imgPlus;
 	}
