@@ -45,7 +45,7 @@ import net.imglib2.type.Type;
  * 
  * @author Christian Dietz
  */
-public class UnaryOperationAssignment< T extends Type< T >, V extends Type< V >, IN extends IterableInterval< T >, OUT extends IterableInterval< V >> implements UnaryOperation< IN, OUT >
+public class UnaryOperationAssignment< T extends Type< T >, V extends Type< V >> implements UnaryOperation< IterableInterval< T >, IterableInterval< V >>
 {
 
 	private final UnaryOperation< T, V > m_op;
@@ -56,7 +56,7 @@ public class UnaryOperationAssignment< T extends Type< T >, V extends Type< V >,
 	}
 
 	@Override
-	public OUT compute( IN input, OUT output )
+	public IterableInterval< V > compute( IterableInterval< T > input, IterableInterval< V > output )
 	{
 		if ( !IterationOrderUtil.equalInterval( input, output ) ) { throw new IllegalArgumentException( "Intervals in UnaryOperationAssignment are not compatible: different dimensions." ); }
 
@@ -75,8 +75,8 @@ public class UnaryOperationAssignment< T extends Type< T >, V extends Type< V >,
 	}
 
 	@Override
-	public UnaryOperation< IN, OUT > copy()
+	public UnaryOperation< IterableInterval< T >, IterableInterval< V >> copy()
 	{
-		return new UnaryOperationAssignment< T, V, IN, OUT >( m_op.copy() );
+		return new UnaryOperationAssignment< T, V >( m_op.copy() );
 	}
 }

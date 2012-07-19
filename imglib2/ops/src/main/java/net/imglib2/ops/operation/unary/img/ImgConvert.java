@@ -107,7 +107,7 @@ public class ImgConvert< I extends RealType< I >, O extends RealType< O >> imple
 			throw new IllegalArgumentException( "Normalization type unknown" );
 		}
 
-		UnaryOperationAssignment< I, O, Img< I >, Img< O > > map = new UnaryOperationAssignment< I, O, Img< I >, Img< O > >( convertOp );
+		UnaryOperationAssignment< I, O > map = new UnaryOperationAssignment< I, O >( convertOp );
 		map.compute( img, r );
 		return r;
 	}

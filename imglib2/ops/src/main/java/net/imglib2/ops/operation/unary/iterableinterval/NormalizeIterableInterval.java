@@ -100,7 +100,7 @@ public class NormalizeIterableInterval< T extends RealType< T >, I extends Itera
 		}
 
 		// actually compute everything
-		UnaryOperationAssignment< T, T, IterableInterval< T >, IterableInterval< T >> imgNormalize = new UnaryOperationAssignment< T, T, IterableInterval< T >, IterableInterval< T >>( m_normalize );
+		UnaryOperationAssignment< T, T > imgNormalize = new UnaryOperationAssignment< T, T >( m_normalize );
 		imgNormalize.compute( in, res );
 
 		return res;
