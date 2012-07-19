@@ -6,7 +6,7 @@ import net.imglib2.ops.UnaryOutputOperation;
 import net.imglib2.ops.image.UnaryOperationAssignment;
 import net.imglib2.ops.operation.binary.real.Convert;
 import net.imglib2.ops.operation.binary.real.Convert.TypeConversionTypes;
-import net.imglib2.ops.operation.unary.iterableinterval.ImgNormalize;
+import net.imglib2.ops.operation.unary.iterableinterval.NormalizeIterableInterval;
 import net.imglib2.type.numeric.RealType;
 
 /**
@@ -78,7 +78,7 @@ public class ImgConvert< I extends RealType< I >, O extends RealType< O >> imple
 			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.DIRECTCLIP );
 			break;
 		case NORMALIZEDIRECT:
-			normPar = new ImgNormalize< I, Img< I >>().getNormalizationProperties( img, 0 );
+			normPar = new NormalizeIterableInterval< I, Img< I >>().getNormalizationProperties( img, 0 );
 
 			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.SCALE );
 
@@ -87,14 +87,14 @@ public class ImgConvert< I extends RealType< I >, O extends RealType< O >> imple
 			convertOp.setOutMin( 0 );
 			break;
 		case NORMALIZESCALE:
-			normPar = new ImgNormalize< I, Img< I >>().getNormalizationProperties( img, 0 );
+			normPar = new NormalizeIterableInterval< I, Img< I >>().getNormalizationProperties( img, 0 );
 
 			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.SCALE );
 			convertOp.setFactor( convertOp.getFactor() / normPar[ 0 ] );
 			convertOp.setInMin( normPar[ 1 ] );
 			break;
 		case NORMALIZEDIRECTCLIP:
-			normPar = new ImgNormalize< I, Img< I >>().getNormalizationProperties( img, 0 );
+			normPar = new NormalizeIterableInterval< I, Img< I >>().getNormalizationProperties( img, 0 );
 			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.SCALECLIP );
 			convertOp.setFactor( convertOp.getFactor() / normPar[ 0 ] );
 			convertOp.setInMin( normPar[ 1 ] );
@@ -107,7 +107,7 @@ public class ImgConvert< I extends RealType< I >, O extends RealType< O >> imple
 			throw new IllegalArgumentException( "Normalization type unknown" );
 		}
 
-		UnaryOperationAssignment< I, O > map = new UnaryOperationAssignment< I, O >( convertOp );
+		UnaryOperationAssignment< I, O, Img< I >, Img< O > > map = new UnaryOperationAssignment< I, O, Img< I >, Img< O > >( convertOp );
 		map.compute( img, r );
 		return r;
 	}
