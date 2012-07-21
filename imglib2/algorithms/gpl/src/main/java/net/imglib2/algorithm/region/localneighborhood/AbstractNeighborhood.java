@@ -30,8 +30,9 @@ public abstract class AbstractNeighborhood<T> implements Positionable,
 	 * dimension <code>d</code> will be <code>2 x span[d] + 1</code>.
 	 */
 	protected final long[] span;
-	protected ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extendedSource;
-	protected RandomAccessibleInterval<T> source;
+	protected final ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extendedSource;
+	protected final RandomAccessibleInterval<T> source;
+	private OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds;
 
 	/*
 	 * CONSTRUCTOR
@@ -40,6 +41,7 @@ public abstract class AbstractNeighborhood<T> implements Positionable,
 	public AbstractNeighborhood(final RandomAccessibleInterval<T> source,
 			final OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds) {
 		this.source = source;
+		this.outOfBounds = outOfBounds;
 		this.extendedSource = Views.extend(source, outOfBounds);
 		this.center = new long[source.numDimensions()];
 		this.span = new long[source.numDimensions()];
@@ -266,9 +268,4 @@ public abstract class AbstractNeighborhood<T> implements Positionable,
 		return (2 * span[d] + 1);
 	}
 
-	public void updateSource(RandomAccessibleInterval<T> newSource,
-			final OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds) {
-		this.source = newSource;
-		this.extendedSource = Views.extend(newSource, outOfBounds);
-	}
 }
