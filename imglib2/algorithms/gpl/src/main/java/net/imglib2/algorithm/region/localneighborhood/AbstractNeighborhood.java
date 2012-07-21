@@ -12,51 +12,56 @@ import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.view.Views;
 
 /**
- * A {@link Positionable} {@link IterableInterval} that serves as a local neighborhood, 
- * e.g. in filtering operation.
+ * A {@link Positionable} {@link IterableInterval} that serves as a local
+ * neighborhood, e.g. in filtering operation.
  * <p>
- * This particular class implements a movable nD domain, defined by a <code>span long[]</code> array.
- * The <code>span</code> array is such that the bounding box of the neighborhood in dimension 
- * <code>d</code> will be <code>2 x span[d] + 1</code>.
+ * This particular class implements a movable nD domain, defined by a
+ * <code>span long[]</code> array. The <code>span</code> array is such that the
+ * bounding box of the neighborhood in dimension <code>d</code> will be
+ * <code>2 x span[d] + 1</code>.
  */
-public abstract class AbstractNeighborhood<T>  implements Positionable, IterableInterval<T>  {
+public abstract class AbstractNeighborhood<T> implements Positionable,
+		IterableInterval<T> {
 
 	/** The pixel coordinates of the center of this regions. */
 	protected final long[] center;
-	/** The span of this neighborhood, such that the size of the bounding box in dimension 
-	 * <code>d</code> will be <code>2 x span[d] + 1</code>. */
+	/**
+	 * The span of this neighborhood, such that the size of the bounding box in
+	 * dimension <code>d</code> will be <code>2 x span[d] + 1</code>.
+	 */
 	protected final long[] span;
-	protected final ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extendedSource;
-	protected final RandomAccessibleInterval<T> source;
-
+	protected ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extendedSource;
+	protected RandomAccessibleInterval<T> source;
 
 	/*
 	 * CONSTRUCTOR
 	 */
-	
-	public AbstractNeighborhood(final RandomAccessibleInterval<T> source, final OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds) {
+
+	public AbstractNeighborhood(final RandomAccessibleInterval<T> source,
+			final OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds) {
 		this.source = source;
 		this.extendedSource = Views.extend(source, outOfBounds);
 		this.center = new long[source.numDimensions()];
 		this.span = new long[source.numDimensions()];
 	}
-	
-	
-	
+
 	/*
 	 * METHODS
 	 */
-	
+
 	/**
 	 * Set the span of this neighborhood.
 	 * <p>
-	 * The neighborhood span is such that the size of the neighborhood in dimension 
-	 * <code>d</code> will be <code>2 x span[d] + 1</code>.
-	 * @param span  this array content will be copied to the neighborhood internal field.
+	 * The neighborhood span is such that the size of the neighborhood in
+	 * dimension <code>d</code> will be <code>2 x span[d] + 1</code>.
+	 * 
+	 * @param span
+	 *            this array content will be copied to the neighborhood internal
+	 *            field.
 	 */
 	public void setSpan(long[] span) {
 		for (int d = 0; d < span.length; d++) {
-			this.span[ d ] = span[ d ];
+			this.span[d] = span[d];
 		}
 	}
 
@@ -67,74 +72,74 @@ public abstract class AbstractNeighborhood<T>  implements Positionable, Iterable
 
 	@Override
 	public void fwd(int d) {
-		center[ d ]++;
+		center[d]++;
 	}
 
 	@Override
 	public void bck(int d) {
-		center[ d ]--;
+		center[d]--;
 	}
 
 	@Override
 	public void move(int distance, int d) {
-		center[ d ] = center[ d ] + distance;
+		center[d] = center[d] + distance;
 	}
 
 	@Override
 	public void move(long distance, int d) {
-		center[ d ] = center[ d ] + distance;
+		center[d] = center[d] + distance;
 	}
 
 	@Override
 	public void move(Localizable localizable) {
 		for (int d = 0; d < center.length; d++) {
-			center[ d ] += localizable.getLongPosition(d);
+			center[d] += localizable.getLongPosition(d);
 		}
 	}
 
 	@Override
 	public void move(int[] distance) {
 		for (int d = 0; d < center.length; d++) {
-			center[ d ] += distance[ d ];
+			center[d] += distance[d];
 		}
 	}
 
 	@Override
 	public void move(long[] distance) {
 		for (int d = 0; d < center.length; d++) {
-			center[ d ] += distance[ d ];
+			center[d] += distance[d];
 		}
 	}
 
 	@Override
 	public void setPosition(Localizable localizable) {
 		for (int d = 0; d < center.length; d++) {
-			center[ d ] = localizable.getLongPosition(d);
+			center[d] = localizable.getLongPosition(d);
 		}
 	}
 
 	@Override
 	public void setPosition(int[] position) {
 		for (int d = 0; d < center.length; d++) {
-			center[ d ] = position[ d ];
+			center[d] = position[d];
 		}
 	}
 
 	@Override
 	public void setPosition(long[] position) {
 		for (int d = 0; d < center.length; d++) {
-			center[ d ] = position[ d ];
+			center[d] = position[d];
 		}
 	}
 
 	@Override
 	public void setPosition(int position, int d) {
-		center[ d ] = position;
+		center[d] = position;
 	}
 
 	@Override
 	public void setPosition(long position, int d) {
-		center[ d ] = position;
+		center[d] = position;
 	}
 
 	/**
@@ -144,7 +149,7 @@ public abstract class AbstractNeighborhood<T>  implements Positionable, Iterable
 	public T firstElement() {
 		RandomAccess<T> ra = source.randomAccess();
 		for (int d = 0; d < span.length; d++) {
-			ra.setPosition(center[d] - span[ d ], d);
+			ra.setPosition(center[d] - span[d], d);
 		}
 		return ra.get();
 	}
@@ -174,40 +179,40 @@ public abstract class AbstractNeighborhood<T>  implements Positionable, Iterable
 
 	@Override
 	public double realMin(int d) {
-		return center[ d ] - span[ d ];
+		return center[d] - span[d];
 	}
 
 	@Override
 	public void realMin(double[] min) {
 		for (int d = 0; d < center.length; d++) {
-			min[ d ] = center[ d ] - span [ d ];
+			min[d] = center[d] - span[d];
 		}
-		
+
 	}
 
 	@Override
 	public void realMin(RealPositionable min) {
 		for (int d = 0; d < center.length; d++) {
-			min.setPosition(center[ d ] - span [ d ], d);
+			min.setPosition(center[d] - span[d], d);
 		}
 	}
 
 	@Override
 	public double realMax(int d) {
-		return center[ d ] + span[ d ];
+		return center[d] + span[d];
 	}
 
 	@Override
 	public void realMax(double[] max) {
 		for (int d = 0; d < center.length; d++) {
-			max[ d ] = center[ d ] + span [ d ];
+			max[d] = center[d] + span[d];
 		}
 	}
 
 	@Override
 	public void realMax(RealPositionable max) {
 		for (int d = 0; d < center.length; d++) {
-			max.setPosition(center[ d ] + span [ d ], d);
+			max.setPosition(center[d] + span[d], d);
 		}
 	}
 
@@ -219,40 +224,40 @@ public abstract class AbstractNeighborhood<T>  implements Positionable, Iterable
 	@Override
 	public void min(long[] min) {
 		for (int d = 0; d < center.length; d++) {
-			min[ d ] = center[ d ] - span [ d ];
+			min[d] = center[d] - span[d];
 		}
 	}
 
 	@Override
 	public void min(Positionable min) {
 		for (int d = 0; d < center.length; d++) {
-			min.setPosition(center[ d ] - span [ d ], d);
+			min.setPosition(center[d] - span[d], d);
 		}
 	}
 
 	@Override
 	public long max(int d) {
-		return center[ d ] + span[ d ];
+		return center[d] + span[d];
 	}
 
 	@Override
 	public void max(long[] max) {
 		for (int d = 0; d < center.length; d++) {
-			max[ d ] = center[ d ] + span [ d ];
+			max[d] = center[d] + span[d];
 		}
 	}
 
 	@Override
 	public void max(Positionable max) {
 		for (int d = 0; d < center.length; d++) {
-			max.setPosition(center[ d ] + span [ d ], d);
+			max.setPosition(center[d] + span[d], d);
 		}
 	}
 
 	@Override
 	public void dimensions(long[] dimensions) {
 		for (int d = 0; d < span.length; d++) {
-			dimensions[d] = 2 * span[d] + 1; 
+			dimensions[d] = 2 * span[d] + 1;
 		}
 	}
 
@@ -261,4 +266,9 @@ public abstract class AbstractNeighborhood<T>  implements Positionable, Iterable
 		return (2 * span[d] + 1);
 	}
 
+	public void updateSource(RandomAccessibleInterval<T> newSource,
+			final OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds) {
+		this.source = newSource;
+		this.extendedSource = Views.extend(newSource, outOfBounds);
+	}
 }

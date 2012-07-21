@@ -969,7 +969,6 @@ public class ImgOpener implements StatusReporter {
 			final boolean computeMinMax, int... includedPlanes)
 			throws FormatException, IOException {
 
-		assert (includedPlanes.length == imgPlus.numDimensions() || includedPlanes.length == 0);
 		// TODO - create better container types; either:
 		// 1) an array container type using one byte array per plane
 		// 2) as #1, but with an IFormatReader reference reading planes on
