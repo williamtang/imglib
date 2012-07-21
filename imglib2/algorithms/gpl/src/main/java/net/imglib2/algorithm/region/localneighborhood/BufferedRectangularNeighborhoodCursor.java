@@ -88,6 +88,12 @@ public class BufferedRectangularNeighborhoodCursor<T extends Type<T>> extends
 	}
 
 	@Override
+	public T next() {
+		fwd();
+		return buffer[bufferPtr];
+	}
+
+	@Override
 	public void fwd() {
 
 		if (++bufferPtr >= buffer.length)

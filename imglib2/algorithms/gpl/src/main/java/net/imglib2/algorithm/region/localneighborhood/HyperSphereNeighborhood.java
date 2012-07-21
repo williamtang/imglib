@@ -25,7 +25,7 @@ public class HyperSphereNeighborhood<T> extends AbstractNeighborhood<T> {
 			Localizable center) {
 		super(source, outOfBounds);
 		this.outOfBounds = outOfBounds;
-		this.sphere = new HyperSphere<T>(source, center, radius);
+		this.sphere = new HyperSphere<T>(extendedSource, center, radius);
 	}
 
 	/*
@@ -40,7 +40,8 @@ public class HyperSphereNeighborhood<T> extends AbstractNeighborhood<T> {
 	@Override
 	public void setSpan(long[] span) {
 
-		// Since now this is an ugly hack
+		// Since now this is an ugly hack, actually setSpan shouldn't have the
+		// setSpan method
 		sphere.updateRadius(span[0]);
 	}
 
