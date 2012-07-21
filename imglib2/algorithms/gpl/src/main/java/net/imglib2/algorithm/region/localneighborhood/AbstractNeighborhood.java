@@ -32,7 +32,6 @@ public abstract class AbstractNeighborhood<T> implements Positionable,
 	protected final long[] span;
 	protected final ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extendedSource;
 	protected final RandomAccessibleInterval<T> source;
-	private OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds;
 
 	/*
 	 * CONSTRUCTOR
@@ -41,7 +40,6 @@ public abstract class AbstractNeighborhood<T> implements Positionable,
 	public AbstractNeighborhood(final RandomAccessibleInterval<T> source,
 			final OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds) {
 		this.source = source;
-		this.outOfBounds = outOfBounds;
 		this.extendedSource = Views.extend(source, outOfBounds);
 		this.center = new long[source.numDimensions()];
 		this.span = new long[source.numDimensions()];
