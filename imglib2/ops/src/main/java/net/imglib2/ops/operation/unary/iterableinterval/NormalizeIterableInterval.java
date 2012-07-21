@@ -17,25 +17,24 @@ import net.imglib2.util.Pair;
  *            The type of the {@link Img} which will be normalized. Must be
  *            {@link RealType}
  */
-public class NormalizeIterableInterval< T extends RealType< T >, I extends IterableInterval< T >> implements UnaryOperation< I, I >
-{
+public class NormalizeIterableInterval<T extends RealType<T>, I extends IterableInterval<T>>
+		implements UnaryOperation<I, I> {
 
 	private double m_saturation;
 
 	private boolean m_manuallyMinMax;
 
-	private Pair< T, T > m_minMax;
+	private Pair<T, T> m_minMax;
 
-	private MinMax< T > m_minMaxOp;
+	private MinMax<T> m_minMaxOp;
 
-	private Normalize< T > m_normalize;
+	private Normalize<T> m_normalize;
 
 	/**
 	 * Normalizes an image.
 	 */
-	public NormalizeIterableInterval()
-	{
-		this( 0 );
+	public NormalizeIterableInterval() {
+		this(0);
 	}
 
 	/**
@@ -43,8 +42,7 @@ public class NormalizeIterableInterval< T extends RealType< T >, I extends Itera
 	 *            the percentage of pixels in the lower and upper domain to be
 	 *            ignored in the normalization
 	 */
-	public NormalizeIterableInterval( double saturation )
-	{
+	public NormalizeIterableInterval(double saturation) {
 		m_saturation = saturation;
 		m_manuallyMinMax = false;
 	}
@@ -53,10 +51,9 @@ public class NormalizeIterableInterval< T extends RealType< T >, I extends Itera
 	 * @param min
 	 * @param max
 	 */
-	public NormalizeIterableInterval( T min, T max )
-	{
+	public NormalizeIterableInterval(T min, T max) {
 
-		m_minMax = new Pair< T, T >( min, max );
+		m_minMax = new Pair<T, T>(min, max);
 		m_manuallyMinMax = true;
 	}
 
@@ -69,9 +66,8 @@ public class NormalizeIterableInterval< T extends RealType< T >, I extends Itera
 	 *            if T is not {@link IntegerType}, 256 bins are chosen
 	 *            automatically
 	 */
-	public NormalizeIterableInterval( ImgFactory< T > fac, double saturation )
-	{
-		this( saturation );
+	public NormalizeIterableInterval(ImgFactory<T> fac, double saturation) {
+		this(saturation);
 	}
 
 	/**
@@ -80,28 +76,25 @@ public class NormalizeIterableInterval< T extends RealType< T >, I extends Itera
 	 * @return
 	 */
 	@Override
-	public I compute( I in, I res )
-	{
-		Pair< T, T > minmax;
-		if ( !m_manuallyMinMax )
-		{
-			if ( m_minMaxOp == null )
-			{
-				m_minMaxOp = new MinMax< T >( m_saturation, in.firstElement().createVariable() );
+	public I compute(I in, I res) {
+		Pair<T, T> minmax;
+		if (!m_manuallyMinMax) {
+			if (m_minMaxOp == null) {
+				m_minMaxOp = new MinMax<T>(m_saturation, in.firstElement()
+						.createVariable());
 			}
-			minmax = m_minMaxOp.compute( in );
-			m_normalize = new Normalize< T >( minmax.a, minmax.b );
-		}
-		else
-		{
+			minmax = m_minMaxOp.compute(in);
+			m_normalize = new Normalize<T>(minmax.a, minmax.b);
+		} else {
 			minmax = m_minMax;
-			if ( m_normalize == null )
-				m_normalize = new Normalize< T >( minmax.a, minmax.b );
+			if (m_normalize == null)
+				m_normalize = new Normalize<T>(minmax.a, minmax.b);
 		}
 
 		// actually compute everything
-		UnaryOperationAssignment< T, T, IterableInterval< T >, IterableInterval< T >> imgNormalize = new UnaryOperationAssignment< T, T, IterableInterval< T >, IterableInterval< T >>( m_normalize );
-		imgNormalize.compute( in, res );
+		UnaryOperationAssignment<T, T> imgNormalize = new UnaryOperationAssignment<T, T>(
+				m_normalize);
+		imgNormalize.compute(in, res);
 
 		return res;
 	}
@@ -118,20 +111,21 @@ public class NormalizeIterableInterval< T extends RealType< T >, I extends Itera
 	 * @return with the normalization factor at position 0, minimum of the image
 	 *         at position 1
 	 */
-	public double[] getNormalizationProperties( I interval, double saturation )
-	{
+	public double[] getNormalizationProperties(I interval, double saturation) {
 
 		T type = interval.firstElement().createVariable();
-		MinMax< T > minMax = new MinMax< T >( saturation, type );
+		MinMax<T> minMax = new MinMax<T>(saturation, type);
 
-		Pair< T, T > pair = minMax.compute( interval );
-		return new double[] { 1 / ( pair.b.getRealDouble() - pair.a.getRealDouble() ) * ( type.getMaxValue() - type.getMinValue() ), pair.a.getRealDouble() };
+		Pair<T, T> pair = minMax.compute(interval);
+		return new double[] {
+				1 / (pair.b.getRealDouble() - pair.a.getRealDouble())
+						* (type.getMaxValue() - type.getMinValue()),
+				pair.a.getRealDouble() };
 	}
 
 	@Override
-	public UnaryOperation< I, I > copy()
-	{
-		return new NormalizeIterableInterval< T, I >( m_saturation );
+	public UnaryOperation<I, I> copy() {
+		return new NormalizeIterableInterval<T, I>(m_saturation);
 	}
 
 }
