@@ -20,8 +20,8 @@ import net.imglib2.view.Views;
  * bounding box of the neighborhood in dimension <code>d</code> will be
  * <code>2 x span[d] + 1</code>.
  */
-public abstract class AbstractNeighborhood<T> implements Positionable,
-		IterableInterval<T> {
+public abstract class AbstractNeighborhood<T, IN extends RandomAccessibleInterval<T>>
+		implements Positionable, IterableInterval<T> {
 
 	/** The pixel coordinates of the center of this regions. */
 	protected final long[] center;
@@ -30,16 +30,18 @@ public abstract class AbstractNeighborhood<T> implements Positionable,
 	 * dimension <code>d</code> will be <code>2 x span[d] + 1</code>.
 	 */
 	protected final long[] span;
-	protected final ExtendedRandomAccessibleInterval<T, RandomAccessibleInterval<T>> extendedSource;
-	protected final RandomAccessibleInterval<T> source;
+	protected final ExtendedRandomAccessibleInterval<T, IN> extendedSource;
+	protected final IN source;
+	protected OutOfBoundsFactory<T, IN> outOfBounds;
 
 	/*
 	 * CONSTRUCTOR
 	 */
 
-	public AbstractNeighborhood(final RandomAccessibleInterval<T> source,
-			final OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds) {
+	public AbstractNeighborhood(final IN source,
+			final OutOfBoundsFactory<T, IN> outOfBounds) {
 		this.source = source;
+		this.outOfBounds = outOfBounds;
 		this.extendedSource = Views.extend(source, outOfBounds);
 		this.center = new long[source.numDimensions()];
 		this.span = new long[source.numDimensions()];
@@ -165,7 +167,7 @@ public abstract class AbstractNeighborhood<T> implements Positionable,
 		if (!(f instanceof RectangleNeighborhood)) {
 			return false;
 		}
-		RectangleNeighborhood<?> otherRectangle = (RectangleNeighborhood<?>) f;
+		RectangleNeighborhood<?, ?> otherRectangle = (RectangleNeighborhood<?, ?>) f;
 		if (otherRectangle.numDimensions() != numDimensions()) {
 			return false;
 		}
@@ -265,5 +267,14 @@ public abstract class AbstractNeighborhood<T> implements Positionable,
 	public long dimension(int d) {
 		return (2 * span[d] + 1);
 	}
+
+	/**
+	 * Create a copy
+	 * 
+	 * @param source
+	 * @param outOfBounds
+	 * @return
+	 */
+	public abstract AbstractNeighborhood<T, IN> copy(final IN source);
 
 }

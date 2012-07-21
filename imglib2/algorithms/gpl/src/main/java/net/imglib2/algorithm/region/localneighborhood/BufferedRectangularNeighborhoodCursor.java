@@ -3,6 +3,7 @@ package net.imglib2.algorithm.region.localneighborhood;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.Type;
 
 /**
@@ -43,7 +44,7 @@ public class BufferedRectangularNeighborhoodCursor<T extends Type<T>> extends
 
 	@SuppressWarnings("unchecked")
 	public BufferedRectangularNeighborhoodCursor(
-			BufferedRectangularNeighborhood<T> neighborhood) {
+			BufferedRectangularNeighborhood<T, ? extends RandomAccessibleInterval<T>> neighborhood) {
 		super(neighborhood);
 
 		n = neighborhood.numDimensions();
@@ -79,7 +80,8 @@ public class BufferedRectangularNeighborhoodCursor<T extends Type<T>> extends
 
 	protected BufferedRectangularNeighborhoodCursor(
 			final BufferedRectangularNeighborhoodCursor<T> c) {
-		this((BufferedRectangularNeighborhood<T>) c.neighborhood);
+		this(
+				(BufferedRectangularNeighborhood<T, ? extends RandomAccessibleInterval<T>>) c.neighborhood);
 	}
 
 	@Override

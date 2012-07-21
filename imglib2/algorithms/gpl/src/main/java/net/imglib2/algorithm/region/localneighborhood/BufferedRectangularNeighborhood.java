@@ -39,7 +39,6 @@ package net.imglib2.algorithm.region.localneighborhood;
 import java.util.Iterator;
 
 import net.imglib2.Cursor;
-import net.imglib2.Localizable;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
@@ -48,20 +47,18 @@ import net.imglib2.type.Type;
  * 
  * 
  */
-public class BufferedRectangularNeighborhood<T extends Type<T>> extends
-		AbstractNeighborhood<T> {
+public class BufferedRectangularNeighborhood<T extends Type<T>, IN extends RandomAccessibleInterval<T>>
+		extends AbstractNeighborhood<T, IN> {
 
 	private int size;
 
-	public BufferedRectangularNeighborhood(RandomAccessibleInterval<T> source,
-			OutOfBoundsFactory<T, RandomAccessibleInterval<T>> outOfBounds,
-			Localizable center, long[] span) {
+	public BufferedRectangularNeighborhood(IN source,
+			OutOfBoundsFactory<T, IN> outOfBounds, long[] spans) {
 		super(source, outOfBounds);
-		setSpan(span);
-		setPosition(center);
+		setSpan(spans);
 
 		size = 1;
-		for (long s : span)
+		for (long s : spans)
 			size *= s;
 	}
 
@@ -85,4 +82,9 @@ public class BufferedRectangularNeighborhood<T extends Type<T>> extends
 		return cursor();
 	}
 
+	@Override
+	public AbstractNeighborhood<T, IN> copy(IN source) {
+		return new BufferedRectangularNeighborhood<T, IN>(source, outOfBounds,
+				span);
+	}
 }
