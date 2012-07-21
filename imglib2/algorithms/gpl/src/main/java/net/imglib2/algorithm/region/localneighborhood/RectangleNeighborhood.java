@@ -34,9 +34,22 @@ public class RectangleNeighborhood<T, IN extends RandomAccessibleInterval<T>>
 	 * The rectangle is initiated centered on the first pixel of the source, and
 	 * span a single pixel.
 	 */
+	public RectangleNeighborhood(final int numDims,
+			final OutOfBoundsFactory<T, IN> outOfBounds) {
+		super(numDims, outOfBounds);
+	}
+
+	/**
+	 * Instantiate a new rectangular neighborhood, on the given image, with the
+	 * given factory to return out of bounds values.
+	 * <p>
+	 * The rectangle is initiated centered on the first pixel of the source, and
+	 * span a single pixel.
+	 */
 	public RectangleNeighborhood(final IN source,
 			final OutOfBoundsFactory<T, IN> outOfBounds) {
-		super(source, outOfBounds);
+		super(source.numDimensions(), outOfBounds);
+		updateSource(source);
 	}
 
 	/**
@@ -46,7 +59,8 @@ public class RectangleNeighborhood<T, IN extends RandomAccessibleInterval<T>>
 	 * @param source
 	 */
 	public RectangleNeighborhood(IN source) {
-		this(source, new OutOfBoundsPeriodicFactory<T, IN>());
+		this(source.numDimensions(), new OutOfBoundsPeriodicFactory<T, IN>());
+		updateSource(source);
 	}
 
 	/*
@@ -89,8 +103,11 @@ public class RectangleNeighborhood<T, IN extends RandomAccessibleInterval<T>>
 	}
 
 	@Override
-	public AbstractNeighborhood<T, IN> copy(IN source) {
-		return new RectangleNeighborhood<T, IN>(source, this.outOfBounds);
+	public AbstractNeighborhood<T, IN> copy() {
+		if (source != null)
+			return new RectangleNeighborhood<T, IN>(source, outOfBounds);
+		else
+			return new RectangleNeighborhood<T, IN>(n, outOfBounds);
 	}
 
 }

@@ -30,13 +30,27 @@ public class EllipsoidNeighborhood<T, IN extends RandomAccessibleInterval<T>>
 	 * CONSTRUCTORS
 	 */
 
-	public EllipsoidNeighborhood(IN source,
+	public EllipsoidNeighborhood(int numDims,
 			OutOfBoundsFactory<T, IN> outOfBounds) {
-		super(source, outOfBounds);
+		super(numDims, outOfBounds);
 		if (numDimensions() < 2) {
 			throw new IllegalArgumentException(
 					"[EllipsoidNeighborhood] source must be at least of dimension 3.");
 		}
+	}
+
+	/*
+	 * CONSTRUCTORS
+	 */
+	public EllipsoidNeighborhood(IN source,
+			OutOfBoundsFactory<T, IN> outOfBounds) {
+		super(source.numDimensions(), outOfBounds);
+		if (numDimensions() < 2) {
+			throw new IllegalArgumentException(
+					"[EllipsoidNeighborhood] source must be at least of dimension 3.");
+		}
+
+		updateSource(source);
 	}
 
 	public EllipsoidNeighborhood(IN source) {
@@ -119,8 +133,11 @@ public class EllipsoidNeighborhood<T, IN extends RandomAccessibleInterval<T>>
 	}
 
 	@Override
-	public AbstractNeighborhood<T, IN> copy(IN source) {
-		return new EllipsoidNeighborhood<T, IN>(source, outOfBounds);
+	public AbstractNeighborhood<T, IN> copy() {
+		if (source != null)
+			return new EllipsoidNeighborhood<T, IN>(source, outOfBounds);
+		else
+			return new EllipsoidNeighborhood<T, IN>(n, outOfBounds);
 	}
 
 }

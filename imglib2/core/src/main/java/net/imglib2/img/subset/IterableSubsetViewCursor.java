@@ -6,98 +6,93 @@ import net.imglib2.type.Type;
 
 public class IterableSubsetViewCursor<T extends Type<T>> implements Cursor<T> {
 
-	private Cursor<T> m_cursor;
+	private Cursor<T> cursor;
 
 	private int m_typeIdx = 0;
 
-	private int m_planePos;
+	private int planePos;
 
-	private int m_planeSize;
+	private int planeSize;
 
-	private int m_numPlaneDims;
-
-	private T m_type;
+	private int numPlaneDims;
 
 	public IterableSubsetViewCursor(Cursor<T> cursor, int planeSize,
 			int planePos, int numPlaneDims) {
-		m_cursor = cursor;
-		m_planeSize = planeSize;
-		m_planePos = planePos == 0 ? planePos : planePos - 1;
-
-		m_numPlaneDims = numPlaneDims;
-
-		m_type = cursor.get();
+		this.cursor = cursor;
+		this.planeSize = planeSize;
+		this.planePos = planePos;
+		this.numPlaneDims = numPlaneDims;
 
 		reset();
 	}
 
 	@Override
 	public void localize(float[] position) {
-		for (int d = 0; d < m_numPlaneDims; d++)
-			position[d] = m_cursor.getFloatPosition(d);
+		for (int d = 0; d < numPlaneDims; d++)
+			position[d] = cursor.getFloatPosition(d);
 	}
 
 	@Override
 	public void localize(double[] position) {
-		for (int d = 0; d < m_numPlaneDims; d++)
-			position[d] = m_cursor.getDoublePosition(d);
+		for (int d = 0; d < numPlaneDims; d++)
+			position[d] = cursor.getDoublePosition(d);
 	}
 
 	@Override
 	public float getFloatPosition(int d) {
-		return m_cursor.getFloatPosition(d);
+		return cursor.getFloatPosition(d);
 	}
 
 	@Override
 	public double getDoublePosition(int d) {
-		return m_cursor.getDoublePosition(d);
+		return cursor.getDoublePosition(d);
 	}
 
 	@Override
 	public int numDimensions() {
-		return m_numPlaneDims;
+		return numPlaneDims;
 	}
 
 	@Override
 	public T get() {
-		return m_type;
+		return cursor.get();
 	}
 
 	@Override
 	public Sampler<T> copy() {
-		return m_cursor.copy();
+		return cursor.copy();
 	}
 
 	@Override
 	public void jumpFwd(long steps) {
-		m_cursor.jumpFwd((int) steps);
+		cursor.jumpFwd((int) steps);
 		m_typeIdx += steps;
 	}
 
 	@Override
 	public void fwd() {
-		m_cursor.fwd();
+		cursor.fwd();
 		m_typeIdx++;
 	}
 
 	@Override
 	public void reset() {
-		m_cursor.reset();
-		m_cursor.jumpFwd(m_planePos);
+		cursor.reset();
+		cursor.jumpFwd(planePos);
 		m_typeIdx = -1;
 	}
 
 	@Override
 	public boolean hasNext() {
-		return m_typeIdx < m_planeSize - 1;
+		return m_typeIdx < planeSize - 1;
 	}
 
 	@Override
 	public T next() {
-		m_cursor.fwd();
+		cursor.fwd();
 		m_typeIdx++;
 
-		return m_type;
+		return cursor.get();
 	}
 
 	@Override
@@ -108,32 +103,32 @@ public class IterableSubsetViewCursor<T extends Type<T>> implements Cursor<T> {
 
 	@Override
 	public void localize(int[] position) {
-		for (int d = 0; d < m_numPlaneDims; d++) {
-			position[d] = m_cursor.getIntPosition(d);
+		for (int d = 0; d < numPlaneDims; d++) {
+			position[d] = cursor.getIntPosition(d);
 		}
 	}
 
 	@Override
 	public void localize(long[] position) {
-		for (int d = 0; d < m_numPlaneDims; d++) {
-			position[d] = m_cursor.getLongPosition(d);
+		for (int d = 0; d < numPlaneDims; d++) {
+			position[d] = cursor.getLongPosition(d);
 		}
 
 	}
 
 	@Override
 	public int getIntPosition(int d) {
-		return m_cursor.getIntPosition(d);
+		return cursor.getIntPosition(d);
 	}
 
 	@Override
 	public long getLongPosition(int d) {
-		return m_cursor.getLongPosition(d);
+		return cursor.getLongPosition(d);
 	}
 
 	@Override
 	public Cursor<T> copyCursor() {
-		return new IterableSubsetViewCursor<T>(m_cursor.copyCursor(),
-				m_planeSize, m_planePos, m_numPlaneDims);
+		return new IterableSubsetViewCursor<T>(cursor.copyCursor(), planeSize,
+				planePos, numPlaneDims);
 	}
 }

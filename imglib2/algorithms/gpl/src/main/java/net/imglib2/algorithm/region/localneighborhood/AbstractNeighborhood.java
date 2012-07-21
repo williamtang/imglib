@@ -30,21 +30,21 @@ public abstract class AbstractNeighborhood<T, IN extends RandomAccessibleInterva
 	 * dimension <code>d</code> will be <code>2 x span[d] + 1</code>.
 	 */
 	protected final long[] span;
-	protected final ExtendedRandomAccessibleInterval<T, IN> extendedSource;
-	protected final IN source;
+	protected ExtendedRandomAccessibleInterval<T, IN> extendedSource;
+	protected IN source;
 	protected OutOfBoundsFactory<T, IN> outOfBounds;
+	protected int n;
 
 	/*
 	 * CONSTRUCTOR
 	 */
 
-	public AbstractNeighborhood(final IN source,
+	public AbstractNeighborhood(final int numDims,
 			final OutOfBoundsFactory<T, IN> outOfBounds) {
-		this.source = source;
+		this.n = numDims;
 		this.outOfBounds = outOfBounds;
-		this.extendedSource = Views.extend(source, outOfBounds);
-		this.center = new long[source.numDimensions()];
-		this.span = new long[source.numDimensions()];
+		this.center = new long[numDims];
+		this.span = new long[numDims];
 	}
 
 	/*
@@ -69,7 +69,7 @@ public abstract class AbstractNeighborhood<T, IN extends RandomAccessibleInterva
 
 	@Override
 	public int numDimensions() {
-		return extendedSource.numDimensions();
+		return n;
 	}
 
 	@Override
@@ -269,12 +269,21 @@ public abstract class AbstractNeighborhood<T, IN extends RandomAccessibleInterva
 	}
 
 	/**
-	 * Create a copy
+	 * Updates the source
 	 * 
 	 * @param source
-	 * @param outOfBounds
+	 */
+	public void updateSource(IN source) {
+		this.source = source;
+		this.extendedSource = Views.extend(source, outOfBounds);
+	}
+
+	/**
+	 * Copy the {@link AbstractNeighborhood}
+	 * 
+	 * @param <K>
 	 * @return
 	 */
-	public abstract AbstractNeighborhood<T, IN> copy(final IN source);
+	public abstract AbstractNeighborhood<T, IN> copy();
 
 }

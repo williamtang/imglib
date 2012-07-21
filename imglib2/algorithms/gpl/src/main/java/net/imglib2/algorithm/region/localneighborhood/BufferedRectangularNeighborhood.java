@@ -54,7 +54,13 @@ public class BufferedRectangularNeighborhood<T extends Type<T>, IN extends Rando
 
 	public BufferedRectangularNeighborhood(IN source,
 			OutOfBoundsFactory<T, IN> outOfBounds, long[] spans) {
-		super(source, outOfBounds);
+		this(source.numDimensions(), outOfBounds, spans);
+		updateSource(source);
+	}
+
+	public BufferedRectangularNeighborhood(int numDims,
+			OutOfBoundsFactory<T, IN> outOfBounds, long[] spans) {
+		super(numDims, outOfBounds);
 		setSpan(spans);
 
 		size = 1;
@@ -83,8 +89,12 @@ public class BufferedRectangularNeighborhood<T extends Type<T>, IN extends Rando
 	}
 
 	@Override
-	public AbstractNeighborhood<T, IN> copy(IN source) {
-		return new BufferedRectangularNeighborhood<T, IN>(source, outOfBounds,
-				span);
+	public BufferedRectangularNeighborhood<T, IN> copy() {
+		if (source != null)
+			return new BufferedRectangularNeighborhood<T, IN>(source,
+					outOfBounds, span);
+		else
+			return new BufferedRectangularNeighborhood<T, IN>(n, outOfBounds,
+					span);
 	}
 }

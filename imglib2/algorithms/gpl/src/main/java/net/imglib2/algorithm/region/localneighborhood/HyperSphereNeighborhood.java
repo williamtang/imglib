@@ -14,7 +14,16 @@ public class HyperSphereNeighborhood<T, IN extends RandomAccessibleInterval<T>>
 	 */
 	public HyperSphereNeighborhood(final IN source,
 			final OutOfBoundsFactory<T, IN> outOfBounds, final long radius) {
-		super(source, outOfBounds);
+		super(source.numDimensions(), outOfBounds);
+		this.radius = radius;
+	}
+
+	/*
+	 * CONSTRUCTORS
+	 */
+	public HyperSphereNeighborhood(final int numDims,
+			final OutOfBoundsFactory<T, IN> outOfBounds, final long radius) {
+		super(numDims, outOfBounds);
 		this.radius = radius;
 	}
 
@@ -56,8 +65,12 @@ public class HyperSphereNeighborhood<T, IN extends RandomAccessibleInterval<T>>
 	}
 
 	@Override
-	public AbstractNeighborhood<T, IN> copy(IN source) {
-		return new HyperSphereNeighborhood<T, IN>(source, outOfBounds, radius);
+	public AbstractNeighborhood<T, IN> copy() {
+		if (source != null)
+			return new HyperSphereNeighborhood<T, IN>(source, outOfBounds,
+					radius);
+		else
+			return new HyperSphereNeighborhood<T, IN>(n, outOfBounds, radius);
 	}
 
 }

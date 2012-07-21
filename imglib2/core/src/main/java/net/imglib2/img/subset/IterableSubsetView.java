@@ -10,103 +10,95 @@ import net.imglib2.util.IntervalIndexer;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
-public class IterableSubsetView< T extends Type< T >> extends IterableRandomAccessibleInterval< T >
-{
+public class IterableSubsetView<T extends Type<T>> extends
+		IterableRandomAccessibleInterval<T> {
 
-	private IterableInterval< T > m_iterableIntervalSource;
+	private boolean isOptimizable;
 
-	private IterableInterval< T > m_iterableIntervalView;
+	private int planeOffset;
 
-	private boolean m_isOptimizable;
+	private int numPlaneDims;
 
-	private int m_planeOffset;
+	private RandomAccessibleInterval<T> src;
 
-	private int m_numPlaneDims;
+	@SuppressWarnings("unchecked")
+	public IterableSubsetView(RandomAccessibleInterval<T> src, Interval interval) {
+		super(SubsetViews.subsetView(src, interval));
+		this.src = src;
 
-	@SuppressWarnings( "unchecked" )
-	public IterableSubsetView( RandomAccessibleInterval< T > src, Interval interval )
-	{
-		super( SubsetViews.subsetView( src, interval ) );
+		isOptimizable = false;
+		planeOffset = 1;
 
-		m_iterableIntervalSource = Views.iterable( src );
-		m_iterableIntervalView = Views.iterable( super.interval );
+		if (!SubsetViews.intervalEquals(this, interval)) {
 
-		m_isOptimizable = false;
-		m_planeOffset = 1;
-
-		if ( SubsetViews.intervalEquals( super.interval, interval ) )
-			return;
-
-		if ( ( src instanceof IterableInterval ) && ( ( IterableInterval< T > ) src ).iterationOrder() instanceof FlatIterationOrder )
-		{
-			m_isOptimizable = true;
-			for ( int d = 0; d < interval.numDimensions(); d++ )
-			{
-				if ( interval.dimension( d ) > 1 )
-				{
-
-					// TODO: this can be handled in the IterableSubsetViewCursor
-					// (hasNext and fwd must be generalized)
-					if ( interval.dimension( d ) != src.dimension( d ) )
-					{
-						m_isOptimizable = false;
-						break;
-					}
-
-					m_numPlaneDims++;
-
-					if ( m_numPlaneDims != d + 1 )
-					{
-						m_isOptimizable = false;
-						break;
-					}
-				}
-
+			if (src instanceof IterableSubsetView) {
+				src = ((IterableSubsetView<T>) src).src;
 			}
 
-			if ( m_isOptimizable )
-			{
+			if ((src instanceof IterableInterval)
+					&& ((IterableInterval<T>) src).iterationOrder() instanceof FlatIterationOrder) {
+				isOptimizable = true;
+				for (int d = 0; d < interval.numDimensions(); d++) {
+					if (interval.dimension(d) > 1) {
 
-				long[] iterDims = new long[ src.numDimensions() - m_numPlaneDims ];
-				long[] cubePos = iterDims.clone();
-				for ( int d = m_numPlaneDims; d < src.numDimensions(); d++ )
-				{
-					iterDims[ d - m_numPlaneDims ] = src.dimension( d );
-					cubePos[ d - m_numPlaneDims ] = interval.min( d );
+						// TODO: this can be handled in the
+						// IterableSubsetViewCursor
+						// (hasNext and fwd must be generalized)
+						if (interval.dimension(d) != src.dimension(d)) {
+							isOptimizable = false;
+							break;
+						}
+
+						numPlaneDims++;
+
+						if (numPlaneDims != d + 1) {
+							isOptimizable = false;
+							break;
+						}
+					}
+
 				}
 
-				if ( iterDims.length == 0 )
-				{
-					m_planeOffset = 0;
-				}
-				else
-				{
-					m_planeOffset = ( int ) ( IntervalIndexer.positionToIndex( cubePos, iterDims ) * super.size() );
+				if (isOptimizable) {
 
-				}
+					long[] iterDims = new long[src.numDimensions()
+							- numPlaneDims];
+					long[] cubePos = iterDims.clone();
+					for (int d = numPlaneDims; d < src.numDimensions(); d++) {
+						iterDims[d - numPlaneDims] = src.dimension(d);
+						cubePos[d - numPlaneDims] = interval.min(d);
+					}
 
+					if (iterDims.length == 0) {
+						planeOffset = 0;
+					} else {
+						planeOffset = (int) (IntervalIndexer.positionToIndex(
+								cubePos, iterDims) * super.size());
+
+					}
+				}
 			}
-
 		}
-
 	}
 
 	@Override
-	public Cursor< T > cursor()
-	{
-		if ( m_isOptimizable )
-			return new IterableSubsetViewCursor< T >( m_iterableIntervalSource.cursor(), ( int ) super.size(), m_planeOffset, m_numPlaneDims );
+	public Cursor<T> cursor() {
+		if (isOptimizable)
+			return new IterableSubsetViewCursor<T>(
+					Views.iterable(src).cursor(), (int) super.size(),
+					planeOffset, numPlaneDims);
 		else
-			return m_iterableIntervalView.cursor();
+			return Views.iterable(super.interval).cursor();
 	}
 
 	@Override
-	public Cursor< T > localizingCursor()
-	{
-		if ( m_isOptimizable )
-			return new IterableSubsetViewCursor< T >( m_iterableIntervalSource.localizingCursor(), ( int ) super.size(), m_planeOffset, m_numPlaneDims );
+	public Cursor<T> localizingCursor() {
+		if (isOptimizable)
+			return new IterableSubsetViewCursor<T>(Views.iterable(src)
+					.localizingCursor(), (int) super.size(), planeOffset,
+					numPlaneDims);
 		else
-			return m_iterableIntervalView.localizingCursor();
+			return Views.iterable(super.interval).cursor();
 	}
 
 }
