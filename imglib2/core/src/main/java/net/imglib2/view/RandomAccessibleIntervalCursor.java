@@ -54,9 +54,9 @@ import net.imglib2.util.IntervalIndexer;
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  * @author Stephan Saalfeld
  */
-public final class RandomAccessibleIntervalCursor< T > extends AbstractInterval implements Cursor< T >
-{
-	private final RandomAccess< T > randomAccess;
+public final class RandomAccessibleIntervalCursor<T> extends AbstractInterval
+		implements Cursor<T> {
+	private final RandomAccess<T> randomAccess;
 
 	private final long[] dimensions;
 
@@ -68,152 +68,135 @@ public final class RandomAccessibleIntervalCursor< T > extends AbstractInterval 
 
 	private long maxIndexOnLine;
 
-	public < I extends RandomAccessible< T > & Interval > RandomAccessibleIntervalCursor( final I interval )
-	{
-		super( interval );
+	public <I extends RandomAccessible<T> & Interval> RandomAccessibleIntervalCursor(
+			final I interval) {
+		super(interval);
 		randomAccess = interval.randomAccess();
-		dimensions = new long[ n ];
-		dimensions( dimensions );
-		tmp = new long[ n ];
-		long size = dimensions[ 0 ];
-		for ( int d = 1; d < n; ++d )
-			size *= dimensions[ d ];
+		dimensions = new long[n];
+		dimensions(dimensions);
+		tmp = new long[n];
+		long size = dimensions[0];
+		for (int d = 1; d < n; ++d)
+			size *= dimensions[d];
 		maxIndex = size - 1;
-		maxIndexOnLine = dimensions[ 0 ] - 1;
 		reset();
 	}
 
-	protected RandomAccessibleIntervalCursor( final RandomAccessibleIntervalCursor< T > cursor )
-	{
-		super( cursor );
+	protected RandomAccessibleIntervalCursor(
+			final RandomAccessibleIntervalCursor<T> cursor) {
+		super(cursor);
 		this.randomAccess = cursor.randomAccess.copyRandomAccess();
 		dimensions = cursor.dimensions.clone();
-		tmp = new long[ n ];
+		tmp = new long[n];
 		index = cursor.index;
 		maxIndex = cursor.maxIndex;
 		maxIndexOnLine = cursor.maxIndexOnLine;
 	}
 
 	@Override
-	public T get()
-	{
+	public T get() {
 		return randomAccess.get();
 	}
 
 	@Override
-	public void jumpFwd( final long steps )
-	{
+	public void jumpFwd(final long steps) {
 		index += steps;
-		maxIndexOnLine = ( index / dimensions[ 0 ] ) * dimensions[ 0 ] - 1;
-		IntervalIndexer.indexToPosition( steps, dimensions, tmp );
-		randomAccess.move( tmp );
+		maxIndexOnLine = (index < 0) ? (dimensions[0] - 1) : ((1 + index
+				/ dimensions[0])
+				* dimensions[0] - 1);
+		IntervalIndexer.indexToPosition(steps, dimensions, tmp);
+		randomAccess.move(tmp);
 	}
 
 	@Override
-	public void fwd()
-	{
-		randomAccess.fwd( 0 );
-		if ( ++index > maxIndexOnLine )
+	public void fwd() {
+		randomAccess.fwd(0);
+		if (++index > maxIndexOnLine)
 			nextLine();
 	}
 
-	private void nextLine()
-	{
-		randomAccess.setPosition( min[ 0 ], 0 );
-		maxIndexOnLine += dimensions[ 0 ];
-		for ( int d = 1; d < n; ++d )
-		{
-			randomAccess.fwd( d );
-			if ( randomAccess.getLongPosition( d ) > max[ d ] )
-				randomAccess.setPosition( min[ d ], d );
+	private void nextLine() {
+		randomAccess.setPosition(min[0], 0);
+		maxIndexOnLine += dimensions[0];
+		for (int d = 1; d < n; ++d) {
+			randomAccess.fwd(d);
+			if (randomAccess.getLongPosition(d) > max[d])
+				randomAccess.setPosition(min[d], d);
 			else
 				break;
 		}
 	}
 
 	@Override
-	public void reset()
-	{
+	public void reset() {
 		index = -1;
-		maxIndexOnLine = dimensions[ 0 ] - 1;
-		randomAccess.setPosition( min );
-		randomAccess.bck( 0 );
+		maxIndexOnLine = dimensions[0] - 1;
+		randomAccess.setPosition(min);
+		randomAccess.bck(0);
 	}
 
 	@Override
-	public boolean hasNext()
-	{
+	public boolean hasNext() {
 		return index < maxIndex;
 	}
 
 	@Override
-	public T next()
-	{
+	public T next() {
 		fwd();
 		return get();
 	}
 
 	@Override
-	public void remove()
-	{}
-
-	@Override
-	public RandomAccessibleIntervalCursor< T > copy()
-	{
-		return new RandomAccessibleIntervalCursor< T >( this );
+	public void remove() {
 	}
 
 	@Override
-	public RandomAccessibleIntervalCursor< T > copyCursor()
-	{
+	public RandomAccessibleIntervalCursor<T> copy() {
+		return new RandomAccessibleIntervalCursor<T>(this);
+	}
+
+	@Override
+	public RandomAccessibleIntervalCursor<T> copyCursor() {
 		return copy();
 	}
 
 	@Override
-	public void localize( final float[] position )
-	{
-		randomAccess.localize( position );
+	public void localize(final float[] position) {
+		randomAccess.localize(position);
 	}
 
 	@Override
-	public void localize( final double[] position )
-	{
-		randomAccess.localize( position );
+	public void localize(final double[] position) {
+		randomAccess.localize(position);
 	}
 
 	@Override
-	public float getFloatPosition( final int d )
-	{
-		return randomAccess.getFloatPosition( d );
+	public float getFloatPosition(final int d) {
+		return randomAccess.getFloatPosition(d);
 	}
 
 	@Override
-	public double getDoublePosition( final int d )
-	{
-		return randomAccess.getDoublePosition( d );
+	public double getDoublePosition(final int d) {
+		return randomAccess.getDoublePosition(d);
 	}
 
 	@Override
-	public void localize( final int[] position )
-	{
-		randomAccess.localize( position );
+	public void localize(final int[] position) {
+		randomAccess.localize(position);
 	}
 
 	@Override
-	public void localize( final long[] position )
-	{
-		randomAccess.localize( position );
+	public void localize(final long[] position) {
+		randomAccess.localize(position);
 	}
 
 	@Override
-	public int getIntPosition( final int d )
-	{
-		return randomAccess.getIntPosition( d );
+	public int getIntPosition(final int d) {
+		return randomAccess.getIntPosition(d);
 	}
 
 	@Override
-	public long getLongPosition( final int d )
-	{
-		return randomAccess.getLongPosition( d );
+	public long getLongPosition(final int d) {
+		return randomAccess.getLongPosition(d);
 	}
 }
