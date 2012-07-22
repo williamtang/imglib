@@ -57,114 +57,123 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- *
+ * 
  * @author ImgLib2 developers
  * @author Tobias Pietzsch
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
-public class RandomAccessibleIntervalCursorTest
-{
+public class RandomAccessibleIntervalCursorTest {
 	long[] dimensions;
 
 	int numValues;
 
 	int[] intData;
 
-	ArrayImg< IntType, IntArray > array1;
+	ArrayImg<IntType, IntArray> array1;
 
-	ArrayImg< IntType, IntArray > array2;
+	ArrayImg<IntType, IntArray> array2;
 
-	CellImg< IntType, IntArray, DefaultCell< IntArray > > cell;
+	CellImg<IntType, IntArray, DefaultCell<IntArray>> cell;
 
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Before
-	public void setUp()
-	{
-		dimensions = new long[] {207, 103};
-		array1 = ( ArrayImg< IntType, IntArray > ) new ArrayImgFactory< IntType >().create( dimensions, new IntType() );
-		array2 = ( ArrayImg< IntType, IntArray > ) new ArrayImgFactory< IntType >().create( dimensions, new IntType() );
-		cell = ( CellImg< IntType, IntArray, DefaultCell< IntArray > > ) new CellImgFactory< IntType >().create( dimensions, new IntType() );
+	public void setUp() {
+		dimensions = new long[] { 400, 400, 3 };
+		array1 = (ArrayImg<IntType, IntArray>) new ArrayImgFactory<IntType>()
+				.create(dimensions, new IntType());
+		array2 = (ArrayImg<IntType, IntArray>) new ArrayImgFactory<IntType>()
+				.create(dimensions, new IntType());
+		cell = (CellImg<IntType, IntArray, DefaultCell<IntArray>>) new CellImgFactory<IntType>()
+				.create(dimensions, new IntType());
 
 		// fill intData with random values
 		numValues = 1;
-		for ( int d = 0; d < dimensions.length; ++d )
-			numValues *= dimensions[ d ];
-		intData = new int[ numValues ];
-		final Random random = new Random( 0 );
-		for ( int i = 0; i < numValues; ++i )
-			intData[ i ] = random.nextInt();
+		for (int d = 0; d < dimensions.length; ++d)
+			numValues *= dimensions[d];
+		intData = new int[numValues];
+		final Random random = new Random(0);
+		for (int i = 0; i < numValues; ++i)
+			intData[i] = random.nextInt();
 
 		// copy intData to array1
-		final long[] pos = new long[ dimensions.length ];
-		final RandomAccess< IntType > a = array1.randomAccess();
-		for ( int i = 0; i < numValues; ++i )
-		{
-			IntervalIndexer.indexToPosition( i, dimensions, pos );
-			a.setPosition( pos );
-			a.get().set( intData[ i ] );
+		final long[] pos = new long[dimensions.length];
+		final RandomAccess<IntType> a = array1.randomAccess();
+		for (int i = 0; i < numValues; ++i) {
+			IntervalIndexer.indexToPosition(i, dimensions, pos);
+			a.setPosition(pos);
+			a.get().set(intData[i]);
 		}
 	}
 
-	public void copy( final Cursor< IntType > src, final Cursor< IntType > dst )
-	{
-		while( src.hasNext() )
-			dst.next().set( src.next().get() );
+	public void copy(final Cursor<IntType> src, final Cursor<IntType> dst) {
+		while (src.hasNext())
+			dst.next().set(src.next().get());
 	}
 
-	int[] getImgAsInts( final Img< IntType > img )
-	{
-		final RandomAccess< IntType > a = img.randomAccess();
-		final int N = ( int ) img.size();
-		final int[] data = new int[ N ];
-		final long[] dim = new long[ img.numDimensions() ];
-		final long[] pos = new long[ img.numDimensions() ];
-		img.dimensions( dim );
-		for ( int i = 0; i < N; ++i ) {
-			IntervalIndexer.indexToPosition( i, dim, pos );
-			a.setPosition( pos );
-			data[ i ] = a.get().get();
+	int[] getImgAsInts(final Img<IntType> img) {
+		final RandomAccess<IntType> a = img.randomAccess();
+		final int N = (int) img.size();
+		final int[] data = new int[N];
+		final long[] dim = new long[img.numDimensions()];
+		final long[] pos = new long[img.numDimensions()];
+		img.dimensions(dim);
+		for (int i = 0; i < N; ++i) {
+			IntervalIndexer.indexToPosition(i, dim, pos);
+			a.setPosition(pos);
+			data[i] = a.get().get();
 		}
 		return data;
 	}
 
 	@Test
-	public void testJumpFwd()
-	{
-		final Cursor< IntType > c1 = array1.cursor();
-		final Cursor< IntType > c2 = new RandomAccessibleIntervalCursor< IntType >( array1 );
+	public void testJumpFwd() {
+
+		final Cursor<IntType> c1 = array1.cursor();
+		final Cursor<IntType> c2 = new RandomAccessibleIntervalCursor<IntType>(
+				array1);
 
 		c1.fwd();
 		c2.fwd();
-		assertEquals( c1.get().get(), c2.get().get() );
+		assertEquals(c1.get().get(), c2.get().get());
 
-		for ( int i=0; i<10; ++i )
+		for (int i = 0; i < 10; ++i)
 			c1.fwd();
-		c2.jumpFwd( 10 );
-		assertEquals( c1.get().get(), c2.get().get() );
+		c2.jumpFwd(10);
+		assertEquals(c1.get().get(), c2.get().get());
 
-		c1.jumpFwd( 713 );
-		c2.jumpFwd( 713 );
-		assertEquals( c1.get().get(), c2.get().get() );
+		c1.jumpFwd(713);
+		c2.jumpFwd(713);
+		assertEquals(c1.get().get(), c2.get().get());
+
+		c1.reset();
+		c1.jumpFwd(array1.dimension(0) * array1.dimension(1));
+		c1.fwd();
+		c1.fwd();
+
+		c2.reset();
+		c2.jumpFwd(array1.dimension(0) * array1.dimension(1));
+		c2.fwd();
+		c2.fwd();
+		assertEquals(c1.get().get(), c2.get().get());
 	}
 
 	@Test
-	public void testArrayCopy()
-	{
-		copy( array1.cursor(), new RandomAccessibleIntervalCursor< IntType >( array2 ) );
-		assertArrayEquals( intData, getImgAsInts( array2 ) );
+	public void testArrayCopy() {
+		copy(array1.cursor(), new RandomAccessibleIntervalCursor<IntType>(
+				array2));
+		assertArrayEquals(intData, getImgAsInts(array2));
 	}
 
 	@Test
-	public void testArrayCopy2()
-	{
-		copy( new RandomAccessibleIntervalCursor< IntType >( array1 ), array2.cursor() );
-		assertArrayEquals( intData, getImgAsInts( array2 ) );
+	public void testArrayCopy2() {
+		copy(new RandomAccessibleIntervalCursor<IntType>(array1),
+				array2.cursor());
+		assertArrayEquals(intData, getImgAsInts(array2));
 	}
 
 	@Test
-	public void testCellCopy()
-	{
-		copy( array1.cursor(), new RandomAccessibleIntervalCursor< IntType >( cell ) );
-		assertArrayEquals( intData, getImgAsInts( cell ) );
+	public void testCellCopy() {
+		copy(array1.cursor(), new RandomAccessibleIntervalCursor<IntType>(cell));
+		assertArrayEquals(intData, getImgAsInts(cell));
 	}
 }
