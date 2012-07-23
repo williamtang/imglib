@@ -100,21 +100,12 @@ public final class RandomAccessibleIntervalCursor<T> extends AbstractInterval
 
 	@Override
 	public void jumpFwd(final long steps) {
-
-		if (index < 1) {
-			randomAccess.fwd(0);
-			IntervalIndexer.indexToPosition(steps - 1, dimensions, tmp);
-		} else {
-			IntervalIndexer.indexToPosition(steps, dimensions, tmp);
-		}
-
 		index += steps;
-
 		maxIndexOnLine = (index < 0) ? (dimensions[0] - 1) : ((1 + index
 				/ dimensions[0])
 				* dimensions[0] - 1);
-
-		randomAccess.move(tmp);
+		IntervalIndexer.indexToPosition(index, dimensions, tmp);
+		randomAccess.setPosition(tmp);
 	}
 
 	@Override
