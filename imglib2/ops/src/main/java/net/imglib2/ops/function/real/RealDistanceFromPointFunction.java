@@ -35,48 +35,49 @@
  */
 
 
-package net.imglib2.ops.parse;
+package net.imglib2.ops.function.real;
 
-import java.util.List;
+import net.imglib2.ops.Function;
+import net.imglib2.type.numeric.RealType;
 
-import net.imglib2.ops.parse.token.Token;
-import net.imglib2.ops.pointset.EmptyPointSet;
 
 /**
- * Static methods used by various parsers
- * 
- * @author Barry DeZonia
- *
- */
-public class ParseUtils {
+* 
+* @author Barry DeZonia
+*
+*/
+public class RealDistanceFromPointFunction<T extends RealType<T>>
+	implements Function<long[],T> {
 
-	private ParseUtils() {}
+	private final T var;
+	private final double[] pt;
 	
-	public static boolean match(Class<?> expectedClass, List<Token> tokens, int pos) {
-		if (pos >= tokens.size()) return false;
-		return tokens.get(pos).getClass() == expectedClass;
+	public RealDistanceFromPointFunction(double[] pt, T var) {
+		this.var = var.createVariable();
+		this.pt = pt.clone();
+	}
+	
+	@Override
+	public void compute(long[] input, T output) {
+		double sum = 0;
+		for (int i = 0; i < input.length; i++) {
+			double delta = input[i] - pt[i];
+			sum += delta * delta;
+		}
+		double dist = Math.sqrt(sum);
+		output.setReal(dist);
 	}
 
-	public static ParseStatus syntaxError(Integer tokenNumber, List<Token> tokens, String err) {
-		ParseStatus status = new ParseStatus();
-		status.columnNumber = -1;
-		status.tokenNumber = tokenNumber;
-		status.pointSet = new EmptyPointSet();
-		if (tokenNumber < tokens.size()) {
-			Token token = tokens.get(tokenNumber);
-			status.errMsg = "Syntax error with token ("+token.getText()+") near column "+token.getStart()+": "+err;
-		}
-		else {
-			Token token = tokens.get(tokenNumber-1);
-			status.errMsg = "Unexpected end of input after token ("+token.getText()+") near column "+token.getStart()+": context - "+err;
-		}
-		return status;
+	@Override
+	public T createOutput() {
+		return var.createVariable();
 	}
 
-	public static ParseStatus nextPosition(int pos) {
-		ParseStatus status = new ParseStatus();
-		status.tokenNumber = pos;
-		return status;
+	@Override
+	public RealDistanceFromPointFunction<T> copy() {
+		return new RealDistanceFromPointFunction<T>(pt, var);
 	}
 	
 }
+
+

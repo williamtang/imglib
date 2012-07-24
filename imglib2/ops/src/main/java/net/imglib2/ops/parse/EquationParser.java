@@ -44,6 +44,7 @@ import net.imglib2.img.Img;
 import net.imglib2.ops.function.general.GeneralBinaryFunction;
 import net.imglib2.ops.function.general.GeneralUnaryFunction;
 import net.imglib2.ops.function.real.ConstantRealFunction;
+import net.imglib2.ops.function.real.RealDistanceFromPointFunction;
 import net.imglib2.ops.function.real.RealImageFunction;
 import net.imglib2.ops.function.real.RealIndexFunction;
 import net.imglib2.ops.operation.binary.real.RealAdd;
@@ -53,6 +54,8 @@ import net.imglib2.ops.operation.binary.real.RealMultiply;
 import net.imglib2.ops.operation.binary.real.RealPower;
 import net.imglib2.ops.operation.binary.real.RealSubtract;
 import net.imglib2.ops.parse.token.CloseParen;
+import net.imglib2.ops.parse.token.DimensionReference;
+import net.imglib2.ops.parse.token.DistanceFromCenterReference;
 import net.imglib2.ops.parse.token.Divide;
 import net.imglib2.ops.parse.token.Exponent;
 import net.imglib2.ops.parse.token.FunctionCall;
@@ -65,6 +68,7 @@ import net.imglib2.ops.parse.token.Plus;
 import net.imglib2.ops.parse.token.Real;
 import net.imglib2.ops.parse.token.Times;
 import net.imglib2.ops.parse.token.Token;
+import net.imglib2.ops.parse.token.TypeBoundReference;
 import net.imglib2.ops.parse.token.Variable;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.DoubleType;
@@ -253,7 +257,7 @@ public class EquationParser<T extends RealType<T>> {
 			Variable var = (Variable) tokens.get(pos);
 			int index = varMap.get(var.getText());
 			if (index< 0)
-				return ParseUtils.syntaxError(pos, tokens.get(pos),
+				return ParseUtils.syntaxError(pos, tokens,
 						"Undeclared variable " + var.getText());
 			ParseStatus status = new ParseStatus();
 			status.tokenNumber = pos + 1;
@@ -263,14 +267,14 @@ public class EquationParser<T extends RealType<T>> {
 		else if (ParseUtils.match(FunctionCall.class, tokens, pos)) {
 			FunctionCall funcCall = (FunctionCall) tokens.get(pos);
 			if (!ParseUtils.match(OpenParen.class, tokens, pos+1))
-				ParseUtils.syntaxError(pos+1, tokens.get(pos+1),
+				return ParseUtils.syntaxError(pos+1, tokens,
 							"Function call definition expected a '('");
 			ParseStatus status = equation(tokens, pos+2);
 			if (status.errMsg != null) return status;
 			if (!ParseUtils.match(CloseParen.class, tokens, status.tokenNumber))
 				return ParseUtils.syntaxError(
 						status.tokenNumber,
-						tokens.get(status.tokenNumber),
+						tokens,
 						"Function call definition expected a ')'");
 			status.function =
 				new GeneralUnaryFunction<long[], DoubleType, DoubleType>(
@@ -278,25 +282,76 @@ public class EquationParser<T extends RealType<T>> {
 			status.tokenNumber++;
 			return status;
 		}
+		else if (ParseUtils.match(ImgReference.class, tokens, pos)) {
+			if (img == null)
+				return ParseUtils.syntaxError(
+						pos, tokens, "IMG reference not allowed in this context");
+			ParseStatus status = new ParseStatus();
+			status.tokenNumber = pos+1;
+			status.function =
+				new RealImageFunction<T, DoubleType>(img, new DoubleType());
+			return status;
+		}
+		else if (ParseUtils.match(TypeBoundReference.class, tokens, pos)) {
+			TypeBoundReference bound = (TypeBoundReference) tokens.get(pos);
+			if (img == null)
+				return ParseUtils.syntaxError(
+						pos, tokens,
+						"Type bounds only work in equations that are associated with an Img");
+			T type = img.cursor().get();
+			double constant = (bound.isMin() ? type.getMinValue() : type.getMaxValue());
+			ParseStatus status = new ParseStatus();
+			status.tokenNumber = pos+1;
+			status.function =	new ConstantRealFunction<long[],DoubleType>(new DoubleType(), constant);
+			return status;
+		}
+		else if (ParseUtils.match(DimensionReference.class, tokens, pos)) {
+			if (!ParseUtils.match(OpenParen.class, tokens, pos+1))
+				return ParseUtils.syntaxError(pos+1, tokens, "Expected a '('.");
+			if (!ParseUtils.match(Variable.class, tokens, pos+2))
+				return ParseUtils.syntaxError(pos+2, tokens, "Expected a dimension variable reference.");
+			Variable var = (Variable) tokens.get(pos+2);
+			if (!ParseUtils.match(CloseParen.class, tokens, pos+3))
+				return ParseUtils.syntaxError(pos+3, tokens, "Expected a ')'.");
+			// if here then structured okay
+			Integer reference = varMap.get(var.getText());
+			if (reference == null)
+				return ParseUtils.syntaxError(pos+2, tokens, "Unknown variable.");
+			if (reference < 0)
+				return ParseUtils.syntaxError(pos+2, tokens, "Undeclared variable.");
+			if (img == null)
+				return ParseUtils.syntaxError(
+						pos, tokens,
+						"Dimension bounds only work in equations that are associated with an Img");
+			double constant = img.dimension(reference);
+			ParseStatus status = new ParseStatus();
+			status.tokenNumber = pos+4;
+			status.function =	new ConstantRealFunction<long[],DoubleType>(new DoubleType(), constant);
+			return status;
+		}
+		else if (ParseUtils.match(DistanceFromCenterReference.class, tokens, pos)) {
+			if (img == null)
+				return ParseUtils.syntaxError(
+					pos, tokens,
+					"Center distance references only work in equations that are associated with an Img");
+			long[] dims = new long[img.numDimensions()];
+			img.dimensions(dims);
+			double[] ctr = new double[dims.length];
+			for (int i = 0; i < dims.length; i++) {
+				ctr[i] = dims[i] / 2.0;
+			}
+			ParseStatus status = new ParseStatus();
+			status.tokenNumber = pos+1;
+			status.function =	new RealDistanceFromPointFunction<DoubleType>(ctr, new DoubleType());
+			return status;
+		}
 		else if (ParseUtils.match(OpenParen.class, tokens, pos)) {
 			ParseStatus status = equation(tokens, pos+1);
 			if (status.errMsg != null) return status;
 			if (!ParseUtils.match(CloseParen.class, tokens, status.tokenNumber))
 				return ParseUtils.syntaxError(
-						status.tokenNumber, tokens.get(status.tokenNumber),
-						"Expected a ')'");
+						status.tokenNumber, tokens, "Expected a ')'");
 			status.tokenNumber++;
-			return status;
-		}
-		else if (ParseUtils.match(ImgReference.class, tokens, pos)) {
-			if (img == null)
-				return ParseUtils.syntaxError(
-						pos, tokens.get(pos),
-						"IMG reference not allowed in this context");
-			ParseStatus status = new ParseStatus();
-			status.tokenNumber = pos+1;
-			status.function =
-				new RealImageFunction<T, DoubleType>(img, new DoubleType());
 			return status;
 		}
 		else
@@ -326,8 +381,7 @@ public class EquationParser<T extends RealType<T>> {
 			return status;
 		}
 		else
-			return ParseUtils.syntaxError(
-					pos, tokens.get(pos), "Expected a number.");
+			return ParseUtils.syntaxError(pos, tokens, "Expected a number.");
 	}
 	
 }
