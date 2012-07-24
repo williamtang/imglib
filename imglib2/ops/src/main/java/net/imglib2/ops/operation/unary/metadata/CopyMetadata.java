@@ -22,10 +22,10 @@ public class CopyMetadata implements UnaryOperation< Metadata, Metadata >
 	public CopyMetadata()
 	{
 		ops = new UnaryOperation[ 4 ];
-		ops[ 0 ] = new CopyCalibratedSpace();
-		ops[ 1 ] = new CopyImageMetadata();
-		ops[ 2 ] = new CopyNamed();
-		ops[ 3 ] = new CopySourced();
+		ops[ 0 ] = new CopyCalibratedSpace< Metadata >();
+		ops[ 1 ] = new CopyImageMetadata< Metadata >();
+		ops[ 2 ] = new CopyNamed< Metadata >();
+		ops[ 3 ] = new CopySourced< Metadata >();
 	}
 
 	@Override

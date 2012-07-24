@@ -1,13 +1,13 @@
 package net.imglib2.ops.operation.unary.metadata;
 
-import net.imglib2.meta.Metadata;
+import net.imglib2.meta.ImageMetadata;
 import net.imglib2.ops.UnaryOperation;
 
-public class CopyImageMetadata implements UnaryOperation< Metadata, Metadata >
+public class CopyImageMetadata< M extends ImageMetadata > implements UnaryOperation< M, M >
 {
 
 	@Override
-	public Metadata compute( Metadata input, Metadata output )
+	public M compute( M input, M output )
 	{
 		output.setValidBits( input.getValidBits() );
 		output.setCompositeChannelCount( input.getCompositeChannelCount() );
@@ -29,9 +29,9 @@ public class CopyImageMetadata implements UnaryOperation< Metadata, Metadata >
 	}
 
 	@Override
-	public UnaryOperation< Metadata, Metadata > copy()
+	public UnaryOperation< M, M > copy()
 	{
-		return new CopyImageMetadata();
+		return new CopyImageMetadata< M >();
 	}
 
 }

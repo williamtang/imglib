@@ -1,22 +1,22 @@
 package net.imglib2.ops.operation.unary.metadata;
 
-import net.imglib2.meta.Metadata;
+import net.imglib2.meta.Sourced;
 import net.imglib2.ops.UnaryOperation;
 
-public class CopySourced implements UnaryOperation< Metadata, Metadata >
+public class CopySourced< S extends Sourced > implements UnaryOperation< S, S >
 {
 
 	@Override
-	public Metadata compute( Metadata input, Metadata output )
+	public S compute( S input, S output )
 	{
 		output.setSource( input.getSource() );
 		return output;
 	}
 
 	@Override
-	public UnaryOperation< Metadata, Metadata > copy()
+	public UnaryOperation< S, S > copy()
 	{
-		return new CopySourced();
+		return new CopySourced< S >();
 	}
 
 }

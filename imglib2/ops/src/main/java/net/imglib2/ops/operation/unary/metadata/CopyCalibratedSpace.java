@@ -1,10 +1,10 @@
 package net.imglib2.ops.operation.unary.metadata;
 
 import net.imglib2.Interval;
-import net.imglib2.meta.Metadata;
+import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.ops.UnaryOperation;
 
-public class CopyCalibratedSpace implements UnaryOperation< Metadata, Metadata >
+public class CopyCalibratedSpace< CS extends CalibratedSpace > implements UnaryOperation< CS, CS >
 {
 	private Interval interval;
 
@@ -19,7 +19,7 @@ public class CopyCalibratedSpace implements UnaryOperation< Metadata, Metadata >
 	}
 
 	@Override
-	public Metadata compute( Metadata input, Metadata output )
+	public CS compute( CS input, CS output )
 	{
 
 		for ( int d = 0; d < input.numDimensions(); d++ )
@@ -35,9 +35,9 @@ public class CopyCalibratedSpace implements UnaryOperation< Metadata, Metadata >
 	}
 
 	@Override
-	public UnaryOperation< Metadata, Metadata > copy()
+	public UnaryOperation< CS, CS > copy()
 	{
-		return new CopyCalibratedSpace();
+		return new CopyCalibratedSpace< CS >();
 	}
 
 }
