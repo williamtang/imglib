@@ -11,16 +11,17 @@ public class Min< T extends RealType< T >, V extends RealType< V >> implements U
 	@Override
 	public V compute( Iterator< T > input, V output )
 	{
-		T min = null;
+		double min = Double.MAX_VALUE;
 		while ( input.hasNext() )
 		{
 			T in = input.next();
 
-			if ( min == null || in.compareTo( min ) < 0 )
-				min = in;
+			double val = in.getRealDouble();
+			if ( val < min )
+				min = val;
 		}
 
-		output.setReal( min.getRealDouble() );
+		output.setReal( min );
 
 		return output;
 	}
