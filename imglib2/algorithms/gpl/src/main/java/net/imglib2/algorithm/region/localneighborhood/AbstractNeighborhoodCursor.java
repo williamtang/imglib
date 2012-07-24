@@ -2,22 +2,25 @@ package net.imglib2.algorithm.region.localneighborhood;
 
 import net.imglib2.Bounded;
 import net.imglib2.Cursor;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.outofbounds.OutOfBounds;
 
-public abstract class AbstractNeighborhoodCursor<T> implements Cursor<T>, Bounded {
+public abstract class AbstractNeighborhoodCursor<T> implements Cursor<T>,
+		Bounded {
 
-	protected AbstractNeighborhood<T> neighborhood;
+	protected AbstractNeighborhood<T, ? extends RandomAccessibleInterval<T>> neighborhood;
 	protected final OutOfBounds<T> ra;
-	
+
 	/*
 	 * CONSTRUCTOR
 	 */
 
-	public AbstractNeighborhoodCursor(AbstractNeighborhood<T> neighborhood) {
+	public AbstractNeighborhoodCursor(
+			AbstractNeighborhood<T, ? extends RandomAccessibleInterval<T>> neighborhood) {
 		this.neighborhood = neighborhood;
 		this.ra = neighborhood.extendedSource.randomAccess();
 	}
-	
+
 	/*
 	 * METHODS
 	 */
@@ -52,9 +55,27 @@ public abstract class AbstractNeighborhoodCursor<T> implements Cursor<T>, Bounde
 		return ra.get();
 	}
 
+	/**
+	 * This dummy method just calls {@link #fwd()} multiple times.
+	 */
+	@Override
+	public void jumpFwd(long steps) {
+		for (int i = 0; i < steps; i++) {
+			fwd();
+		}
+	}
+
+	@Override
+	public T next() {
+		fwd();
+		return ra.get();
+	}
+
 	@Override
 	public void remove() {
-		throw new UnsupportedOperationException("remove() is not implemented for "+getClass().getCanonicalName());
+		throw new UnsupportedOperationException(
+				"remove() is not implemented for "
+						+ getClass().getCanonicalName());
 	}
 
 	@Override

@@ -4,43 +4,41 @@
 package net.imglib2.algorithm.region.localneighborhood;
 
 import net.imglib2.Cursor;
-import net.imglib2.Sampler;
+import net.imglib2.RandomAccessibleInterval;
 
 /**
  * A {@link Cursor} that iterates over a {@link RectangleNeighborhood}.
  * 
  * @author Jean-Yves Tinevez
  */
-public class RectangleCursor<T> extends AbstractNeighborhoodCursor<T>  { 
+public class RectangleCursor<T> extends AbstractNeighborhoodCursor<T> {
 
 	/*
 	 * FIELDS
 	 */
-	
+
 	protected long[] position;
 	protected long count = 0;
 	protected long size;
 
-	
 	/*
 	 * CONSTRUCTOR
 	 */
-	
-	
-	public RectangleCursor(AbstractNeighborhood<T> rectangle) {
+
+	public RectangleCursor(
+			AbstractNeighborhood<T, ? extends RandomAccessibleInterval<T>> rectangle) {
 		super(rectangle);
-		this.position = new long[ rectangle.source.numDimensions() ];
+		this.position = new long[rectangle.source.numDimensions()];
 		reset();
 	}
-	
+
 	/*
 	 * METHODS
 	 */
-	
 
 	@Override
-	public Sampler<T> copy() {
-		return ra.copy();
+	public RectangleCursor<T> copy() {
+		return copyCursor();
 	}
 
 	/**
@@ -67,7 +65,7 @@ public class RectangleCursor<T> extends AbstractNeighborhoodCursor<T>  {
 				break;
 			}
 		}
-		++count ;
+		++count;
 	}
 
 	@Override
@@ -79,7 +77,7 @@ public class RectangleCursor<T> extends AbstractNeighborhoodCursor<T>  {
 		// Set ready for starting, which needs a call to fwd() which adds one:
 		--position[0];
 		ra.setPosition(position);
-		
+
 		size = 1;
 		for (int d = 0; d < neighborhood.span.length; d++) {
 			size *= (2 * neighborhood.span[d] + 1);
@@ -98,7 +96,7 @@ public class RectangleCursor<T> extends AbstractNeighborhoodCursor<T>  {
 	}
 
 	@Override
-	public Cursor<T> copyCursor() {
+	public RectangleCursor<T> copyCursor() {
 		return new RectangleCursor<T>(this.neighborhood);
 	}
 

@@ -1,4 +1,4 @@
-package net.imglib2.ops.image.neighborhood;
+package net.imglib2.algorithm.region.localneighborhood;
 
 /*
  * #%L
@@ -36,37 +36,65 @@ package net.imglib2.ops.image.neighborhood;
  * #L%
  */
 
+import java.util.Iterator;
+
 import net.imglib2.Cursor;
-import net.imglib2.Localizable;
-import net.imglib2.Point;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
 
-public class RectangularNeighborhood< T extends Type< T > > extends AbstractRectangularNeighborhood< T >
-{
+/**
+ * 
+ * 
+ */
+public class BufferedRectangularNeighborhood<T extends Type<T>, IN extends RandomAccessibleInterval<T>>
+		extends AbstractNeighborhood<T, IN> {
 
-	public RectangularNeighborhood( Localizable center, long[] span )
-	{
-		super( center, span );
+	private int size;
 
+	public BufferedRectangularNeighborhood(IN source,
+			OutOfBoundsFactory<T, IN> outOfBounds, long[] spans) {
+		this(source.numDimensions(), outOfBounds, spans);
+		updateSource(source);
+	}
+
+	public BufferedRectangularNeighborhood(int numDims,
+			OutOfBoundsFactory<T, IN> outOfBounds, long[] spans) {
+		super(numDims, outOfBounds);
+		setSpan(spans);
+
+		size = 1;
+		for (long s : spans)
+			size *= s;
 	}
 
 	@Override
-	public Cursor< T > cursor()
-	{
-
-		return new RectangularNeighborhoodCursor< T >( source.randomAccess(), center, span );
+	public Cursor<T> cursor() {
+		return new BufferedRectangularNeighborhoodCursor<T>(this);
 	}
 
 	@Override
-	public Cursor< T > localizingCursor()
-	{
+	public Cursor<T> localizingCursor() {
 		return cursor();
 	}
 
 	@Override
-	public Neighborhood< T > copy()
-	{
-		return new RectangularNeighborhood< T >( new Point( center.clone() ), span );
+	public long size() {
+		return size;
 	}
 
+	@Override
+	public Iterator<T> iterator() {
+		return cursor();
+	}
+
+	@Override
+	public BufferedRectangularNeighborhood<T, IN> copy() {
+		if (source != null)
+			return new BufferedRectangularNeighborhood<T, IN>(source,
+					outOfBounds, span);
+		else
+			return new BufferedRectangularNeighborhood<T, IN>(n, outOfBounds,
+					span);
+	}
 }

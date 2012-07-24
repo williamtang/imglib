@@ -428,7 +428,7 @@ public class ImgOpener implements StatusReporter
 	 * @throws ImgIOException
 	 *             if there is a problem reading the image data.
 	 */
-	protected < T extends RealType< T > > ImgPlus< T > openImg( final IFormatReader r, final ImgCreator< T > creator, boolean computeMinMax ) throws ImgIOException
+	protected < T extends RealType< T >> ImgPlus< T > openImg( final IFormatReader r, final ImgCreator< T > creator, boolean computeMinMax ) throws ImgIOException
 	{
 		return openImg( r, creator.factory, creator.type, computeMinMax );
 	}
@@ -447,7 +447,7 @@ public class ImgOpener implements StatusReporter
 	 * @throws ImgIOException
 	 *             if there is a problem reading the image data.
 	 */
-	public < T extends RealType< T > > ImgPlus< T > openImg( final String id, final ImgFactory< T > imgFactory, final T type ) throws ImgIOException
+	public < T extends RealType< T >> ImgPlus< T > openImg( final String id, final ImgFactory< T > imgFactory, final T type ) throws ImgIOException
 	{
 		return openImg( id, imgFactory, type, false );
 	}
@@ -470,7 +470,7 @@ public class ImgOpener implements StatusReporter
 	 * @throws ImgIOException
 	 *             if there is a problem reading the image data.
 	 */
-	public < T extends RealType< T > > ImgPlus< T > openImg( final String id, final ImgFactory< T > imgFactory, final T type, final boolean computeMinMax ) throws ImgIOException
+	public < T extends RealType< T >> ImgPlus< T > openImg( final String id, final ImgFactory< T > imgFactory, final T type, final boolean computeMinMax ) throws ImgIOException
 	{
 		try
 		{
@@ -532,7 +532,7 @@ public class ImgOpener implements StatusReporter
 	 * @throws ImgIOException
 	 *             if there is a problem reading the image data.
 	 */
-	public < T extends RealType< T > > ImgPlus< T > openImg( final IFormatReader r, final ImgFactory< T > imgFactory, final T type, final boolean computeMinMax ) throws ImgIOException
+	public < T extends RealType< T >> ImgPlus< T > openImg( final IFormatReader r, final ImgFactory< T > imgFactory, final T type, final boolean computeMinMax ) throws ImgIOException
 	{
 		return openImg( r, imgFactory, type, computeMinMax, new int[ 0 ] );
 	}
@@ -559,7 +559,7 @@ public class ImgOpener implements StatusReporter
 	 * @throws ImgIOException
 	 *             if there is a problem reading the image data.
 	 */
-	public < T extends RealType< T > > ImgPlus< T > openImg( final IFormatReader r, final ImgFactory< T > imgFactory, final T type, final boolean computeMinMax, int... includedPlanes ) throws ImgIOException
+	public < T extends RealType< T >> ImgPlus< T > openImg( final IFormatReader r, final ImgFactory< T > imgFactory, final T type, final boolean computeMinMax, int... includedPlanes ) throws ImgIOException
 	{
 
 		Pair< long[], int[] > info = dimLengths( r, includedPlanes );
@@ -1037,7 +1037,6 @@ public class ImgOpener implements StatusReporter
 	private < T extends RealType< T >> void readPlanes( final IFormatReader r, final T type, final ImgPlus< T > imgPlus, final boolean computeMinMax, int... includedPlanes ) throws FormatException, IOException
 	{
 
-		assert ( includedPlanes.length == imgPlus.numDimensions() );
 		// TODO - create better container types; either:
 		// 1) an array container type using one byte array per plane
 		// 2) as #1, but with an IFormatReader reference reading planes on
@@ -1055,7 +1054,7 @@ public class ImgOpener implements StatusReporter
 		// #3 is useful for efficient memory use
 
 		// get container
-		final PlanarAccess< ArrayDataAccess< ? > > planarAccess = ImgIOUtils.getPlanarAccess( imgPlus );
+		final PlanarAccess< ArrayDataAccess< ? >> planarAccess = ImgIOUtils.getPlanarAccess( imgPlus );
 		final RealType< ? > inputType = ImgIOUtils.makeType( r.getPixelType() ).type;
 		final T outputType = type;
 		final boolean compatibleTypes = outputType.getClass().isAssignableFrom( inputType.getClass() );
