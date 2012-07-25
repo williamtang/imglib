@@ -58,9 +58,8 @@ public class UnaryOperationAssignment< T extends Type< T >, V extends Type< V >>
 	@Override
 	public IterableInterval< V > compute( IterableInterval< T > input, IterableInterval< V > output )
 	{
-		if ( !IterationOrderUtil.equalInterval( input, output ) ) { throw new IllegalArgumentException( "Intervals in UnaryOperationAssignment are not compatible: different dimensions." ); }
 
-		if ( !input.iterationOrder().equals( output.iterationOrder() ) ) { throw new IllegalArgumentException( "Intervals in UnaryOperationAssignment are not compatible: different size." ); }
+		if ( !IterationOrderUtil.equalInterval( input, output ) ) { throw new IllegalArgumentException( "Intervals in UnaryOperationAssignment are not compatible: different dimensions." ); }
 
 		final Cursor< T > inCursor = input.cursor();
 		final Cursor< V > outCursor = output.cursor();
