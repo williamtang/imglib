@@ -34,38 +34,51 @@
  * #L%
  */
 
-
 package net.imglib2.ops.function.real;
 
 import net.imglib2.ops.Function;
 import net.imglib2.type.numeric.RealType;
 
+// TODO - could make this relative to a point rather than the origin. This would
+// be more general. However at construction time you might not know the number
+// of dimensions the input indices will take in the compute() method. This makes
+// specifying a point tricky. If a point is supported later it should be in
+// double coords for consistency with RealDistanceFromPointFunction
 
 /**
- * 
- * @author Barry DeZonia
- */
-public class ConstantRealFunction<INPUT, O extends RealType<O>> implements Function<INPUT, O> {
-	private final O real;
+* 
+* @author Barry DeZonia
+*
+*/
+public class RealAngleFromOriginFunction<T extends RealType<T>>
+	implements Function<long[],T> {
 
-	public ConstantRealFunction(O typeHint, double r) {
-		real = typeHint.createVariable();
-		real.setReal(r);
+	private final T var;
+	private final int axisU;
+	private final int axisV;
+	
+	public RealAngleFromOriginFunction(int axisU, int axisV, T var) {
+		this.var = var.createVariable();
+		this.axisU = axisU;
+		this.axisV = axisV;
 	}
 	
 	@Override
-	public void compute(INPUT input, O r) {
-		r.set(real);
+	public void compute(long[] input, T output) {
+		double du = input[axisU];
+		double dv = input[axisV];
+		output.setReal(Math.atan2(dv, du));
 	}
 
 	@Override
-	public ConstantRealFunction<INPUT,O> copy() {
-		return new ConstantRealFunction<INPUT,O>(real, real.getRealDouble());
+	public T createOutput() {
+		return var.createVariable();
 	}
 
 	@Override
-	public O createOutput() {
-		return real.createVariable();
+	public RealAngleFromOriginFunction<T> copy() {
+		return new RealAngleFromOriginFunction<T>(axisU, axisV, var);
 	}
+
 }
 
