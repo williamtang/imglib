@@ -69,7 +69,7 @@ public class PlanarImgXYShortProjector<A extends GenericShortType<A>, B extends 
                         for (int i = 0; i < targetArray.length; i++) {
                                 targetArray[i] = (short) (targetArray[i] - 0x8000);
                         }
-                        minCopy += 0x80;
+                        minCopy += 0x8000;
                 }
                 if (normalizationFactor != 1) {
                         int max = 2 * Short.MAX_VALUE + 1;
