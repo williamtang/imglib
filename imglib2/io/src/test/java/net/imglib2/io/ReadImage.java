@@ -75,7 +75,7 @@ public class ReadImage {
 		System.out.println("== AUTO-DETECTED TYPE, DEFAULT CONTAINER ==");
 		for (final String id : ids) {
 			try {
-				final ImgPlus<RealType> img = imageOpener.openImg(id);
+				final ImgPlus<? extends RealType> img = imageOpener.openImg(id);
 				reportInformation(img);
 			}
 			catch (final IncompatibleTypeException e) {

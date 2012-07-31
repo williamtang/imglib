@@ -110,9 +110,9 @@ public class ImgOpener implements StatusReporter {
 	 * 
 	 * @throws ImgIOException - if file could not be found, if it is too big for the memory or if it is incompatible with the opener
 	 */
-	public static ImgPlus< RealType > open( final String id ) throws ImgIOException
+	public static ImgPlus< ? extends RealType > open( final String id ) throws ImgIOException
 	{
-		ImgPlus< RealType > img = null;
+		ImgPlus< ? extends RealType > img = null;
 		ImgOpener opener = new ImgOpener();
 		
 		try
@@ -289,7 +289,7 @@ public class ImgOpener implements StatusReporter {
 	 * @throws IncompatibleTypeException if the {@link Type} of the file is
 	 *           incompatible with the {@link PlanarImg}.
 	 */
-	public ImgPlus< RealType > openImg(
+	public ImgPlus< ? extends RealType > openImg(
 		final String id) throws ImgIOException, IncompatibleTypeException
 	{
 		return openImg(id, new PlanarImgFactory<FloatType>());
@@ -308,7 +308,7 @@ public class ImgOpener implements StatusReporter {
 	 * @throws IncompatibleTypeException if the {@link Type} of the file is
 	 *           incompatible with the {@link PlanarImg}.
 	 */
-	public ImgPlus< RealType > openImg(
+	public ImgPlus< ? extends RealType > openImg(
 		final String id, final boolean computeMinMax) throws ImgIOException,
 		IncompatibleTypeException
 	{
@@ -329,7 +329,7 @@ public class ImgOpener implements StatusReporter {
 	 * @throws IncompatibleTypeException if the Type of the {@link Img} is
 	 *           incompatible with the {@link ImgFactory}
 	 */
-	public ImgPlus< RealType > openImg(
+	public ImgPlus< ? extends RealType > openImg(
 		final String id, final ImgFactory<?> imgFactory) throws ImgIOException,
 		IncompatibleTypeException
 	{
@@ -353,7 +353,7 @@ public class ImgOpener implements StatusReporter {
 	 * @throws IncompatibleTypeException if the {@link Type} of the {@link Img} is
 	 *           incompatible with the {@link ImgFactory}
 	 */
-	public ImgPlus< RealType >
+	public ImgPlus< ? extends RealType >
 		openImg(final String id, final ImgFactory<?> imgFactory,
 			final boolean computeMinMax) throws ImgIOException,
 			IncompatibleTypeException
@@ -365,7 +365,7 @@ public class ImgOpener implements StatusReporter {
 			final ImgCreator< ? > type = ImgIOUtils.makeType( r.getPixelType() );
 			type.setImageFactory( imgFactory );
 			
-			return (ImgPlus< RealType >)openImg( r, type, computeMinMax );
+			return (ImgPlus< ? extends RealType >)openImg( r, type, computeMinMax );
 		}
 		catch (final FormatException e) {
 			throw new ImgIOException(e);
