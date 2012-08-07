@@ -75,7 +75,7 @@ import net.imglib2.type.numeric.RealType;
  */
 public class ImgPanel extends JPanel {
 
-	public class ImgData<T extends RealType<T> & NativeType<T>> {
+	public class ImgData<T extends RealType<T>> {
 
 		public String name;
 		public ImgPlus<T> imgPlus;
@@ -150,7 +150,7 @@ public class ImgPanel extends JPanel {
 		});
 	}
 
-	public <T extends RealType<T> & NativeType<T>> void addImage(
+	public <T extends RealType<T>> void addImage(
 		final String name, final ImgPlus<T> img)
 	{
 		final ImgData<T> imgData = new ImgData<T>(name, img, this);
@@ -160,7 +160,7 @@ public class ImgPanel extends JPanel {
 		add(new SliderPanel(imgData));
 	}
 
-	public static final <T extends RealType<T> & NativeType<T>> void main(
+	public static final void main(
 		final String[] args)
 	{
 		final String[] urls = {
@@ -170,7 +170,7 @@ public class ImgPanel extends JPanel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final ImgPanel imgPanel = new ImgPanel();
 		for (final String url : urls) {
-			final ImgPlus<T> img = loadImage(url);
+			final ImgPlus<RealType> img = loadImage(url);
 			imgPanel.addImage(url, img);
 		}
 		frame.setContentPane(imgPanel);
@@ -179,7 +179,7 @@ public class ImgPanel extends JPanel {
 		frame.setVisible(true);
 	}
 
-	private static <T extends RealType<T> & NativeType<T>> ImgPlus<T> loadImage(
+	private static ImgPlus<RealType> loadImage(
 		final String url)
 	{
 		try {

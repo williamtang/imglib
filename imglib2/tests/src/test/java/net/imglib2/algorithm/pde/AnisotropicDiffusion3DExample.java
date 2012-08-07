@@ -104,16 +104,14 @@ public class AnisotropicDiffusion3DExample {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static <T extends RealType<T> & NativeType< T >> Img openExampleImage(T type) {
+	public static <T extends RealType<T> & NativeType< T >> Img openExampleImage1(T type) {
 		File file = new File( "/Users/tinevez/Desktop/Data/StarryNight.tif");
 
-		ImgFactory< ? > imgFactory = new ArrayImgFactory< T >();
+		ImgFactory< T > imgFactory = new ArrayImgFactory< T >();
 		Img<T> image = null;
 		try {
-			image = new ImgOpener().openImg( file.getAbsolutePath(), imgFactory );
+			image = new ImgOpener().openImg( file.getAbsolutePath(), imgFactory, type );
 		} catch (ImgIOException e) {
-			e.printStackTrace();
-		} catch (IncompatibleTypeException e) {
 			e.printStackTrace();
 		}
 

@@ -92,7 +92,7 @@ public class ImgSaver implements StatusReporter {
 	/**
 	 * see isCompressible(ImgPlus)
 	 */
-	public <T extends RealType<T> & NativeType<T>> boolean isCompressible(
+	public <T extends RealType<T>> boolean isCompressible(
 		final Img<T> img)
 	{
 		return isCompressible(ImgPlus.wrap(img));
@@ -108,7 +108,7 @@ public class ImgSaver implements StatusReporter {
 	 * return true if the axes of the provided image can be represented with a
 	 * valid 5D String, and false otherwise.
 	 */
-	public <T extends RealType<T> & NativeType<T>> boolean isCompressible(
+	public <T extends RealType<T>> boolean isCompressible(
 		final ImgPlus<T> img)
 	{
 
@@ -159,7 +159,7 @@ public class ImgSaver implements StatusReporter {
 	 * @throws ImgIOException
 	 * @throws IncompatibleTypeException
 	 */
-	public <T extends RealType<T> & NativeType<T>> void saveImg(final String id,
+	public <T extends RealType<T>> void saveImg(final String id,
 		final Img<T> img) throws ImgIOException, IncompatibleTypeException
 	{
 		saveImg(id, ImgPlus.wrap(img));
@@ -175,7 +175,7 @@ public class ImgSaver implements StatusReporter {
 	 * @throws ImgIOException
 	 * @throws IncompatibleTypeException
 	 */
-	public <T extends RealType<T> & NativeType<T>> void saveImg(final String id,
+	public <T extends RealType<T>> void saveImg(final String id,
 		final ImgPlus<T> img) throws ImgIOException, IncompatibleTypeException
 	{
 		img.setSource(id);
@@ -192,7 +192,7 @@ public class ImgSaver implements StatusReporter {
 	 * @throws ImgIOException
 	 * @throws IncompatibleTypeException
 	 */
-	public <T extends RealType<T> & NativeType<T>> void saveImg(
+	public <T extends RealType<T>> void saveImg(
 		final IFormatWriter w, final Img<T> img) throws ImgIOException,
 		IncompatibleTypeException
 	{
@@ -213,7 +213,7 @@ public class ImgSaver implements StatusReporter {
 	 * @throws ImgIOException
 	 * @throws IncompatibleTypeException
 	 */
-	public <T extends RealType<T> & NativeType<T>> void saveImg(
+	public <T extends RealType<T>> void saveImg(
 		final IFormatWriter w, final ImgPlus<T> img) throws ImgIOException,
 		IncompatibleTypeException
 	{
@@ -409,7 +409,7 @@ public class ImgSaver implements StatusReporter {
 	// -- Helper methods --
 
 	/* Entry point for writePlanes method, the actual workhorse to save pixels to disk */
-	private <T extends RealType<T> & NativeType<T>> void
+	private <T extends RealType<T>> void
 		saveImg(final IFormatWriter w, final ImgPlus<T> img,
 			final boolean initializeWriter) throws ImgIOException,
 			IncompatibleTypeException
@@ -469,7 +469,7 @@ public class ImgSaver implements StatusReporter {
 	/* Counts the number of slices in the provided ImgPlus.
 	 * NumSlices = product of the sizes of all non-X,Y planes.
 	 */
-	private <T extends RealType<T> & NativeType<T>> int countSlices(
+	private <T extends RealType<T>> int countSlices(
 		final ImgPlus<T> img)
 	{
 
@@ -492,7 +492,7 @@ public class ImgSaver implements StatusReporter {
 	 */
 	@SuppressWarnings("unchecked")
 	private <T extends RealType<T> & NativeType<T>> void writePlanes(
-		IFormatWriter w, final ImgPlus<T> img) throws ImgIOException,
+		IFormatWriter w, @SuppressWarnings("rawtypes") final ImgPlus img) throws ImgIOException,
 		IncompatibleTypeException
 	{
 		final PlanarAccess<?> planarAccess = ImgIOUtils.getPlanarAccess(img);
@@ -583,7 +583,7 @@ public class ImgSaver implements StatusReporter {
 	 * Creates a new {@link IFormatWriter} with an unpopulated MetadataStore and
 	 * sets its id to the provided String.
 	 */
-	private <T extends RealType<T> & NativeType<T>> IFormatWriter
+	private <T extends RealType<T>> IFormatWriter
 		initializeWriter(final String id, final ImgPlus<T> img)
 			throws ImgIOException
 	{
@@ -611,7 +611,7 @@ public class ImgSaver implements StatusReporter {
 	 * Uses the provided {@link ImgPlus} to populate the minimum metadata fields
 	 * necessary for writing.
 	 */
-	private <T extends RealType<T> & NativeType<T>> void populateMeta(
+	private <T extends RealType<T>> void populateMeta(
 		final IFormatWriter w, final ImgPlus<T> img) throws ImgIOException
 	{
 		notifyListeners(new StatusEvent("Initializing " + img.getName()));

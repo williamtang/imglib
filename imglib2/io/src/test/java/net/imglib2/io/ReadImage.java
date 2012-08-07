@@ -75,7 +75,7 @@ public class ReadImage {
 		System.out.println("== AUTO-DETECTED TYPE, DEFAULT CONTAINER ==");
 		for (final String id : ids) {
 			try {
-				final ImgPlus<T> img = imageOpener.openImg(id);
+				final ImgPlus<? extends RealType> img = imageOpener.openImg(id);
 				reportInformation(img);
 			}
 			catch (final IncompatibleTypeException e) {
@@ -88,13 +88,10 @@ public class ReadImage {
 		System.out.println("== FLOAT TYPE, ARRAY CONTAINER ==");
 		final ImgFactory<FloatType> acf = new ArrayImgFactory<FloatType>();
 		for (final String arg : args) {
-			try {
-				final ImgPlus<FloatType> img = imageOpener.openImg(arg, acf);
+			
+				final ImgPlus<FloatType> img = imageOpener.openImg(arg, acf, new FloatType());
 				reportInformation(img);
-			}
-			catch (final IncompatibleTypeException e) {
-				e.printStackTrace();
-			}
+			
 		}
 
 		// read all arguments using FloatType with PlanarImg
@@ -102,13 +99,8 @@ public class ReadImage {
 		System.out.println("== FLOAT TYPE, PLANAR CONTAINER ==");
 		final ImgFactory<FloatType> pcf = new PlanarImgFactory<FloatType>();
 		for (final String arg : args) {
-			try {
-				final ImgPlus<FloatType> img = imageOpener.openImg(arg, pcf);
+				final ImgPlus<FloatType> img = imageOpener.openImg(arg, pcf, new FloatType());
 				reportInformation(img);
-			}
-			catch (final IncompatibleTypeException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

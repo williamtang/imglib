@@ -77,6 +77,7 @@ import net.imglib2.meta.AxisType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 import ome.xml.model.primitives.PositiveFloat;
@@ -109,9 +110,9 @@ public class ImgOpener implements StatusReporter {
 	 * 
 	 * @throws ImgIOException - if file could not be found, if it is too big for the memory or if it is incompatible with the opener
 	 */
-	public static < T extends RealType< T > & NativeType< T > > ImgPlus< T > open( final String id ) throws ImgIOException
+	public static ImgPlus< ? extends RealType > open( final String id ) throws ImgIOException
 	{
-		ImgPlus< T > img = null;
+		ImgPlus< ? extends RealType > img = null;
 		ImgOpener opener = new ImgOpener();
 		
 		try
@@ -233,6 +234,49 @@ public class ImgOpener implements StatusReporter {
 		return img;
 	}
 
+	/**
+	 * Opens an {@link Img} as {@link UnsignedByteType}. It returns an {@link ImgPlus} which contains the Calibration and name.
+	 * 
+	 * The {@link Img} containing the data could be either {@link ArrayImg}, {@link PlanarImg} or {@link CellImg}. It
+	 * tries opening it in exactly this order.
+	 * 
+	 * @param id - the location of the file/http address to open
+	 * @return - the {@link ImgPlus} or null 
+	 * 
+	 * @throws ImgIOException - if file could not be found or is too big for the memory
+	 */
+	public static ImgPlus< UnsignedByteType > openUnsignedByte( final String id ) throws ImgIOException
+	{
+		final UnsignedByteType tmp = new UnsignedByteType();
+		ImgPlus< UnsignedByteType > img = null;
+		ImgOpener opener = new ImgOpener();
+		
+		try
+		{
+			img = opener.openImg( id, new ArrayImgFactory< UnsignedByteType >(), tmp );
+		} 
+		catch ( NegativeArraySizeException e1 )
+		{
+			try
+			{
+				img = opener.openImg( id, new PlanarImgFactory< UnsignedByteType >(), tmp );
+			}
+			catch ( NegativeArraySizeException e2 )
+			{
+				try
+				{
+					img = opener.openImg( id, new CellImgFactory< UnsignedByteType >( 256 ), tmp );
+				}
+				catch ( Exception e )
+				{
+					throw new ImgIOException( "Cannot open file '"+ id + "': " + e );
+				}
+			}
+		}
+		
+		return img;
+	}
+
 	// -- ImgOpener methods --
 
 	/**
@@ -245,10 +289,10 @@ public class ImgOpener implements StatusReporter {
 	 * @throws IncompatibleTypeException if the {@link Type} of the file is
 	 *           incompatible with the {@link PlanarImg}.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public ImgPlus< ? extends RealType > openImg(
 		final String id) throws ImgIOException, IncompatibleTypeException
 	{
-		return openImg(id, new PlanarImgFactory<T>());
+		return openImg(id, new PlanarImgFactory<FloatType>());
 	}
 
 	/**
@@ -264,11 +308,11 @@ public class ImgOpener implements StatusReporter {
 	 * @throws IncompatibleTypeException if the {@link Type} of the file is
 	 *           incompatible with the {@link PlanarImg}.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public ImgPlus< ? extends RealType > openImg(
 		final String id, final boolean computeMinMax) throws ImgIOException,
 		IncompatibleTypeException
 	{
-		return openImg(id, new PlanarImgFactory<T>(), computeMinMax);
+		return openImg(id, new PlanarImgFactory<FloatType>(), computeMinMax);
 	}
 
 	/**
@@ -285,7 +329,7 @@ public class ImgOpener implements StatusReporter {
 	 * @throws IncompatibleTypeException if the Type of the {@link Img} is
 	 *           incompatible with the {@link ImgFactory}
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public ImgPlus< ? extends RealType > openImg(
 		final String id, final ImgFactory<?> imgFactory) throws ImgIOException,
 		IncompatibleTypeException
 	{
@@ -309,16 +353,19 @@ public class ImgOpener implements StatusReporter {
 	 * @throws IncompatibleTypeException if the {@link Type} of the {@link Img} is
 	 *           incompatible with the {@link ImgFactory}
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T>
+	public ImgPlus< ? extends RealType >
 		openImg(final String id, final ImgFactory<?> imgFactory,
 			final boolean computeMinMax) throws ImgIOException,
 			IncompatibleTypeException
 	{
-		try {
+		try
+		{
 			final IFormatReader r = initializeReader(id, computeMinMax);
-			final T type = ImgIOUtils.makeType(r.getPixelType());
-			final ImgFactory<T> imgFactoryT = imgFactory.imgFactory(type);
-			return openImg(r, imgFactoryT, type, computeMinMax);
+			
+			final ImgCreator< ? > type = ImgIOUtils.makeType( r.getPixelType() );
+			type.setImageFactory( imgFactory );
+			
+			return (ImgPlus< ? extends RealType >)openImg( r, type, computeMinMax );
 		}
 		catch (final FormatException e) {
 			throw new ImgIOException(e);
@@ -327,6 +374,27 @@ public class ImgOpener implements StatusReporter {
 			throw new ImgIOException(e);
 		}
 	}
+		
+	/**
+	 * Protected generic method that calls the opening method which takes a factory
+	 * and a type. Enclosing everything in one instance ensures type safety, T
+	 * implements RealType and NativeType.
+	 * 
+	 * @param r - An initialized {@link IFormatReader} to use for reading image
+	 *          data.
+	 * @param creator - The {@link ImgCreator} that contains {@link ImgFactory} and {@link Type} 
+	 * @param computeMinMax - If set, the {@link ImgPlus}'s channel minimum and
+	 *          maximum metadata is computed and populated based on the data's
+	 *          actual pixel values.
+	 * @param type - The {@link Type} T of the output {@link ImgPlus}
+	 * @throws ImgIOException if there is a problem reading the image data.
+	 */
+	protected <T extends RealType<T> > ImgPlus<T> openImg(
+		final IFormatReader r, final ImgCreator<T> creator, boolean computeMinMax )
+		throws ImgIOException
+		{
+			return openImg( r, creator.factory, creator.type, computeMinMax);
+		}
 
 	/**
 	 * Reads in an {@link ImgPlus} from the given source, using the given
@@ -339,7 +407,7 @@ public class ImgOpener implements StatusReporter {
 	 *          match the typing of the {@link ImgFactory}.
 	 * @throws ImgIOException if there is a problem reading the image data.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public <T extends RealType<T> > ImgPlus<T> openImg(
 		final String id, final ImgFactory<T> imgFactory, final T type)
 		throws ImgIOException
 	{
@@ -360,7 +428,7 @@ public class ImgOpener implements StatusReporter {
 	 *          actual pixel values.
 	 * @throws ImgIOException if there is a problem reading the image data.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public <T extends RealType<T> > ImgPlus<T> openImg(
 		final String id, final ImgFactory<T> imgFactory, final T type,
 		final boolean computeMinMax) throws ImgIOException
 	{
@@ -389,7 +457,7 @@ public class ImgOpener implements StatusReporter {
 	 *          match the typing of the {@link ImgFactory}.
 	 * @throws ImgIOException if there is a problem reading the image data.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public <T extends RealType<T>> ImgPlus<T> openImg(
 		final IFormatReader r, final ImgFactory<T> imgFactory, final T type)
 		throws ImgIOException
 	{
@@ -412,7 +480,7 @@ public class ImgOpener implements StatusReporter {
 	 *          actual pixel values.
 	 * @throws ImgIOException if there is a problem reading the image data.
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
+	public <T extends RealType<T> > ImgPlus<T> openImg(
 		final IFormatReader r, final ImgFactory<T> imgFactory, final T type,
 		final boolean computeMinMax) throws ImgIOException
 	{
@@ -738,7 +806,7 @@ public class ImgOpener implements StatusReporter {
 
 		// get container
 		final PlanarAccess<?> planarAccess = ImgIOUtils.getPlanarAccess(imgPlus);
-		final T inputType = ImgIOUtils.makeType(r.getPixelType());
+		final RealType< ? > inputType = ImgIOUtils.makeType(r.getPixelType()).type;
 		final T outputType = type;
 		final boolean compatibleTypes =
 			outputType.getClass().isAssignableFrom(inputType.getClass());

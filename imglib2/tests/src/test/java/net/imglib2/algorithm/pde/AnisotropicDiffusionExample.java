@@ -31,19 +31,16 @@ import java.io.File;
 
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
-import net.imglib2.img.ImgFactory;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.io.ImgIOException;
 import net.imglib2.io.ImgOpener;
-import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 
 
 public class AnisotropicDiffusionExample {
 
-	public static <T extends RealType<T> & NativeType< T >> void  main(String[] args) throws ImgIOException, IncompatibleTypeException {
+	public static void  main(String[] args) throws ImgIOException, IncompatibleTypeException {
 
 		// Open file in imglib2
 		//		File file = new File( "E:/Users/JeanYves/Desktop/Data/Y.tif");
@@ -51,13 +48,15 @@ public class AnisotropicDiffusionExample {
 //		File file = new File( "/Users/tinevez/Desktop/Data/StarryNight.tif");
 //		File file = new File( "/Users/tinevez/Desktop/Data/cross2.tif");
 
-		ImgFactory< ? > imgFactory = new ArrayImgFactory< T >();
-		
-		Img< T > image = new ImgOpener().openImg( file.getAbsolutePath(), imgFactory );
-		Img<T> copy = image.copy();
-
+		run( ImgOpener.open( file.getAbsolutePath() ) );
+	}
+	
+	public static <T extends RealType<T>> void run( final Img< T > image )
+	{
 		// Display it via ImgLib using ImageJ
 		new ImageJ();
+
+		Img<T> copy = image.copy();
 
 		// Compute tensor
 		
@@ -89,7 +88,7 @@ public class AnisotropicDiffusionExample {
 
 		//	ImageJFunctions.show(algo.getIncrement());
 		ImageJFunctions.show(diffusionTensor);
-		ImageJFunctions.show(copy);
+		ImageJFunctions.show(copy);		
 	}
 
 }
