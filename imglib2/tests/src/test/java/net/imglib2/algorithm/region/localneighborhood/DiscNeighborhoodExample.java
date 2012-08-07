@@ -48,7 +48,11 @@ public class DiscNeighborhoodExample
 
 			double radius = Math.random() / 10 * DIM;
 
+<<<<<<< HEAD
 			DiscNeighborhood< UnsignedByteType, ImgPlus< UnsignedByteType >> disc = new DiscNeighborhood< UnsignedByteType, ImgPlus< UnsignedByteType >>( image, radius );
+=======
+			DiscNeighborhood< UnsignedByteType, ImgPlus< UnsignedByteType >> disc = new DiscNeighborhood< UnsignedByteType, ImgPlus< UnsignedByteType > >( image, radius );
+>>>>>>> localneighborhood-revised
 			disc.setPosition( center );
 			DiscCursor< UnsignedByteType, ImgPlus< UnsignedByteType > > cursor = disc.cursor();
 
@@ -82,7 +86,11 @@ public class DiscNeighborhoodExample
 		ImgPlus< UnsignedByteType > image = new ImgPlus< UnsignedByteType >( img, "Radius " + radius, axes, cal );
 
 		// Write into the image
+<<<<<<< HEAD
 		DiscNeighborhood< UnsignedByteType, ImgPlus< UnsignedByteType > > disc = new DiscNeighborhood< UnsignedByteType, ImgPlus< UnsignedByteType > >( image, radius );
+=======
+		DiscNeighborhood< UnsignedByteType, ImgPlus< UnsignedByteType >> disc = new DiscNeighborhood< UnsignedByteType, ImgPlus< UnsignedByteType >>( image, radius );
+>>>>>>> localneighborhood-revised
 		disc.setPosition( center );
 		DiscCursor< UnsignedByteType, ImgPlus< UnsignedByteType > > cursor = disc.cursor();
 		while ( cursor.hasNext() )

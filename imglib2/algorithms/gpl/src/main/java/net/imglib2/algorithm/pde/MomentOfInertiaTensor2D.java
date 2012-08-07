@@ -45,35 +45,40 @@ import net.imglib2.type.numeric.real.FloatType;
  * 
  * @param <T>
  */
-public class MomentOfInertiaTensor2D<T extends RealType<T>> extends
-		MultiThreadedBenchmarkAlgorithm implements
-		OutputAlgorithm<Img<FloatType>> {
+public class MomentOfInertiaTensor2D< T extends RealType< T >> extends MultiThreadedBenchmarkAlgorithm implements OutputAlgorithm< Img< FloatType >>
+{
 
 	private static final double DEFAULT_EPSILON_1 = 1;
-	private static final double DEFAULT_EPSILON_2 = 1e-3;
-	private static final String BASE_ERROR_MESSAGE = "["
-			+ MomentOfInertiaTensor2D.class.getSimpleName() + "] ";
 
-	private final Img<T> input;
+	private static final double DEFAULT_EPSILON_2 = 1e-3;
+
+	private static final String BASE_ERROR_MESSAGE = "[" + MomentOfInertiaTensor2D.class.getSimpleName() + "] ";
+
+	private final Img< T > input;
+
 	private final double epsilon_1;
+
 	private final double epsilon_2;
+
 	private final int scale;
-	private Img<FloatType> D;
+
+	private Img< FloatType > D;
 
 	/*
 	 * CONSTRUCTORS
 	 */
 
-	public MomentOfInertiaTensor2D(Img<T> input, int scale, double epsilon_1,
-			double epsilon_2) {
+	public MomentOfInertiaTensor2D( Img< T > input, int scale, double epsilon_1, double epsilon_2 )
+	{
 		this.input = input;
 		this.scale = scale;
 		this.epsilon_1 = epsilon_1;
 		this.epsilon_2 = epsilon_2;
 	}
 
-	public MomentOfInertiaTensor2D(Img<T> input, int scale) {
-		this(input, scale, DEFAULT_EPSILON_1, DEFAULT_EPSILON_2);
+	public MomentOfInertiaTensor2D( Img< T > input, int scale )
+	{
+		this( input, scale, DEFAULT_EPSILON_1, DEFAULT_EPSILON_2 );
 	}
 
 	/*
@@ -81,73 +86,79 @@ public class MomentOfInertiaTensor2D<T extends RealType<T>> extends
 	 */
 
 	@Override
-	public boolean checkInput() {
+	public boolean checkInput()
+	{
 		return true;
 	}
 
 	@Override
-	public boolean process() {
+	public boolean process()
+	{
 
 		// Instantiate tensor holder, and initialize cursors
-		long[] tensorDims = new long[input.numDimensions() + 1];
-		for (int i = 0; i < input.numDimensions(); i++) {
-			tensorDims[i] = input.dimension(i);
+		long[] tensorDims = new long[ input.numDimensions() + 1 ];
+		for ( int i = 0; i < input.numDimensions(); i++ )
+		{
+			tensorDims[ i ] = input.dimension( i );
 		}
-		tensorDims[input.numDimensions()] = 3;
+		tensorDims[ input.numDimensions() ] = 3;
 		final int tensorDim = input.numDimensions(); // the dim to write the
 														// tensor components to.
 
-		try {
-			D = input.factory().imgFactory(new FloatType())
-					.create(tensorDims, new FloatType());
-		} catch (IncompatibleTypeException e) {
+		try
+		{
+			D = input.factory().imgFactory( new FloatType() ).create( tensorDims, new FloatType() );
+		}
+		catch ( IncompatibleTypeException e )
+		{
 			e.printStackTrace();
 		}
 
-		Vector<Chunk> chunks = SimpleMultiThreading.divideIntoChunks(
-				input.size(), numThreads);
-		Thread[] threads = SimpleMultiThreading.newThreads(numThreads);
+		Vector< Chunk > chunks = SimpleMultiThreading.divideIntoChunks( input.size(), numThreads );
+		Thread[] threads = SimpleMultiThreading.newThreads( numThreads );
 
-		for (int i = 0; i < threads.length; i++) {
+		for ( int i = 0; i < threads.length; i++ )
+		{
 
-			final Chunk chunk = chunks.get(i);
+			final Chunk chunk = chunks.get( i );
 
-			threads[i] = new Thread("" + BASE_ERROR_MESSAGE + "thread " + i) {
+			threads[ i ] = new Thread( "" + BASE_ERROR_MESSAGE + "thread " + i )
+			{
 
-				public void run() {
+				public void run()
+				{
 
-					Cursor<T> cursor = input.localizingCursor();
-					RandomAccess<FloatType> Dcursor = D.randomAccess();
+					Cursor< T > cursor = input.localizingCursor();
+					RandomAccess< FloatType > Dcursor = D.randomAccess();
 
 					// Main cursor position
-					final long[] position = new long[input.numDimensions()];
+					final long[] position = new long[ input.numDimensions() ];
 					// Neighborhood position
-					final long[] pos = new long[input.numDimensions()];
+					final long[] pos = new long[ input.numDimensions() ];
 
-					long[] domain = new long[input.numDimensions()];
-					domain[0] = (scale - 1) / 2;
-					domain[1] = (scale - 1) / 2; // iterate only over X & Y, but
-													// for all pixels
+					long[] domain = new long[ input.numDimensions() ];
+					domain[ 0 ] = ( scale - 1 ) / 2;
+					domain[ 1 ] = ( scale - 1 ) / 2; // iterate only over X & Y,
+														// but for all pixels
 
-					OutOfBoundsFactory<T, RandomAccessibleInterval<T>> oobf = new OutOfBoundsMirrorExpWindowingFactory<T, RandomAccessibleInterval<T>>(
-							(scale - 1) / 2);
-					RectangleNeighborhood<T, RandomAccessibleInterval<T>> neighborhood = new RectangleNeighborhood<T, RandomAccessibleInterval<T>>(
-							input, oobf);
-					neighborhood.setSpan(domain);
+					OutOfBoundsFactory< T, RandomAccessibleInterval< T >> oobf = new OutOfBoundsMirrorExpWindowingFactory< T, RandomAccessibleInterval< T >>( ( scale - 1 ) / 2 );
+					RectangleNeighborhood< T, RandomAccessibleInterval< T >> neighborhood = new RectangleNeighborhood< T, RandomAccessibleInterval< T >>( input, oobf );
+					neighborhood.setSpan( domain );
 
-					RectangleCursor<T> neighborhoodCursor = neighborhood
-							.cursor();
+					RectangleCursor< T > neighborhoodCursor = neighborhood.cursor();
 
-					cursor.jumpFwd(chunk.getStartPosition());
-					for (long j = 0; j < chunk.getLoopSize(); j++) {
+					cursor.jumpFwd( chunk.getStartPosition() );
+					for ( long j = 0; j < chunk.getLoopSize(); j++ )
+					{
 
 						cursor.fwd();
-						cursor.localize(position);
+						cursor.localize( position );
 
 						// Move the tensor to the right position (but for last
 						// dim)
-						for (int i = 0; i < position.length; i++) {
-							Dcursor.setPosition(position[i], i);
+						for ( int i = 0; i < position.length; i++ )
+						{
+							Dcursor.setPosition( position[ i ], i );
 						}
 
 						double mass, x, y, x2, y2;
@@ -158,22 +169,24 @@ public class MomentOfInertiaTensor2D<T extends RealType<T>> extends
 						double cmx = 0;
 						double cmy = 0;
 
-						neighborhood.setPosition(position);
+						neighborhood.setPosition( position );
 						neighborhoodCursor.reset();
-						while (neighborhoodCursor.hasNext()) {
+						while ( neighborhoodCursor.hasNext() )
+						{
 
 							neighborhoodCursor.fwd();
-							neighborhoodCursor.localize(pos);
+							neighborhoodCursor.localize( pos );
 
 							mass = neighborhoodCursor.get().getRealDouble();
 							totalmass += mass;
 
-							cmx += mass * pos[0];
-							cmy += mass * pos[1];
+							cmx += mass * pos[ 0 ];
+							cmy += mass * pos[ 1 ];
 
 						}
 
-						if (totalmass > 0) {
+						if ( totalmass > 0 )
+						{
 							cmx /= totalmass;
 							cmy /= totalmass;
 						}
@@ -184,13 +197,14 @@ public class MomentOfInertiaTensor2D<T extends RealType<T>> extends
 						double Iyy = 0;
 
 						neighborhoodCursor.reset();
-						while (neighborhoodCursor.hasNext()) {
+						while ( neighborhoodCursor.hasNext() )
+						{
 
 							neighborhoodCursor.fwd();
-							neighborhoodCursor.localize(pos);
+							neighborhoodCursor.localize( pos );
 
-							x = (pos[0] - cmx);
-							y = (pos[1] - cmy);
+							x = ( pos[ 0 ] - cmx );
+							y = ( pos[ 1 ] - cmy );
 							x2 = x * x;
 							y2 = y * y;
 							mass = neighborhoodCursor.get().getRealDouble();
@@ -200,49 +214,50 @@ public class MomentOfInertiaTensor2D<T extends RealType<T>> extends
 							Ixy -= mass * x * y;
 						}
 
-						double[] arr = PdeUtil.realSymetricMatrix2x2(Ixx, Iyy,
-								Ixy);
-						double mu_1 = arr[0];
-						double mu_2 = arr[1];
-						double cosalpha = arr[2];
-						double sinalpha = arr[3];
+						double[] arr = PdeUtil.realSymetricMatrix2x2( Ixx, Iyy, Ixy );
+						double mu_1 = arr[ 0 ];
+						double mu_2 = arr[ 1 ];
+						double cosalpha = arr[ 2 ];
+						double sinalpha = arr[ 3 ];
 
 						double lambda_1, lambda_2;
-						if (mu_1 == mu_2) {
+						if ( mu_1 == mu_2 )
+						{
 							lambda_1 = epsilon_1;
 							lambda_2 = epsilon_1;
-						} else {
+						}
+						else
+						{
 							lambda_1 = epsilon_1;
 							lambda_2 = epsilon_2;
 						}
 
 						// Diffusion tensor [ a b ; b c ]
-						double a = lambda_1 * cosalpha * cosalpha + lambda_2
-								* sinalpha * sinalpha;
-						double b = -(lambda_1 - lambda_2) * cosalpha * sinalpha;
-						double c = lambda_1 * sinalpha * sinalpha + lambda_2
-								* cosalpha * cosalpha;
+						double a = lambda_1 * cosalpha * cosalpha + lambda_2 * sinalpha * sinalpha;
+						double b = -( lambda_1 - lambda_2 ) * cosalpha * sinalpha;
+						double c = lambda_1 * sinalpha * sinalpha + lambda_2 * cosalpha * cosalpha;
 
 						// Store
-						Dcursor.setPosition(0, tensorDim);
-						Dcursor.get().setReal(a);
-						Dcursor.fwd(tensorDim);
-						Dcursor.get().setReal(b);
-						Dcursor.fwd(tensorDim);
-						Dcursor.get().setReal(c);
+						Dcursor.setPosition( 0, tensorDim );
+						Dcursor.get().setReal( a );
+						Dcursor.fwd( tensorDim );
+						Dcursor.get().setReal( b );
+						Dcursor.fwd( tensorDim );
+						Dcursor.get().setReal( c );
 					}
 				};
 			};
 
 		}
 
-		SimpleMultiThreading.startAndJoin(threads);
+		SimpleMultiThreading.startAndJoin( threads );
 
 		return true;
 	}
 
 	@Override
-	public Img<FloatType> getResult() {
+	public Img< FloatType > getResult()
+	{
 		return D;
 	}
 

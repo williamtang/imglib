@@ -78,7 +78,11 @@ public class RectangleNeighborhoodExample
 		long[] span = new long[] { 30, 30, 0 }; // a single plane in the middle
 
 		// Write into the image
+<<<<<<< HEAD
 		RectangleNeighborhood< UnsignedByteType, Img< UnsignedByteType > > rectangle = new RectangleNeighborhood< UnsignedByteType, Img< UnsignedByteType > >( image );
+=======
+		RectangleNeighborhood< UnsignedByteType, Img< UnsignedByteType >> rectangle = new RectangleNeighborhood< UnsignedByteType, Img< UnsignedByteType >>( image );
+>>>>>>> localneighborhood-revised
 		rectangle.setPosition( center );
 		rectangle.setSpan( span );
 
