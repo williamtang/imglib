@@ -97,11 +97,7 @@ public class EllipsoidNeighborhoodExample
 		};
 		long[][] spans = new long[][] { { 20, 10, 15 }, { 20, 15, 1 }, { 1, 20, 15 }, { 20, 1, 15 }, { 20, 1, 1 } };
 
-<<<<<<< HEAD
-		EllipsoidNeighborhood< UnsignedByteType, Img< UnsignedByteType > > ellipsoid = new EllipsoidNeighborhood< UnsignedByteType, Img< UnsignedByteType > >( image );
-=======
 		EllipsoidNeighborhood< UnsignedByteType, Img< UnsignedByteType >> ellipsoid = new EllipsoidNeighborhood< UnsignedByteType, Img< UnsignedByteType > >( image );
->>>>>>> localneighborhood-revised
 
 		for ( int i = 0; i < spans.length; i++ )
 		{
