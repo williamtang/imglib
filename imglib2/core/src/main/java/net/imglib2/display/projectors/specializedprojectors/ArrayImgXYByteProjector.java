@@ -1,5 +1,6 @@
-package net.imglib2.display.projectors;
+package net.imglib2.display.projectors.specializedprojectors;
 
+import net.imglib2.display.projectors.Abstract2DProjector;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.basictypeaccess.array.ByteArray;
 import net.imglib2.type.numeric.integer.GenericByteType;

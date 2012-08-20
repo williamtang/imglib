@@ -1,60 +1,61 @@
-package net.imglib2.display.projectors;
+package net.imglib2.display.projectors.dimsamplers;
 
 import net.imglib2.RandomAccess;
 import net.imglib2.Sampler;
 
 /**
- * Provides access to a set of predefined positions of a projected dimension
- *  
+ * allows stepwise access to a preselected projected dimension. 
+ * 
  * @author zinsmaie
  *
  * @param <T>
  */
-public class SelectiveProjectedDimSampler<T> implements
+public class IntervalProjectedDimSampler<T> implements
                 ProjectedDimSamplerImpl<T> {
 
-        private final long[] m_projectedPositions;
         private final int m_projectionDimension;
+        private final long m_startPosition;
+        private final long m_endPosition;
 
         private RandomAccess<T> m_source;
 
-        private int m_selectedIndex = 0;
+        public IntervalProjectedDimSampler(int projectionDimension,
+                        long startPosition, long endPosition) {
 
-        public SelectiveProjectedDimSampler(int projectionDimension,
-                        long[] projectedPositions) {
-                m_projectedPositions = projectedPositions;
                 m_projectionDimension = projectionDimension;
+                m_startPosition = startPosition;
+                m_endPosition = endPosition;
         }
 
         @Override
         public void jumpFwd(long steps) {
-                m_selectedIndex += steps;
+                for (int i = 0; i < steps; i++) {
+                        fwd();
+                }
         }
 
         @Override
         public void fwd() {
-                m_selectedIndex++;
+                m_source.fwd(m_projectionDimension);
         }
 
         @Override
         public void reset() {
-                m_selectedIndex = 0;
+                m_source.setPosition(m_startPosition, m_projectionDimension);
         }
 
         @Override
         public boolean hasNext() {
-                return (m_selectedIndex < m_projectedPositions.length);
+                return (m_source.getLongPosition(m_projectionDimension) <= m_endPosition);
         }
 
         @Override
         public T get() {
-                m_source.setPosition(m_selectedIndex, m_projectionDimension);
                 return m_source.get();
         }
 
         @Override
         public Sampler<T> copy() {
-                m_source.setPosition(m_selectedIndex, m_projectionDimension);
                 return m_source.copy();
         }
 
@@ -62,4 +63,5 @@ public class SelectiveProjectedDimSampler<T> implements
         public void setRandomAccess(RandomAccess<T> srcAccess) {
                 m_source = srcAccess;
         }
+
 }

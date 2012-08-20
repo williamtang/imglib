@@ -7,6 +7,9 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
+import net.imglib2.display.projectors.dimsamplers.IntervalProjectedDimSampler;
+import net.imglib2.display.projectors.dimsamplers.ProjectedDimSamplerImpl;
+import net.imglib2.display.projectors.dimsamplers.SelectiveProjectedDimSampler;
 
 /**
  * A 2D Projector that uses three dimensions as input to create the 2D result. Starting from the

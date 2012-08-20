@@ -3,6 +3,7 @@ package net.imglib2.display.projectors;
 import net.imglib2.Localizable;
 import net.imglib2.Positionable;
 import net.imglib2.display.Projector;
+import net.imglib2.display.projectors.specializedprojectors.ArrayImgXYByteProjector;
 
 /**
  * Base class for 2D projectors. Projecting means in this case projecting from a source

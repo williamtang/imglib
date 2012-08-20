@@ -1,26 +1,27 @@
-package net.imglib2.display.projectors;
+package net.imglib2.display.projectors.specializedprojectors;
 
+import net.imglib2.display.projectors.Abstract2DProjector;
 import net.imglib2.img.array.ArrayImg;
-import net.imglib2.img.basictypeaccess.array.ByteArray;
+import net.imglib2.img.basictypeaccess.array.ShortArray;
 import net.imglib2.img.planar.PlanarImg;
-import net.imglib2.type.numeric.integer.GenericByteType;
+import net.imglib2.type.numeric.integer.GenericShortType;
 import net.imglib2.util.IntervalIndexer;
 
 /**
- * Fast implementation of a {@link Abstract2DProjector} that selects a 2D data plain from a ByteType PlanarImg. The map method implements
- * a normalization function. The resulting image is a ByteType ArrayImg. * 
+ * Fast implementation of a {@link Abstract2DProjector} that selects a 2D data plain from an ShortType PlanarImg. The map method implements
+ * a normalization function. The resulting image is a ShortType ArrayImg. * 
  *  
  * @author zinsmaie
  *
  * @param <A>
  * @param <B>
  */
-public class PlanarImgXYByteProjector<A extends GenericByteType<A>, B extends GenericByteType<B>>
+public class PlanarImgXYShortProjector<A extends GenericShortType<A>, B extends GenericShortType<B>>
                 extends Abstract2DProjector<A, B> {
 
-        private final PlanarImg<A, ByteArray> source;
+        private final PlanarImg<A, ShortArray> source;
 
-        private final byte[] targetArray;
+        private final short[] targetArray;
 
         private final double min;
 
@@ -30,8 +31,8 @@ public class PlanarImgXYByteProjector<A extends GenericByteType<A>, B extends Ge
 
         private final long[] dims;
 
-        public PlanarImgXYByteProjector(PlanarImg<A, ByteArray> source,
-                        ArrayImg<B, ByteArray> target,
+        public PlanarImgXYShortProjector(PlanarImg<A, ShortArray> source,
+                        ArrayImg<B, ShortArray> target,
                         double normalizationFactor, double min, boolean isSigned) {
                 super(source.numDimensions());
 
@@ -67,7 +68,7 @@ public class PlanarImgXYByteProjector<A extends GenericByteType<A>, B extends Ge
                         planeIndex = 0;
                 }
 
-                byte[] sourceArray = source.update(
+                short[] sourceArray = source.update(
                                 new PlanarImgContainerSamplerImpl(planeIndex))
                                 .getCurrentStorageArray();
 
@@ -76,17 +77,17 @@ public class PlanarImgXYByteProjector<A extends GenericByteType<A>, B extends Ge
 
                 if (isSigned) {
                         for (int i = 0; i < targetArray.length; i++) {
-                                targetArray[i] = (byte) (targetArray[i] - 0x80);
+                                targetArray[i] = (short) (targetArray[i] - 0x8000);
                         }
-                        minCopy += 0x80;
+                        minCopy += 0x8000;
                 }
                 if (normalizationFactor != 1) {
-                        int max = 2 * Byte.MAX_VALUE + 1;
+                        int max = 2 * Short.MAX_VALUE + 1;
                         for (int i = 0; i < targetArray.length; i++) {
-                                targetArray[i] = (byte) Math
+                                targetArray[i] = (short) Math
                                                 .min(max,
                                                                 Math.max(0,
-                                                                                (Math.round((((byte) (targetArray[i] + 0x80)) + 0x80 - minCopy)
+                                                                                (Math.round((((short) (targetArray[i] + 0x8000)) + 0x8000 - minCopy)
                                                                                                 * normalizationFactor))));
 
                         }

@@ -1,5 +1,6 @@
-package net.imglib2.display.projectors;
+package net.imglib2.display.projectors.specializedprojectors;
 
+import net.imglib2.display.projectors.Abstract2DProjector;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.basictypeaccess.array.ShortArray;
 import net.imglib2.type.numeric.integer.GenericShortType;
@@ -7,7 +8,7 @@ import net.imglib2.util.IntervalIndexer;
 
 /**
  * Fast implementation of a {@link Abstract2DProjector} that selects a 2D data plain from an ShortType ArrayImg. The map method implements
- * a normalization function. * 
+ * a normalization function. The resulting image is a ShortType ArrayImg. * 
  *  
  * @author zinsmaie
  *
