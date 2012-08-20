@@ -10,7 +10,7 @@ import net.imglib2.display.projectors.specializedprojectors.ArrayImgXYByteProjec
  * format to a target format (A->B).
  * 2D hints that the result is something 2 dimensional.
  * The base class provides methods to select a reference point in a multi-dimensional data object. Sub
- * classes like {@link ArrayImgXYByteProjector} or {@link DimProjector2D} specify a mapping that uses the
+ * classes like  {@link Projector2D}, {@link DimProjector2D} or {@link ArrayImgXYByteProjector} specify a mapping that uses the
  * reference point to project data into a 2 dimensional representation.
  * <br>
  * A basic example is the extraction of a data plain (containing the reference point) by sampling two axes

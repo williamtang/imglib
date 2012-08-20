@@ -12,9 +12,11 @@ import net.imglib2.display.projectors.dimsamplers.ProjectedDimSamplerImpl;
 import net.imglib2.display.projectors.dimsamplers.SelectiveProjectedDimSampler;
 
 /**
- * A 2D Projector that uses three dimensions as input to create the 2D result. Starting from the
+ * A general 2D Projector that uses three dimensions as input to create the 2D result. Starting from the
  * refrence point two dimensions are sampled such that a plain gets cut out of a higher dimensional data
  * volumn. The third dimension is projected (in a mathematical sense) onto this plain.
+ * <br>
+ * The mapping function is specified by a {@link Converter}.
  * It is not necessary to process the complete interval of the third dimension, instead {@link ProjectedDimSampler}
  * can be used to control the sampling.
  * <br>
