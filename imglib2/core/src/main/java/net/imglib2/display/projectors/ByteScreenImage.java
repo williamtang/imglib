@@ -18,6 +18,11 @@ import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.basictypeaccess.array.ByteArray;
 import net.imglib2.type.numeric.integer.ByteType;
 
+/**
+ * Creates an {@link Image} from a ByteType ArrayImg
+ * @author zinsmaie
+ *
+ */
 public class ByteScreenImage extends ArrayImg<ByteType, ByteArray> implements
                 ScreenImage {
 

@@ -3,6 +3,13 @@ package net.imglib2.display.projectors;
 import net.imglib2.RandomAccess;
 import net.imglib2.Sampler;
 
+/**
+ * allows stepwise access to a preselected projected dimension. 
+ * 
+ * @author zinsmaie
+ *
+ * @param <T>
+ */
 public class IntervalProjectedDimSampler<T> implements
                 ProjectedDimSamplerImpl<T> {
 

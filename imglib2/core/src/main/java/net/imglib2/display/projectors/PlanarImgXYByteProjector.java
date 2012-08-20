@@ -6,6 +6,15 @@ import net.imglib2.img.planar.PlanarImg;
 import net.imglib2.type.numeric.integer.GenericByteType;
 import net.imglib2.util.IntervalIndexer;
 
+/**
+ * Fast implementation of a {@link Abstract2DProjector} that selects a 2D data plain from a ByteType PlanarImg. The map method implements
+ * a normalization function. The resulting image is a ByteType ArrayImg. * 
+ *  
+ * @author zinsmaie
+ *
+ * @param <A>
+ * @param <B>
+ */
 public class PlanarImgXYByteProjector<A extends GenericByteType<A>, B extends GenericByteType<B>>
                 extends Abstract2DProjector<A, B> {
 

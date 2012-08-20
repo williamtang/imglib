@@ -6,6 +6,15 @@ import net.imglib2.img.planar.PlanarImg;
 import net.imglib2.type.numeric.integer.GenericShortType;
 import net.imglib2.util.IntervalIndexer;
 
+/**
+ * Fast implementation of a {@link Abstract2DProjector} that selects a 2D data plain from an ShortType PlanarImg. The map method implements
+ * a normalization function. The resulting image is a ShortType ArrayImg. * 
+ *  
+ * @author zinsmaie
+ *
+ * @param <A>
+ * @param <B>
+ */
 public class PlanarImgXYShortProjector<A extends GenericShortType<A>, B extends GenericShortType<B>>
                 extends Abstract2DProjector<A, B> {
 

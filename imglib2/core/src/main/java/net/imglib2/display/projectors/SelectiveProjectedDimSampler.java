@@ -3,6 +3,13 @@ package net.imglib2.display.projectors;
 import net.imglib2.RandomAccess;
 import net.imglib2.Sampler;
 
+/**
+ * Provides access to a set of predefined positions of a projected dimension
+ *  
+ * @author zinsmaie
+ *
+ * @param <T>
+ */
 public class SelectiveProjectedDimSampler<T> implements
                 ProjectedDimSamplerImpl<T> {
 

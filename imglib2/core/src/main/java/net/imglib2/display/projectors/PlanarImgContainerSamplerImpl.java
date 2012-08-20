@@ -2,6 +2,7 @@ package net.imglib2.display.projectors;
 
 import net.imglib2.img.planar.PlanarImg.PlanarContainerSampler;
 
+
 public class PlanarImgContainerSamplerImpl implements PlanarContainerSampler {
 
         private int m_currentSliceIndex = -1;
