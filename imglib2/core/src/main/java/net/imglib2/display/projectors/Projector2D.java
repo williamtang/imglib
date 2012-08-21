@@ -8,12 +8,18 @@ import net.imglib2.converter.Converter;
 import net.imglib2.type.Type;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 
+/*
+ * depends on SubsetViews which are in ops
+ * 
+ * => at the moment not functional
+ */
+
 /**
  * A general 2D Projector that uses two dimensions as input to create the 2D result. Starting from the
- * refrence point two dimensions are sampled such that a plain gets cut out of a higher dimensional data
- * volumn.
+ * reference point two dimensions are sampled such that a plain gets cut out of a higher dimensional data
+ * volume.
  * <br>
- * The mapping function is specified by a {@link Converter}.
+ * The mapping function can be specified with a {@link Converter}.
  * <br>
  * A basic example is cutting out a time frame from a (greyscale) video 
  * 
@@ -35,6 +41,16 @@ public class Projector2D<A extends Type<A>, B extends Type<B>> extends
 	final int Y = 1;
 	private RandomAccessibleInterval<A> source;
 
+	/**
+	 * creates a new 2D projector that samples a plain in the dimensions dimX, dimY.
+	 * 
+	 * @param dimX
+	 * @param dimY
+	 * @param source
+	 * @param target
+	 * @param converter a converter that is applied to each point in the plain. This can e.g. be used
+	 * for normalization, conversions, ...
+	 */
 	public Projector2D(final int dimX, final int dimY,
 			final RandomAccessibleInterval<A> source,
 			final IterableInterval<B> target, final Converter<A, B> converter) {
@@ -47,6 +63,10 @@ public class Projector2D<A extends Type<A>, B extends Type<B>> extends
 		this.numDimensions = source.numDimensions();
 	}
 
+	/**
+	 * projects data from the source to the target and
+	 * applies the former specified {@link Converter} e.g. for normalization.
+	 */
 	@Override
 	public void map() {
 		// fix interval for all dimensions
@@ -60,7 +80,7 @@ public class Projector2D<A extends Type<A>, B extends Type<B>> extends
 		final FinalInterval sourceInterval = new FinalInterval(min, max);
 
 		IterableRandomAccessibleInterval<A> iterableSubsetView = SubsetViews
-				.iterableSubsetView(source, sourceInterval, false);
+				.iterableSubsetView(source, sourceInterval);
 
 		final Cursor<B> targetCursor = target.localizingCursor();
 		final Cursor<A> sourceCursor = iterableSubsetView.cursor();

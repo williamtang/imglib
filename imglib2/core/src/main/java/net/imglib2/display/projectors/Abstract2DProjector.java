@@ -30,6 +30,11 @@ public abstract class Abstract2DProjector<A, B> implements Projector<A, B>,
 	protected final long[] max;
 	protected final int numDimensions;
 	
+	/**
+	 * initializes a reference point with the specified number of dimensions.
+	 * Start position is 0,0,...,0
+	 * @param numDims
+	 */
 	public Abstract2DProjector(int numDims) {
 
 		// as this is an 2D projector, we need at least two dimensions,

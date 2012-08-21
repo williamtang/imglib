@@ -4,7 +4,7 @@ import net.imglib2.Iterator;
 import net.imglib2.Sampler;
 
 /**
- * provides samples from a projected dimension. E.g. the color values from the
+ * provides samples from a projected ({@link DimProjector2D}) dimension. E.g. the color values from the
  * color dimension when projecting the values onto the xy plane.
  *
  * Implements {@link Iterator} and {@link Sampler} to allow access to the
