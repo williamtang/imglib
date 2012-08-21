@@ -1,4 +1,4 @@
-package net.imglib2.display.projectors;
+package net.imglib2.display.projectors.screenimages;
 
 import java.awt.Image;
 import java.awt.Transparency;
@@ -18,6 +18,11 @@ import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.basictypeaccess.array.ShortArray;
 import net.imglib2.type.numeric.integer.ShortType;
 
+/**
+ * Creates an {@link Image} from a ShortType ArrayImg
+ * @author zinsmaie
+ *
+ */
 public class ShortScreenImage extends ArrayImg<ShortType, ShortArray> implements
                 ScreenImage {
 
