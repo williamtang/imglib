@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
@@ -89,11 +89,12 @@ import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Reads in an {@link ImgPlus} using SCIFIO.
- * 
+ *
  * @author Curtis Rueden
  * @author Stephan Preibisch
  * @author Stephan Saalfeld
  * @author Christian Dietz
+ * @author Martin Horn
  */
 public class ImgOpener implements StatusReporter
 {
@@ -108,15 +109,15 @@ public class ImgOpener implements StatusReporter
 	 * Opens an {@link Img} in a format it is in (unsigned byte, float, int,
 	 * ...) using the respective {@link RealType}. It returns an {@link ImgPlus}
 	 * which contains the Calibration and name.
-	 * 
+	 *
 	 * The {@link Img} containing the data could be either {@link ArrayImg},
 	 * {@link PlanarImg} or {@link CellImg}. It tries opening it in exactly this
 	 * order.
-	 * 
+	 *
 	 * @param id
 	 *            - the location of the file/http address to open
 	 * @return - the {@link ImgPlus} or null
-	 * 
+	 *
 	 * @throws ImgIOException
 	 *             - if file could not be found, if it is too big for the memory
 	 *             or if it is incompatible with the opener
@@ -162,15 +163,15 @@ public class ImgOpener implements StatusReporter
 	/**
 	 * Opens an {@link Img} as {@link FloatType}. It returns an {@link ImgPlus}
 	 * which contains the Calibration and name.
-	 * 
+	 *
 	 * The {@link Img} containing the data could be either {@link ArrayImg},
 	 * {@link PlanarImg} or {@link CellImg}. It tries opening it in exactly this
 	 * order.
-	 * 
+	 *
 	 * @param id
 	 *            - the location of the file/http address to open
 	 * @return - the {@link ImgPlus} or null
-	 * 
+	 *
 	 * @throws ImgIOException
 	 *             - if file could not be found or is too big for the memory
 	 */
@@ -209,15 +210,15 @@ public class ImgOpener implements StatusReporter
 	/**
 	 * Opens an {@link Img} as {@link DoubleType}. It returns an {@link ImgPlus}
 	 * which contains the Calibration and name.
-	 * 
+	 *
 	 * The {@link Img} containing the data could be either {@link ArrayImg},
 	 * {@link PlanarImg} or {@link CellImg}. It tries opening it in exactly this
 	 * order.
-	 * 
+	 *
 	 * @param id
 	 *            - the location of the file/http address to open
 	 * @return - the {@link ImgPlus} or null
-	 * 
+	 *
 	 * @throws ImgIOException
 	 *             - if file could not be found or is too big for the memory
 	 */
@@ -256,15 +257,15 @@ public class ImgOpener implements StatusReporter
 	/**
 	 * Opens an {@link Img} as {@link UnsignedByteType}. It returns an
 	 * {@link ImgPlus} which contains the Calibration and name.
-	 * 
+	 *
 	 * The {@link Img} containing the data could be either {@link ArrayImg},
 	 * {@link PlanarImg} or {@link CellImg}. It tries opening it in exactly this
 	 * order.
-	 * 
+	 *
 	 * @param id
 	 *            - the location of the file/http address to open
 	 * @return - the {@link ImgPlus} or null
-	 * 
+	 *
 	 * @throws ImgIOException
 	 *             - if file could not be found or is too big for the memory
 	 */
@@ -306,7 +307,7 @@ public class ImgOpener implements StatusReporter
 	 * Reads in an {@link ImgPlus} from the given source. It will read it into a
 	 * {@link PlanarImg}, where the {@link Type} T is defined by the file format
 	 * and implements {@link RealType} and {@link NativeType}.
-	 * 
+	 *
 	 * @param id
 	 *            The source of the image (e.g., a file on disk).
 	 * @throws ImgIOException
@@ -324,7 +325,7 @@ public class ImgOpener implements StatusReporter
 	 * Reads in an {@link ImgPlus} from the given source. It will read it into a
 	 * {@link PlanarImg}, where the {@link Type} T is defined by the file format
 	 * and implements {@link RealType} and {@link NativeType}.
-	 * 
+	 *
 	 * @param id
 	 *            The source of the image (e.g., a file on disk).
 	 * @param computeMinMax
@@ -348,7 +349,7 @@ public class ImgOpener implements StatusReporter
 	 * {@link Type} T is defined by the file format and implements
 	 * {@link RealType} and {@link NativeType}. The {@link Type} of the
 	 * {@link ImgFactory} will be ignored.
-	 * 
+	 *
 	 * @param id
 	 *            The source of the image (e.g., a file on disk).
 	 * @param imgFactory
@@ -371,7 +372,7 @@ public class ImgOpener implements StatusReporter
 	 * defined by the file format and implements {@link RealType} and
 	 * {@link NativeType}. The {@link Type} of the {@link ImgFactory} will be
 	 * ignored.
-	 * 
+	 *
 	 * @param id
 	 *            The source of the image (e.g., a file on disk).
 	 * @param imgFactory
@@ -412,7 +413,7 @@ public class ImgOpener implements StatusReporter
 	 * Protected generic method that calls the opening method which takes a
 	 * factory and a type. Enclosing everything in one instance ensures type
 	 * safety, T implements RealType and NativeType.
-	 * 
+	 *
 	 * @param r
 	 *            - An initialized {@link IFormatReader} to use for reading
 	 *            image data.
@@ -428,7 +429,7 @@ public class ImgOpener implements StatusReporter
 	 * @throws ImgIOException
 	 *             if there is a problem reading the image data.
 	 */
-	protected < T extends RealType< T >> ImgPlus< T > openImg( final IFormatReader r, final ImgCreator< T > creator, boolean computeMinMax ) throws ImgIOException
+	protected < T extends RealType< T >> ImgPlus< T > openImg( final IFormatReader r, final ImgCreator< T > creator, final boolean computeMinMax ) throws ImgIOException
 	{
 		return openImg( r, creator.factory, creator.type, computeMinMax );
 	}
@@ -437,7 +438,7 @@ public class ImgOpener implements StatusReporter
 	 * Reads in an {@link ImgPlus} from the given source, using the given
 	 * {@link ImgFactory} to construct the {@link Img}. The {@link Type} T to
 	 * read is defined by the third parameter.
-	 * 
+	 *
 	 * @param imgFactory
 	 *            The {@link ImgFactory} to use for creating the resultant
 	 *            {@link ImgPlus}.
@@ -456,7 +457,7 @@ public class ImgOpener implements StatusReporter
 	 * Reads in an {@link ImgPlus} from the given source, using the given
 	 * {@link ImgFactory} to construct the {@link Img}. The {@link Type} T to
 	 * read is defined by the third parameter.
-	 * 
+	 *
 	 * @param imgFactory
 	 *            The {@link ImgFactory} to use for creating the resultant
 	 *            {@link ImgPlus}.
@@ -492,7 +493,7 @@ public class ImgOpener implements StatusReporter
 	 * {@link IFormatReader}, using the given {@link ImgFactory} to construct
 	 * the {@link Img}. The {@link Type} T to read is defined by the third
 	 * parameter.
-	 * 
+	 *
 	 * @param r
 	 *            An initialized {@link IFormatReader} to use for reading image
 	 *            data.
@@ -515,7 +516,7 @@ public class ImgOpener implements StatusReporter
 	 * {@link IFormatReader}, using the given {@link ImgFactory} to construct
 	 * the {@link Img}. The {@link Type} T to read is defined by the third
 	 * parameter.
-	 * 
+	 *
 	 * @param r
 	 *            An initialized {@link IFormatReader} to use for reading image
 	 *            data.
@@ -542,7 +543,7 @@ public class ImgOpener implements StatusReporter
 	 * {@link IFormatReader}, using the given {@link ImgFactory} to construct
 	 * the {@link Img}. The {@link Type} T to read is defined by the third
 	 * parameter.
-	 * 
+	 *
 	 * @param r
 	 *            An initialized {@link IFormatReader} to use for reading image
 	 *            data.
@@ -559,7 +560,7 @@ public class ImgOpener implements StatusReporter
 	 * @throws ImgIOException
 	 *             if there is a problem reading the image data.
 	 */
-	public < T extends RealType< T >> ImgPlus< T > openImg( final IFormatReader r, final ImgFactory< T > imgFactory, final T type, final boolean computeMinMax, int... includedPlanes ) throws ImgIOException
+	public < T extends RealType< T >> ImgPlus< T > openImg( final IFormatReader r, final ImgFactory< T > imgFactory, final T type, final boolean computeMinMax, final int... includedPlanes ) throws ImgIOException
 	{
 
 		Pair< long[], int[] > info = dimLengths( r, includedPlanes );
@@ -595,7 +596,7 @@ public class ImgOpener implements StatusReporter
 	 * Calculate dimensionality of resulting img and returns the resulting
 	 * dimensionality and the invalid dimensions (which are size one)
 	 */
-	private Pair< long[], int[] > dimLengths( IFormatReader r, int... includedPlanes )
+	private Pair< long[], int[] > dimLengths( final IFormatReader r, final int... includedPlanes )
 	{
 
 		long[] srcDimLengths = getDimLengths( r );
@@ -690,7 +691,7 @@ public class ImgOpener implements StatusReporter
 		return createReader( null, id, computeMinMax );
 	}
 
-	public static IFormatReader createReader( ClassList< IFormatReader > readers, final String id, final boolean computeMinMax ) throws FormatException, IOException
+	public static IFormatReader createReader( final ClassList< IFormatReader > readers, final String id, final boolean computeMinMax ) throws FormatException, IOException
 	{
 		IFormatReader r = null;
 
@@ -930,7 +931,7 @@ public class ImgOpener implements StatusReporter
 	 * Wraps the given {@link Img} in an {@link ImgPlus} with metadata
 	 * corresponding to the specified initialized {@link IFormatReader}.
 	 */
-	private < T extends RealType< T >> ImgPlus< T > makeImgPlus( final Img< T > img, final IFormatReader r, int[] invalidDims ) throws ImgIOException
+	private < T extends RealType< T >> ImgPlus< T > makeImgPlus( final Img< T > img, final IFormatReader r, final int[] invalidDims ) throws ImgIOException
 	{
 		final String name = getName( r );
 
@@ -1004,7 +1005,7 @@ public class ImgOpener implements StatusReporter
 		return imgPlus;
 	}
 
-	private boolean contains( int[] invalidDims, int d )
+	private boolean contains( final int[] invalidDims, final int d )
 	{
 		for ( int i = 0; i < invalidDims.length; i++ )
 			if ( invalidDims[ i ] == d )
@@ -1034,7 +1035,7 @@ public class ImgOpener implements StatusReporter
 	 * Reads planes from the given initialized {@link IFormatReader} into the
 	 * specified {@link Img}.
 	 */
-	private < T extends RealType< T >> void readPlanes( final IFormatReader r, final T type, final ImgPlus< T > imgPlus, final boolean computeMinMax, int... includedPlanes ) throws FormatException, IOException
+	private < T extends RealType< T >> void readPlanes( final IFormatReader r, final T type, final ImgPlus< T > imgPlus, final boolean computeMinMax, final int... includedPlanes ) throws FormatException, IOException
 	{
 
 		// TODO - create better container types; either:
@@ -1246,7 +1247,7 @@ public class ImgOpener implements StatusReporter
 	/**
 	 * Helper
 	 */
-	private static void fillDataArray( Object alloc, byte[] b, int bpp, boolean fp, boolean little )
+	private static void fillDataArray( final Object alloc, final byte[] b, final int bpp, final boolean fp, final boolean little )
 	{
 
 		if ( alloc instanceof byte[] )
