@@ -317,6 +317,35 @@ public class PolygonRegionOfInterestTest {
 			}
 		}
 	}
+	
+	
+	/**
+	 * Test method for
+	 * {@link mpicbg.imglib.roi.AbstractIterableRegionOfInterest#getIterableIntervalOverROI(mpicbg.imglib.RandomAccessible)}
+	 * .
+	 */
+	@Test
+	public void testGetIterableIntervalOverROIBeyondImgBorder() {
+		double size = 5;
+		Img<IntType> img = makeNumberedArray((int) size, (int) size);
+		 PolygonRegionOfInterest roi = new PolygonRegionOfInterest();
+		 roi.addVertex(0, new RealPoint(-size, size));
+		 roi.addVertex(1, new RealPoint(size, size));
+		 roi.addVertex(2, new RealPoint(size, -size));
+		 roi.addVertex(3, new RealPoint(-size, -size));
+		// RectangleRegionOfInterest roi = new RectangleRegionOfInterest(
+		// new double[] { -5.0, -5.0 }, new double[] { 10.0, 10.0 });
+		IterableInterval<IntType> ii = roi.getIterableIntervalOverROI(img);
+		Cursor<IntType> cur = ii.cursor();
+		int i = 0;
+		while (cur.hasNext()) {
+			cur.fwd();
+			i++;
+		}
+		assertEquals((int) (size * size), i);
+
+	}
+	
 	/**
 	 * Determine whether the given position is on an edge of the polygon
 	 * @param x
