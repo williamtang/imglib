@@ -35,97 +35,16 @@
  */
 
 
-package net.imglib2.ops.pointset;
-
-import java.util.Arrays;
-
+package net.imglib2.ops.parse.token;
 
 /**
- * OnePointSet represents a {@link PointSet} that contains exactly one point.
- * 
- * @author Barry DeZonia
- */
-public class OnePointSet implements PointSet {
+* 
+* @author Barry DeZonia
+*
+*/
+public class Min extends Token {
 
-	// -- instance varaibles --
-	
-	private long[] point;
-	
-	// -- constructor --
-	
-	public OnePointSet(long[] point) {
-		this.point = point;
-	}
-	
-	// -- PointSet methods --
-	
-	@Override
-	public long[] getOrigin() {
-		return point;
-	}
-
-	@Override
-	public void translate(long[] deltas) {
-		for (int i = 0; i < point.length; i++)
-			point[i] += deltas[i];
-	}
-
-	@Override
-	public int numDimensions() {
-		return point.length;
-	}
-
-	@Override
-	public long[] findBoundMin() {
-		return point;
-	}
-
-	@Override
-	public long[] findBoundMax() {
-		return point;
-	}
-
-	@Override
-	public boolean includes(long[] pt) {
-		return Arrays.equals(this.point, pt);
-	}
-
-	@Override
-	public long calcSize() {
-		return 1;
-	}
-
-	@Override
-	public OnePointSet copy() {
-		return new OnePointSet(point.clone());
-	}
-	
-	@Override
-	public PointSetIterator createIterator() {
-		return new OnePointSetIterator();
-	}
-
-	// -- private helpers --
-	
-	private class OnePointSetIterator implements PointSetIterator {
-
-		private boolean hasNext = true;
-		
-		@Override
-		public boolean hasNext() {
-			return hasNext;
-		}
-
-		@Override
-		public long[] next() {
-			hasNext = false;
-			return point;
-		}
-
-		@Override
-		public void reset() {
-			hasNext = true;
-		}
-		
+	public Min(int start, String text) {
+		super(start, text);
 	}
 }

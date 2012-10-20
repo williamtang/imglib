@@ -35,97 +35,43 @@
  */
 
 
-package net.imglib2.ops.pointset;
+package net.imglib2.ops.function.real;
 
-import java.util.Arrays;
-
+import net.imglib2.ops.function.Function;
+import net.imglib2.ops.pointset.PointSet;
+import net.imglib2.type.numeric.RealType;
 
 /**
- * OnePointSet represents a {@link PointSet} that contains exactly one point.
+ * Computes the number of points of an input {@link PointSet}.
  * 
  * @author Barry DeZonia
+ *
+ * @param <T>
+ *   A {@link RealType} representing the output type filled during the
+ *   call to compute().
  */
-public class OnePointSet implements PointSet {
-
-	// -- instance varaibles --
+public class RealPointCountFunction <T extends RealType<T>>
+	implements Function<PointSet,T>
+{
+	private final T type;
 	
-	private long[] point;
-	
-	// -- constructor --
-	
-	public OnePointSet(long[] point) {
-		this.point = point;
-	}
-	
-	// -- PointSet methods --
-	
-	@Override
-	public long[] getOrigin() {
-		return point;
-	}
-
-	@Override
-	public void translate(long[] deltas) {
-		for (int i = 0; i < point.length; i++)
-			point[i] += deltas[i];
-	}
-
-	@Override
-	public int numDimensions() {
-		return point.length;
-	}
-
-	@Override
-	public long[] findBoundMin() {
-		return point;
-	}
-
-	@Override
-	public long[] findBoundMax() {
-		return point;
-	}
-
-	@Override
-	public boolean includes(long[] pt) {
-		return Arrays.equals(this.point, pt);
-	}
-
-	@Override
-	public long calcSize() {
-		return 1;
-	}
-
-	@Override
-	public OnePointSet copy() {
-		return new OnePointSet(point.clone());
+	public RealPointCountFunction(T type) {
+		this.type = type;
 	}
 	
 	@Override
-	public PointSetIterator createIterator() {
-		return new OnePointSetIterator();
+	public void compute(PointSet input, T output) {
+		output.setReal(input.calcSize());
 	}
 
-	// -- private helpers --
-	
-	private class OnePointSetIterator implements PointSetIterator {
-
-		private boolean hasNext = true;
-		
-		@Override
-		public boolean hasNext() {
-			return hasNext;
-		}
-
-		@Override
-		public long[] next() {
-			hasNext = false;
-			return point;
-		}
-
-		@Override
-		public void reset() {
-			hasNext = true;
-		}
-		
+	@Override
+	public T createOutput() {
+		return type.createVariable();
 	}
+
+	@Override
+	public RealPointCountFunction<T> copy() {
+		return new RealPointCountFunction<T>(type.copy());
+	}
+
 }

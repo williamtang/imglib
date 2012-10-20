@@ -39,6 +39,8 @@ package net.imglib2.ops.pointset;
 
 
 /**
+ * HyperVolumePointSet is a {@link PointSet} that spans a contiguous region of
+ * space. It can be thought of as a regularly spaced n-dimensional grid.
  * 
  * @author Barry DeZonia
  */
@@ -47,8 +49,6 @@ public class HyperVolumePointSet implements PointSet {
 	// -- instance variables --
 	
 	private final long[] origin;
-	private final long[] negOffsets;
-	private final long[] posOffsets;
 	private final long[] boundMin;
 	private final long[] boundMax;
 
@@ -74,8 +74,6 @@ public class HyperVolumePointSet implements PointSet {
 				throw new IllegalArgumentException("all offsets must be >= 0");
 		}
 		this.origin = origin.clone();
-		this.negOffsets = negOffsets.clone();
-		this.posOffsets = posOffsets.clone();
 		this.boundMin = new long[origin.length];
 		this.boundMax = new long[origin.length];
 		for (int i = 0; i < origin.length; i++) {
@@ -96,16 +94,11 @@ public class HyperVolumePointSet implements PointSet {
 			throw new IllegalArgumentException();
 		this.boundMin = new long[pt1.length];
 		this.boundMax = new long[pt1.length];
-		this.negOffsets = new long[pt1.length];
-		this.posOffsets = new long[pt1.length];
 		for (int i = 0; i < pt1.length; i++) {
 			boundMin[i] = Math.min(pt1[i], pt2[i]);
 			boundMax[i] = Math.max(pt1[i], pt2[i]);
 		}
-		for (int i = 0; i < pt1.length; i++) {
-			posOffsets[i] = boundMax[i] - boundMin[i];
-		}
-		this.origin = boundMin.clone();
+		this.origin = pt1.clone();
 	}
 	
 	/**
@@ -119,7 +112,7 @@ public class HyperVolumePointSet implements PointSet {
 		this(new long[span.length], lastPoint(span));
 	}
 	
-	// -- public api --
+	// -- PointSet methods --
 	
 	@Override
 	public long[] getOrigin() { return origin; }
@@ -127,9 +120,10 @@ public class HyperVolumePointSet implements PointSet {
 	@Override
 	public void translate(long[] deltas) {
 		for (int i = 0; i < origin.length; i++) {
-			origin[i] += deltas[i];
-			boundMin[i] += deltas[i];
-			boundMax[i] += deltas[i];
+			long delta = deltas[i];
+			origin[i] += delta;
+			boundMin[i] += delta;
+			boundMax[i] += delta;
 		}
 		//for (PointSetIterator iter : iters) iter.reset();
 	}
@@ -151,8 +145,8 @@ public class HyperVolumePointSet implements PointSet {
 	@Override
 	public boolean includes(long[] point) {
 		for (int i = 0; i < origin.length; i++) {
-			if (point[i] < origin[i] - negOffsets[i]) return false;
-			if (point[i] > origin[i] + posOffsets[i]) return false;
+			if (point[i] < boundMin[i]) return false;
+			if (point[i] > boundMax[i]) return false;
 		}
 		return true;
 	}
@@ -161,7 +155,7 @@ public class HyperVolumePointSet implements PointSet {
 	public long calcSize() {
 		long numElements = 1;
 		for (int i = 0; i < origin.length; i++) {
-			numElements *= 1 + negOffsets[i] + posOffsets[i];
+			numElements *= boundMax[i] - boundMin[i] + 1;
 		}
 		return numElements;
 	}
