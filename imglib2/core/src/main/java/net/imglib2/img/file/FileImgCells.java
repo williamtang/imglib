@@ -36,43 +36,66 @@
 
 package net.imglib2.img.file;
 
-import net.imglib2.exception.IncompatibleTypeException;
-import net.imglib2.img.ImgFactory;
+import net.imglib2.img.Img;
+import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
+import net.imglib2.img.cell.AbstractImgCells;
+import net.imglib2.img.cell.Cells;
+import net.imglib2.img.cell.DefaultCell;
+import net.imglib2.img.file.FileImgFactory.FileNameGenerator;
 
 /**
+ * Implementation of {@link Cells} that uses {@link DefaultCell}s and keeps them
+ * all in memory all the time.
  * 
  * 
- * 
- * @author Stephan Preibisch
- * @author Stephan Saalfeld
+ * @author ImgLib2 developers
+ * @author Tobias Pietzsch
+ * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
-public class FileImgFactory< T extends ExternalizableType< T >> extends ImgFactory< T >
+public class FileImgCells< A extends ArrayDataAccess< A > & ExternalizableType< A >> extends AbstractImgCells< A, FileCell< A > >
 {
 
-	private final FileNameGenerator nameGenerator;
+	private int entitiesPerPixel;
 
-	public FileImgFactory( FileNameGenerator nameGenerator )
+	private A creator;
+
+	private FileNameGenerator fileNameGenerator;
+
+	public FileImgCells( final A creator, final int entitiesPerPixel, final long[] dimensions, final int[] cellDimensions, FileNameGenerator fileNameGenerator )
 	{
-		this.nameGenerator = nameGenerator;
+		super( entitiesPerPixel, dimensions, cellDimensions );
+		this.entitiesPerPixel = entitiesPerPixel;
+		this.creator = creator;
+		this.fileNameGenerator = fileNameGenerator;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected Img< FileCell< A >> getCellsImg( long[] numCells )
+	{
+
+		FileImg< FileCell< A >> cells = new FileImgFactory< FileCell< A > >( fileNameGenerator ).create( numCells, new FileCell< A >( creator, cellDimensions, new long[ cellDimensions.length ], entitiesPerPixel ) );
+		final FileLocalizingCursor< FileCell< A > > cellCursor = cells.localizingCursor();
+		long[] currentCellOffset = new long[ numCells.length ];
+		int[] currentCellDims = new int[ numCells.length ];
+		while ( cellCursor.hasNext() )
+		{
+			cellCursor.fwd();
+			cellCursor.localize( currentCellOffset );
+			getCellDimensions( currentCellOffset, currentCellDims );
+
+			cellCursor.set( new FileCell< A >( creator, currentCellDims, currentCellOffset, entitiesPerPixel ) );
+		}
+		return cells;
 
 	}
 
-	@Override
-	public FileImg< T > create( final long[] dim, final T type )
+	/**
+	 * To release the memory manually for debugging purposes
+	 */
+	public void freeAllMemory()
 	{
-		return new FileImg< T >( dim, type, nameGenerator );
+		( ( FileImg< FileCell< A >> ) cells ).freeAllMemory();
 	}
-
-	@SuppressWarnings( { "unchecked", "rawtypes" } )
-	@Override
-	public < S > ImgFactory< S > imgFactory( final S type ) throws IncompatibleTypeException
-	{
-		throw new UnsupportedOperationException( "Not supported, yet!" );
-	}
-
-	public interface FileNameGenerator
-	{
-		public String nextAbsoluteFileName();
-	}
-
 }

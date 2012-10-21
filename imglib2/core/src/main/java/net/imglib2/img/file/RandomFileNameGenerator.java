@@ -28,29 +28,35 @@ import java.util.UUID;
 import net.imglib2.img.file.FileImgFactory.FileNameGenerator;
 
 /**
- *
+ * 
  * @author Martin Horn, University of Konstanz
- *
+ * 
  */
-public class RandomFileNameGenerator implements FileNameGenerator {
+public class RandomFileNameGenerator implements FileNameGenerator
+{
 
-    private final String directory;
+	private final String directory;
 
-    public RandomFileNameGenerator(final String directory) {
+	public RandomFileNameGenerator( final String directory )
+	{
 
-        if (!directory.endsWith(File.separator)) {
-            this.directory = directory + File.separator;
-        } else {
-            this.directory = directory;
-        }
+		if ( !directory.endsWith( File.separator ) )
+		{
+			this.directory = directory + File.separator;
+		}
+		else
+		{
+			this.directory = directory;
+		}
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String nextAbsoluteFileName() {
-        return directory + UUID.randomUUID().toString();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String nextAbsoluteFileName()
+	{
+		return directory + UUID.randomUUID().toString();
+	}
 }

@@ -1,288 +1,257 @@
-/* ------------------------------------------------------------------
- * This source code, its documentation and all appendant files
- * are protected by copyright law. All rights reserved.
- *
- * Copyright, 2008 - 2012
- * KNIME.com, Zurich, Switzerland
- *
- * You may not modify, publish, transmit, transfer or sell, reproduce,
- * create derivative works from, distribute, perform, display, or in
- * any way exploit any of the content, in whole or in part, except as
- * otherwise expressly permitted in writing by the copyright owner or
- * as specified in the license file distributed with this product.
- *
- * If you have any questions please contact the copyright holder:
- * website: www.knime.com
- * email: contact@knime.com
- * ---------------------------------------------------------------------
- *
- * History
- *   Sep 4, 2012 (hornm): created
+/*
+ * #%L
+ * ImgLib2: a general-purpose, multidimensional image processing library.
+ * %%
+ * Copyright (C) 2009 - 2012 Stephan Preibisch, Stephan Saalfeld, Tobias
+ * Pietzsch, Albert Cardona, Barry DeZonia, Curtis Rueden, Lee Kamentsky, Larry
+ * Lindsey, Johannes Schindelin, Christian Dietz, Grant Harris, Jean-Yves
+ * Tinevez, Steffen Jaensch, Mark Longair, Nick Perry, and Jan Funke.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 package net.imglib2.img.file;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.ref.SoftReference;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.imglib2.Cursor;
-import net.imglib2.RandomAccess;
-import net.imglib2.img.AbstractNativeImg;
+import net.imglib2.FlatIterationOrder;
+import net.imglib2.img.AbstractImg;
 import net.imglib2.img.Img;
-import net.imglib2.img.ImgFactory;
-import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
-import net.imglib2.type.NativeType;
+import net.imglib2.img.file.FileImgFactory.FileNameGenerator;
+import net.imglib2.type.Type;
 import net.imglib2.util.IntervalIndexer;
-import net.imglib2.util.Pair;
 
 /**
- *
- * @author Martin Horn, University of Konstanz
- *
+ * This {@link Img} stores an image in a single linear {@link ArrayList}. Each
+ * pixel is stored as an individual object, so {@link FileImg} should only be
+ * used for images with relatively few pixels. In principle, the number of
+ * entities stored is limited to {@link Integer#MAX_VALUE}.
+ * 
+ * @param <T>
+ *            The value type of the pixels. You can us {@link Type}s or
+ *            arbitrary {@link Object}s. If you use non-{@link Type} pixels,
+ *            note, that you cannot use {@link Type#set(Type)} to change the
+ *            value stored in every reference. Instead, you can use the
+ *            {@link FileCursor#set(Object)} and
+ *            {@link FileRandomAccess#set(Object)} methods to alter the
+ *            underlying {@link ArrayList}.
+ * 
+ * @author ImgLib2 developers
+ * @author Stephan Preibisch
+ * @author Stephan Saalfeld
+ * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
-public class FileImg<T extends NativeType<T>, A extends ArrayDataAccess<A>>
-        extends AbstractNativeImg<T, A> {
+public class FileImg< T extends ExternalizableType< T >> extends AbstractImg< T >
+{
+	private static final Logger LOGGER = Logger.getLogger( "FileImg" );
 
-    private static final Logger LOGGER = Logger.getLogger("FileImg");
+	final protected int[] step;
 
-    private final int maxEntitiesPerChunk;
+	final protected int[] dim;
 
-    /* maps buffer index to the buffer */
-    private final Map<Integer, SoftReference<A>> dataChunkMap =
-            new HashMap<Integer, SoftReference<A>>();
+	private final HashMap< Integer, T > pixels;
 
-    private final LinkedList<Pair<A, Long>> chunkCache =
-            new LinkedList<Pair<A, Long>>();
+	private final String baseFilename;
 
-    private final File file;
+	private T type;
 
-    private final A dataBufferTemplate;
+	private final FileNameGenerator fileNameGen;
 
-    int[] dim;
+	private static final MemoryWarningSystem MEMORY_WARNING_SYSTEM = new MemoryWarningSystem();
 
-    int[] steps;
+	protected FileImg( final long[] dim, final T type, FileNameGenerator fileNameGen )
+	{
+		super( dim );
 
-    /* offset in the file where the image data starts */
-    private final long offset;
+		this.dim = new int[ n ];
+		this.baseFilename = fileNameGen.nextAbsoluteFileName();
+		this.fileNameGen = fileNameGen;
+		this.type = type;
+		for ( int d = 0; d < n; ++d )
+			this.dim[ d ] = ( int ) dim[ d ];
 
-    private RandomAccessFile fileAccess;
+		this.step = new int[ n ];
+		IntervalIndexer.createAllocationSteps( this.dim, this.step );
 
-    private static MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
+		this.pixels = new HashMap< Integer, T >( ( int ) numPixels );
 
-    /**
-     * @param dim
-     * @param entitiesPerPixel
-     * @param file the file backing the image, if it doesn't exist it will be
-     *            created with the according size
-     * @param dataBufferTemplate data buffer template to be able to create the
-     *            right type of new data buffers, hence size can be 1
-     * @param maxEntitiesPerChunk
-     * @param offset the offset in the file where the image data starts
-     */
-    public FileImg(final long[] dim, final int entitiesPerPixel,
-            final File file, final A dataBufferTemplate,
-            final int maxEntitiesPerChunk, final long offset) {
-        super(dim, entitiesPerPixel);
+		// if (type instanceof Type<?>) {
+		// final Type<?> t = (Type<?>) type;
+		// @SuppressWarnings("unchecked")
+		// final ArrayList<Type<?>> tpixels = (ArrayList<Type<?>>) this.pixels;
+		// for (int i = 0; i < this.numPixels; ++i)
+		// tpixels.add(t.createVariable());
+		// } else {
+		// for (int i = 0; i < this.numPixels; ++i)
+		// pixels.add(null);
+		// }
 
-        this.dim = new int[n];
-        for (int d = 0; d < n; ++d)
-            this.dim[d] = (int)dim[d];
+		MemoryWarningSystem.setPercentageUsageThreshold( .8 );
+		MEMORY_WARNING_SYSTEM.addListener( new MemoryWarningSystem.Listener()
+		{
 
-        this.steps = new int[n];
-        IntervalIndexer.createAllocationSteps(this.dim, this.steps);
+			public void memoryUsageLow( long usedMemory, long maxMemory )
+			{
+				LOGGER.log( Level.INFO, "low memory. used mem: " + usedMemory + ";max mem: " + maxMemory + "." );
+				freeAllMemory();
 
-        this.dataBufferTemplate = dataBufferTemplate;
-        this.file = file;
+			}
+		} );
+	}
 
-        // if the file doesn't exist allocate the harddisk memory
-        boolean fileExists = file.exists();
-        try {
-            fileAccess = new RandomAccessFile(file, "rw");
-            if (!fileExists) {
-                fileAccess.setLength(numEntities);
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Can't access file.", e);
-        } catch (IOException e) {
-            throw new RuntimeException("Can't access file.", e);
-        }
-        this.maxEntitiesPerChunk = maxEntitiesPerChunk;
+	void set( T t, int i )
+	{
+		pixels.put( i, t );
+	}
 
-        this.offset = offset;
+	T get( int i )
+	{
+		// freeAllMemory();
+		T t = pixels.get( i );
+		if ( t == null )
+		{
+			try
+			{
+				t = ( T ) type.getClass().newInstance();
+				BufferedDataInputStream stream = null;
+				File f = new File( baseFilename + i );
+				if ( !f.exists() )
+				{
+					t = type.emptyCopy();
+				}
+				else
+				{
+					stream = new BufferedDataInputStream( new FileInputStream( f ) );
+					ObjectInputStream objectInput = new ObjectInputStream( stream );
+					t.readExternal( objectInput );
+					stream.close();
+				}
 
-    }
+			}
+			catch ( Exception e )
+			{
+				throw new RuntimeException( e );
+			}
+		}
+		pixels.put( i, t );
+		return t;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public A update(final Object updater) {
+	/* Makes all pixels persistent (if dirty) and releases them */
+	void freeAllMemory()
+	{
+		for ( Entry< Integer, T > e : pixels.entrySet() )
+		{
+			if ( e.getValue().isDirty() )
+			{
+				// make persistent
+				try
+				{
+					BufferedDataOutputStream stream = new BufferedDataOutputStream( new FileOutputStream( new File( baseFilename + e.getKey() ), false ) );
+					ObjectOutputStream objectOutput = new ObjectOutputStream( stream );
+					e.getValue().writeExternal( objectOutput );
+					stream.close();
 
-        // get the current index in the file/image from the updater
-        long entityIndex =
-                ((FileContainerSampler<T, A>)updater).getEntityIndex();
-        int bufferIndex = (int)(entityIndex / maxEntitiesPerChunk);
-        long bufferStartIndex = (long)bufferIndex * maxEntitiesPerChunk;
-        ((FileContainerSampler<T, A>)updater)
-                .setBufferStartIndex(bufferStartIndex);
-        int length =
-                (int)Math.min(maxEntitiesPerChunk, numEntities
-                        - bufferStartIndex);
-        ((FileContainerSampler<T, A>)updater).setBufferLength(length);
-        checkAndFreeMemory();
-        SoftReference<A> ref = dataChunkMap.get(bufferIndex);
-        if (ref != null && ref.get() != null) {
-            // current position is already in the buffer
-            return ref.get();
-        } else {
+				}
+				catch ( IOException ioe )
+				{
+					throw new RuntimeException( ioe );
+				}
+			}
+		}
 
-            System.out.println("Create chunk in memory ...");
-            A dataBuffer = dataBufferTemplate.createArray(length);
-            try {
-                FileBufferIO.fillBuffer(
-                        file,
-                        dataBuffer,
-                        offset
-                                + FileBufferIO.getOffsetFromEntityIndex(
-                                        dataBuffer, bufferStartIndex));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            dataChunkMap.put(bufferIndex, new SoftReference<A>(dataBuffer));
-            chunkCache.add(new Pair<A, Long>(dataBuffer, bufferStartIndex));
-            return dataBuffer;
-        }
+		// free memory
+		pixels.clear();
 
-    }
+	}
 
-    private void checkAndFreeMemory() {
-        if ((double)memBean.getHeapMemoryUsage().getUsed()
-                / memBean.getHeapMemoryUsage().getMax() > .6) {
-            // write and clear some chunks
-            for (int i = 0; chunkCache.size() > 1 && i < 2; i++) {
-                Pair<A, Long> chunk = chunkCache.removeFirst();
-                System.out.println("Free memory ...");
-                if (chunk.a instanceof DirtyFlag
-                        && ((DirtyFlag)chunk.a).isDirty()) {
-                    System.out.println("Write chunk to file ... ");
-                    try {
-                        FileBufferIO.writeBuffer(
-                                fileAccess,
-                                chunk.a,
-                                offset
-                                        + FileBufferIO
-                                                .getOffsetFromEntityIndex(
-                                                        chunk.a, chunk.b));
-                    } catch (IOException e) {
-                        throw new RuntimeException("Writing chunk to file "
-                                + file + " failed.", e);
-                    }
-                }
-            }
-        }
+	@Override
+	public FileCursor< T > cursor()
+	{
+		return new FileCursor< T >( this );
+	}
 
-    }
+	@Override
+	public FileLocalizingCursor< T > localizingCursor()
+	{
+		return new FileLocalizingCursor< T >( this );
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ImgFactory<T> factory() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public FileRandomAccess< T > randomAccess()
+	{
+		return new FileRandomAccess< T >( this );
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Img<T> copy() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public FileImgFactory< T > factory()
+	{
+		return new FileImgFactory< T >( fileNameGen );
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RandomAccess<T> randomAccess() {
-        return new FileRandomAccess<T, A>(this);
-    }
+	@Override
+	public FlatIterationOrder iterationOrder()
+	{
+		return new FlatIterationOrder( this );
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cursor<T> cursor() {
-        return new FileCursor<T, A>(this);
-    }
+	// private static <A extends Type<A>> FileImg<A> copyWithType(
+	// final FileImg<A> img) {
+	// final FileImg<A> copy = new FileImg<A>(img.dimension, img
+	// .firstElement().createVariable());
+	//
+	// final FileCursor<A> source = img.cursor();
+	// final FileCursor<A> target = copy.cursor();
+	//
+	// while (source.hasNext())
+	// target.next().set(source.next());
+	//
+	// return copy;
+	// }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cursor<T> localizingCursor() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object iterationOrder() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * This interface is implemented by all samplers on the {@link FileImg}. It
-     * allows the container to ask for the current absolute offset in the file.
-     */
-    public interface FileContainerSampler<T extends NativeType<T>, A extends ArrayDataAccess<A>> {
-        /**
-         * @return the offset in the file where the sampler is
-         */
-        public long getEntityIndex();
-
-        public void setBufferStartIndex(long bufferStartIndex);
-
-        public void setBufferLength(int length);
-    }
-
-    // private class WriteOnFinalizeBuffer {
-    //
-    // final A buffer;
-    //
-    // public WriteOnFinalizeBuffer(final A buffer) {
-    // this.buffer = buffer;
-    // }
-    //
-    // @Override
-    // protected void finalize() throws Throwable {
-    // // only write chunk to file if it is dirty!
-    // System.out.println("Garbage collect chunk ...");
-    // if (buffer instanceof DirtyFlag && ((DirtyFlag)buffer).isDirty()) {
-    // System.out.println("Write chunk to file ... (free memory: "
-    // + Runtime.getRuntime().freeMemory()
-    // + ";#chunks in memory: " + dataChunkMap.size() + ")");
-    // FileBufferIO.writeBuffer(
-    // fileAccess,
-    // buffer,
-    // offset
-    // + FileBufferIO.getOffsetFromEntityIndex(buffer,
-    // lastEntityIndex));
-    // }
-    // }
-    // }
-
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
+	@Override
+	public FileImg< T > copy()
+	{
+		// final T type = firstElement();
+		// if (type instanceof Type<?>) {
+		// return copyWithType((FileImg<Type>) this);
+		// } else {
+		return new FileImg< T >( dimension, type, fileNameGen );
+		// }
+	}
 }

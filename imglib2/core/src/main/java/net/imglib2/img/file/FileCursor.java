@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
+ * 
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
@@ -36,172 +36,90 @@
 
 package net.imglib2.img.file;
 
-import net.imglib2.AbstractCursor;
+import net.imglib2.AbstractCursorInt;
 import net.imglib2.Cursor;
-import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
-import net.imglib2.img.cell.CellImg;
-import net.imglib2.type.NativeType;
+import net.imglib2.util.IntervalIndexer;
 
 /**
- * {@link Cursor} on a {@link CellImg}.
- *
- *
- * @author ImgLib2 developers
- * @author Tobias Pietzsch
- * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
+ * {@link Cursor} on a {@link FileImg}.
+ * 
+ * @param <T>
+ * 
+ * @author Stephan Preibisch
+ * @author Stephan Saalfeld
  */
-public class FileCursor<T extends NativeType<T>, A extends ArrayDataAccess<A>>
-        extends AbstractCursor<T> implements FileImg.FileContainerSampler<T, A> {
-    protected final T type;
+final public class FileCursor<T extends ExternalizableType<T>> extends
+		AbstractCursorInt<T> {
+	private int i;
+	final private int maxNumPixels;
 
-    /*
-     * The current index of the type. It is faster to duplicate this here than
-     * to access it through type.getIndex(). Its the index within the current
-     * buffer.
-     */
-    protected int index;
+	final private FileImg<T> container;
 
-    /*
-     * Index of the offset of the buffer.
-     */
-    protected int bufferOffsetIndex;
+	protected FileCursor(final FileCursor<T> cursor) {
+		super(cursor.numDimensions());
 
-    /*
-     * Caches cursorOnCells.hasNext().
-     */
-    protected boolean isNotLastBuffer;
+		container = cursor.container;
+		this.maxNumPixels = cursor.maxNumPixels;
 
-    /*
-     * Number of total entities in the image.
-     */
-    private final long numEntities;
+		i = cursor.i;
+	}
 
-    /*
-     * Number of entities in the current buffer.
-     */
-    private int numEntitiesInBuffer;
+	public FileCursor(final FileImg<T> container) {
+		super(container.numDimensions());
 
-    protected FileCursor(final FileCursor<T, A> cursor) {
-        super(cursor.numDimensions());
+		this.container = container;
+		this.maxNumPixels = (int) container.size() - 1;
 
-        this.type = cursor.type.duplicateTypeOnSameNativeImg();
-        isNotLastBuffer = cursor.isNotLastBuffer;
-        index = cursor.index;
-        bufferOffsetIndex = cursor.bufferOffsetIndex;
-        numEntitiesInBuffer = cursor.numEntitiesInBuffer;
-        numEntities = cursor.numEntities;
+		reset();
+	}
 
-        type.updateContainer(this);
-        type.updateIndex(index);
-    }
+	@Override
+	public T get() {
+		return container.get(i);
+	}
 
-    public FileCursor(final FileImg<T, A> container) {
-        super(container.numDimensions());
+	public void set(final T t) {
+		container.set(t, i);
+	}
 
-        this.type = container.createLinkedType();
-        this.numEntities = container.size();
-        reset();
-    }
+	@Override
+	public FileCursor<T> copy() {
+		return new FileCursor<T>(this);
+	}
 
-    @Override
-    public T get() {
-        return type;
-    }
+	@Override
+	public FileCursor<T> copyCursor() {
+		return copy();
+	}
 
-    @Override
-    public FileCursor<T, A> copy() {
-        return new FileCursor<T, A>(this);
-    }
+	@Override
+	public boolean hasNext() {
+		return i < maxNumPixels;
+	}
 
-    @Override
-    public FileCursor<T, A> copyCursor() {
-        return copy();
-    }
+	@Override
+	public void jumpFwd(final long steps) {
+		i += steps;
+	}
 
-    @Override
-    public boolean hasNext() {
-        return (index < numEntitiesInBuffer - 1) || isNotLastBuffer;
-    }
+	@Override
+	public void fwd() {
+		++i;
+	}
 
-    @Override
-    public void jumpFwd(final long steps) {
-        long newIndex = index + steps;
-        while (newIndex >= numEntitiesInBuffer) {
-            newIndex -= numEntitiesInBuffer;
-            fillNextBuffer();
-        }
-        index = (int)newIndex;
-        type.updateIndex(index);
-        type.updateContainer(this);
-    }
+	@Override
+	public void reset() {
+		i = -1;
+	}
 
-    @Override
-    public void fwd() {
-        if (++index >= numEntitiesInBuffer) {
-            fillNextBuffer();
-            index = 0;
-            type.updateIndex(index);
-        } else {
-            type.incIndex();
-        }
-    }
+	@Override
+	public void localize(final int[] position) {
+		IntervalIndexer.indexToPosition(i, container.dim, position);
+	}
 
-    @Override
-    public void reset() {
-        bufferOffsetIndex = 0;
-        fillNextBuffer();
-        type.updateIndex(index);
-    }
-
-    @Override
-    public String toString() {
-        return type.toString();
-    }
-
-    @Override
-    public long getLongPosition(final int dim) {
-        return 0;
-    }
-
-    @Override
-    public void localize(final long[] position) {
-        // getCell().indexToGlobalPosition(index, position);
-    }
-
-    /**
-     * Move cursor right before the first element of the next cell. Update type
-     * and index variables.
-     */
-    private void fillNextBuffer() {
-        bufferOffsetIndex += numEntitiesInBuffer;
-        type.updateContainer(this);
-        isNotLastBuffer = bufferOffsetIndex + numEntitiesInBuffer < numEntities;
-        index = -1;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getEntityIndex() {
-        return bufferOffsetIndex;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setBufferLength(final int length) {
-        numEntitiesInBuffer = length;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setBufferStartIndex(final long bufferStartIndex) {
-        // nothing to do here
-
-    }
-
+	@Override
+	public int getIntPosition(final int d) {
+		return IntervalIndexer.indexToPosition(i, container.dim,
+				container.step, d);
+	}
 }

@@ -36,43 +36,104 @@
 
 package net.imglib2.img.file;
 
-import net.imglib2.exception.IncompatibleTypeException;
-import net.imglib2.img.ImgFactory;
+import net.imglib2.AbstractLocalizingCursorInt;
+import net.imglib2.Cursor;
 
 /**
+ * Localizing {@link Cursor} on a {@link FileImg}.
  * 
- * 
+ * @param <T>
  * 
  * @author Stephan Preibisch
  * @author Stephan Saalfeld
  */
-public class FileImgFactory< T extends ExternalizableType< T >> extends ImgFactory< T >
-{
+final public class FileLocalizingCursor<T extends ExternalizableType<T>>
+		extends AbstractLocalizingCursorInt<T> {
+	private int i;
+	final private int maxNumPixels;
 
-	private final FileNameGenerator nameGenerator;
+	final private long[] max;
 
-	public FileImgFactory( FileNameGenerator nameGenerator )
-	{
-		this.nameGenerator = nameGenerator;
+	private FileImg<T> container;
 
+	public FileLocalizingCursor(final FileLocalizingCursor<T> cursor) {
+		super(cursor.numDimensions());
+
+		container = cursor.container;
+
+		this.maxNumPixels = cursor.maxNumPixels;
+
+		this.max = new long[n];
+		for (int d = 0; d < n; ++d) {
+			max[d] = cursor.max[d];
+			position[d] = cursor.position[d];
+		}
+
+		i = cursor.i;
+	}
+
+	public FileLocalizingCursor(final FileImg<T> img) {
+		super(img.numDimensions());
+
+		container = img;
+
+		this.maxNumPixels = (int) img.size() - 1;
+
+		this.max = new long[n];
+		for (int d = 0; d < n; ++d) {
+			max[d] = img.max(d);
+		}
+
+		reset();
 	}
 
 	@Override
-	public FileImg< T > create( final long[] dim, final T type )
-	{
-		return new FileImg< T >( dim, type, nameGenerator );
+	public void fwd() {
+		++i;
+
+		for (int d = 0; d < n; d++) {
+			if (position[d] < max[d]) {
+				position[d]++;
+
+				for (int e = 0; e < d; e++)
+					position[e] = 0;
+
+				break;
+			}
+		}
 	}
 
-	@SuppressWarnings( { "unchecked", "rawtypes" } )
 	@Override
-	public < S > ImgFactory< S > imgFactory( final S type ) throws IncompatibleTypeException
-	{
-		throw new UnsupportedOperationException( "Not supported, yet!" );
+	public boolean hasNext() {
+		return i < maxNumPixels;
 	}
 
-	public interface FileNameGenerator
-	{
-		public String nextAbsoluteFileName();
+	@Override
+	public void reset() {
+		i = -1;
+
+		position[0] = -1;
+
+		for (int d = 1; d < n; d++)
+			position[d] = 0;
 	}
 
+	@Override
+	public T get() {
+		return container.get(i);
+	}
+
+	public void set(final T t) {
+		container.set(t, i);
+	}
+
+	@Override
+	public FileLocalizingCursor<T> copy() {
+		return new FileLocalizingCursor<T>(this);
+	}
+
+	@Override
+	public FileLocalizingCursor<T> copyCursor() {
+		return copy();
+	}
 }
