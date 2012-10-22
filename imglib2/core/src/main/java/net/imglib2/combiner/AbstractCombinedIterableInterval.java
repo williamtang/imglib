@@ -34,7 +34,7 @@
  * #L%
  */
 
-package net.imglib2.converter;
+package net.imglib2.combiner;
 
 import java.util.Iterator;
 
@@ -44,118 +44,122 @@ import net.imglib2.Positionable;
 import net.imglib2.RealPositionable;
 
 /**
- * TODO
- * 
+ * @author Christian Dietz
  */
-abstract public class AbstractConvertedIterableInterval< A, B > implements IterableInterval< B >
+abstract public class AbstractCombinedIterableInterval< A, B, C > implements IterableInterval< C >
 {
-	final protected IterableInterval< A > source;
+	final protected IterableInterval< A > sourceA;
 
-	public AbstractConvertedIterableInterval( final IterableInterval< A > source )
+	final protected IterableInterval< B > sourceB;
+
+	public AbstractCombinedIterableInterval( final IterableInterval< A > sourceA, final IterableInterval< B > sourceB )
 	{
-		this.source = source;
+		assert ( sourceA.iterationOrder().equals( sourceB.iterationOrder() ) );
+
+		this.sourceA = sourceA;
+		this.sourceB = sourceB;
 	}
 
 	@Override
 	public int numDimensions()
 	{
-		return source.numDimensions();
+		return sourceA.numDimensions();
 	}
 
 	@Override
 	public long min( final int d )
 	{
-		return source.min( d );
+		return sourceA.min( d );
 	}
 
 	@Override
 	public void min( final long[] min )
 	{
-		source.min( min );
+		sourceA.min( min );
 	}
 
 	@Override
 	public void min( final Positionable min )
 	{
-		source.min( min );
+		sourceA.min( min );
 	}
 
 	@Override
 	public long max( final int d )
 	{
-		return source.max( d );
+		return sourceA.max( d );
 	}
 
 	@Override
 	public void max( final long[] max )
 	{
-		source.max( max );
+		sourceA.max( max );
 	}
 
 	@Override
 	public void max( final Positionable max )
 	{
-		source.max( max );
+		sourceA.max( max );
 	}
 
 	@Override
 	public void dimensions( final long[] dimensions )
 	{
-		source.dimensions( dimensions );
+		sourceA.dimensions( dimensions );
 	}
 
 	@Override
 	public long dimension( final int d )
 	{
-		return source.dimension( d );
+		return sourceA.dimension( d );
 	}
 
 	@Override
 	public double realMin( final int d )
 	{
-		return source.realMin( d );
+		return sourceA.realMin( d );
 	}
 
 	@Override
 	public void realMin( final double[] min )
 	{
-		source.realMin( min );
+		sourceA.realMin( min );
 	}
 
 	@Override
 	public void realMin( final RealPositionable min )
 	{
-		source.realMin( min );
+		sourceA.realMin( min );
 	}
 
 	@Override
 	public double realMax( final int d )
 	{
-		return source.realMax( d );
+		return sourceA.realMax( d );
 	}
 
 	@Override
 	public void realMax( final double[] max )
 	{
-		source.realMax( max );
+		sourceA.realMax( max );
 	}
 
 	@Override
 	public void realMax( final RealPositionable max )
 	{
-		source.realMax( max );
+		sourceA.realMax( max );
 	}
 
 	@Override
 	public long size()
 	{
-		return source.size();
+		return sourceA.size();
 	}
 
 	@Override
 	public Object iterationOrder()
 	{
-		return source.iterationOrder();
+		return sourceA.iterationOrder();
 	}
 
 	@Override
@@ -165,20 +169,20 @@ abstract public class AbstractConvertedIterableInterval< A, B > implements Itera
 	}
 
 	@Override
-	public Iterator< B > iterator()
+	public Iterator< C > iterator()
 	{
 		return cursor();
 	}
 
 	@Override
-	public B firstElement()
+	public C firstElement()
 	{
 		return cursor().next();
 	}
 
 	@Override
-	abstract public AbstractConvertedCursor< A, B > cursor();
+	abstract public AbstractCombinedCursor< A, B, C > cursor();
 
 	@Override
-	abstract public AbstractConvertedCursor< A, B > localizingCursor();
+	abstract public AbstractCombinedCursor< A, B, C > localizingCursor();
 }
