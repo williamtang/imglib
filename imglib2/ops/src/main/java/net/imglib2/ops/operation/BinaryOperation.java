@@ -41,9 +41,9 @@ package net.imglib2.ops.operation;
  * 
  * @author Barry DeZonia
  */
-public interface BinaryOperation< INPUT1_TYPE, INPUT2_TYPE, OUTPUT_TYPE >
-{
-	OUTPUT_TYPE compute( INPUT1_TYPE input1, INPUT2_TYPE input2, OUTPUT_TYPE output );
+public interface BinaryOperation<INPUT1_TYPE, INPUT2_TYPE, OUTPUT_TYPE> {
+	OUTPUT_TYPE compute(INPUT1_TYPE input1, INPUT2_TYPE input2,
+			OUTPUT_TYPE output);
 
-	BinaryOperation< INPUT1_TYPE, INPUT2_TYPE, OUTPUT_TYPE > copy();
+	BinaryOperation<INPUT1_TYPE, INPUT2_TYPE, OUTPUT_TYPE> copy();
 }

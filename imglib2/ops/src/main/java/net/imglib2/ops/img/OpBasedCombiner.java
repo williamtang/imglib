@@ -36,8 +36,8 @@
 
 package net.imglib2.ops.img;
 
-import net.imglib2.converter.Converter;
-import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.combiner.Combiner;
+import net.imglib2.ops.operation.BinaryOperation;
 import net.imglib2.type.numeric.RealType;
 
 /**
@@ -49,20 +49,20 @@ import net.imglib2.type.numeric.RealType;
  * @param <A>
  * @param <B>
  */
-public class OpBasedConverter< A extends RealType< A >, B extends RealType< B >> implements Converter< A, B >
+public class OpBasedCombiner< A extends RealType< A >, B extends RealType< B >, C extends RealType< C >> implements Combiner< A, B, C >
 {
 
-	private final UnaryOperation< A, B > m_op;
+	private final BinaryOperation< A, B, C > m_op;
 
-	public OpBasedConverter( UnaryOperation< A, B > op )
+	public OpBasedCombiner( BinaryOperation< A, B, C > op )
 	{
 		m_op = op;
 	}
 
 	@Override
-	public void convert( A input, B output )
+	public void combine( A inputT, B inputV, C output )
 	{
-		m_op.compute( input, output );
+		m_op.compute( inputT, inputV, output );
 	}
 
 }
