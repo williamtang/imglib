@@ -36,29 +36,33 @@
 
 package net.imglib2.ops.img;
 
-import net.imglib2.converter.Converter;
-import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.combiner.Combiner;
+import net.imglib2.ops.operation.BinaryOperation;
+import net.imglib2.type.numeric.RealType;
 
 /**
  * 
  * Converter using an UnaryOperation to convert pixels
  * 
- * @author Christian Dietz
+ * @author dietzc
  * 
  * @param <A>
  * @param <B>
  */
-public class UnaryOperationBasedConverter<A, B> implements Converter<A, B> {
+public class OpBasedCombiner< A extends RealType< A >, B extends RealType< B >, C extends RealType< C >> implements Combiner< A, B, C >
+{
 
-	private final UnaryOperation<A, B> op;
+	private final BinaryOperation< A, B, C > m_op;
 
-	public UnaryOperationBasedConverter(UnaryOperation<A, B> op) {
-		this.op = op;
+	public OpBasedCombiner( BinaryOperation< A, B, C > op )
+	{
+		m_op = op;
 	}
 
 	@Override
-	public void convert(A input, B output) {
-		op.compute(input, output);
+	public void combine( A inputT, B inputV, C output )
+	{
+		m_op.compute( inputT, inputV, output );
 	}
 
 }

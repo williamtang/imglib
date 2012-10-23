@@ -34,31 +34,40 @@
  * #L%
  */
 
-package net.imglib2.ops.img;
+package net.imglib2.combiner.read;
 
-import net.imglib2.converter.Converter;
-import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.RandomAccess;
+import net.imglib2.combiner.AbstractCombinedRandomAccess;
+import net.imglib2.combiner.Combiner;
+import net.imglib2.type.Type;
 
 /**
+ * TODO
  * 
- * Converter using an UnaryOperation to convert pixels
- * 
- * @author Christian Dietz
- * 
- * @param <A>
- * @param <B>
  */
-public class UnaryOperationBasedConverter<A, B> implements Converter<A, B> {
+final public class CombinedRandomAccess< A, B, C extends Type< C > > extends AbstractCombinedRandomAccess< A, B, C >
+{
+	final protected Combiner< A, B, C > combiner;
 
-	private final UnaryOperation<A, B> op;
+	final protected C combined;
 
-	public UnaryOperationBasedConverter(UnaryOperation<A, B> op) {
-		this.op = op;
+	public CombinedRandomAccess( final RandomAccess< A > sourceA, final RandomAccess< B > sourceB, final Combiner< A, B, C > combiner, final C c )
+	{
+		super( sourceA, sourceB );
+		this.combiner = combiner;
+		this.combined = c.copy();
 	}
 
 	@Override
-	public void convert(A input, B output) {
-		op.compute(input, output);
+	public C get()
+	{
+		combiner.combine( sourceA.get(), sourceB.get(), combined );
+		return combined;
 	}
 
+	@Override
+	public CombinedRandomAccess< A, B, C > copy()
+	{
+		return new CombinedRandomAccess< A, B, C >( sourceA.copyRandomAccess(), sourceB.copyRandomAccess(), combiner, combined );
+	}
 }

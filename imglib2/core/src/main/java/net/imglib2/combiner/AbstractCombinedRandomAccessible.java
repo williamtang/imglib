@@ -34,31 +34,33 @@
  * #L%
  */
 
-package net.imglib2.ops.img;
+package net.imglib2.combiner;
 
-import net.imglib2.converter.Converter;
-import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.Interval;
+import net.imglib2.RandomAccessible;
 
 /**
- * 
- * Converter using an UnaryOperation to convert pixels
- * 
- * @author Christian Dietz
- * 
- * @param <A>
- * @param <B>
+ * TODO
  */
-public class UnaryOperationBasedConverter<A, B> implements Converter<A, B> {
+abstract public class AbstractCombinedRandomAccessible< A, B, C > implements RandomAccessible< C >
+{
 
-	private final UnaryOperation<A, B> op;
+	private int n;
 
-	public UnaryOperationBasedConverter(UnaryOperation<A, B> op) {
-		this.op = op;
+	public AbstractCombinedRandomAccessible( int numDimensions )
+	{
+		this.n = numDimensions;
 	}
 
 	@Override
-	public void convert(A input, B output) {
-		op.compute(input, output);
+	public int numDimensions()
+	{
+		return n;
 	}
 
+	@Override
+	abstract public AbstractCombinedRandomAccess< A, B, C > randomAccess();
+
+	@Override
+	abstract public AbstractCombinedRandomAccess< A, B, C > randomAccess( final Interval interval );
 }

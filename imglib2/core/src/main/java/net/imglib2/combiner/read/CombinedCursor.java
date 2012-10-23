@@ -34,31 +34,49 @@
  * #L%
  */
 
-package net.imglib2.ops.img;
+package net.imglib2.combiner.read;
 
-import net.imglib2.converter.Converter;
-import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.Cursor;
+import net.imglib2.combiner.AbstractCombinedCursor;
+import net.imglib2.combiner.Combiner;
+import net.imglib2.type.Type;
 
 /**
  * 
- * Converter using an UnaryOperation to convert pixels
- * 
  * @author Christian Dietz
- * 
- * @param <A>
- * @param <B>
  */
-public class UnaryOperationBasedConverter<A, B> implements Converter<A, B> {
+public class CombinedCursor< A, B, C extends Type< C > > extends AbstractCombinedCursor< A, B, C >
+{
+	final protected Combiner< A, B, C > combiner;
 
-	private final UnaryOperation<A, B> op;
+	final protected C combined;
 
-	public UnaryOperationBasedConverter(UnaryOperation<A, B> op) {
-		this.op = op;
+	/**
+	 * Creates a copy of b for conversion that can be accessed through
+	 * {@link #get()}.
+	 * 
+	 * @param sourceA
+	 * @param converter
+	 * @param b
+	 */
+	public CombinedCursor( final Cursor< A > sourceA, final Cursor< B > sourceB, final Combiner< A, B, C > combiner, final C c )
+	{
+		super( sourceA, sourceB );
+
+		this.combiner = combiner;
+		this.combined = c.copy();
 	}
 
 	@Override
-	public void convert(A input, B output) {
-		op.compute(input, output);
+	public C get()
+	{
+		combiner.combine( sourceA.get(), sourceB.get(), combined );
+		return combined;
 	}
 
+	@Override
+	public CombinedCursor< A, B, C > copy()
+	{
+		return new CombinedCursor< A, B, C >( ( Cursor< A > ) sourceA.copy(), ( Cursor< B > ) sourceB.copy(), combiner, combined );
+	}
 }

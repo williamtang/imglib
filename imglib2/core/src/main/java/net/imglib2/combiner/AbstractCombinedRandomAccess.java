@@ -34,151 +34,158 @@
  * #L%
  */
 
-package net.imglib2.converter;
+package net.imglib2.combiner;
 
-import java.util.Iterator;
-
-import net.imglib2.IterableInterval;
-import net.imglib2.IterableRealInterval;
-import net.imglib2.Positionable;
-import net.imglib2.RealPositionable;
+import net.imglib2.Localizable;
+import net.imglib2.RandomAccess;
 
 /**
  * TODO
- * 
  */
-abstract public class AbstractConvertedIterableInterval< A, B > implements IterableInterval< B >
+abstract public class AbstractCombinedRandomAccess< A, B, C > implements RandomAccess< C >
 {
-	final protected IterableInterval< A > source;
+	final protected RandomAccess< A > sourceA;
 
-	public AbstractConvertedIterableInterval( final IterableInterval< A > source )
+	final protected RandomAccess< B > sourceB;
+
+	public AbstractCombinedRandomAccess( final RandomAccess< A > sourceA, final RandomAccess< B > sourceB )
 	{
-		this.source = source;
+		this.sourceA = sourceA;
+		this.sourceB = sourceB;
+	}
+
+	@Override
+	public void localize( final int[] position )
+	{
+		sourceA.localize( position );
+	}
+
+	@Override
+	public void localize( final long[] position )
+	{
+		sourceA.localize( position );
+	}
+
+	@Override
+	public int getIntPosition( final int d )
+	{
+		return sourceA.getIntPosition( d );
+	}
+
+	@Override
+	public long getLongPosition( final int d )
+	{
+		return sourceA.getLongPosition( d );
+	}
+
+	@Override
+	public void localize( final float[] position )
+	{
+		sourceA.localize( position );
+	}
+
+	@Override
+	public void localize( final double[] position )
+	{
+		sourceA.localize( position );
+	}
+
+	@Override
+	public float getFloatPosition( final int d )
+	{
+		return sourceA.getFloatPosition( d );
+	}
+
+	@Override
+	public double getDoublePosition( final int d )
+	{
+		return sourceA.getDoublePosition( d );
 	}
 
 	@Override
 	public int numDimensions()
 	{
-		return source.numDimensions();
+		return sourceA.numDimensions();
 	}
 
 	@Override
-	public long min( final int d )
+	public void fwd( final int d )
 	{
-		return source.min( d );
+		sourceA.fwd( d );
 	}
 
 	@Override
-	public void min( final long[] min )
+	public void bck( final int d )
 	{
-		source.min( min );
+		sourceA.bck( d );
 	}
 
 	@Override
-	public void min( final Positionable min )
+	public void move( final int distance, final int d )
 	{
-		source.min( min );
+		sourceA.move( distance, d );
 	}
 
 	@Override
-	public long max( final int d )
+	public void move( final long distance, final int d )
 	{
-		return source.max( d );
+		sourceA.move( distance, d );
 	}
 
 	@Override
-	public void max( final long[] max )
+	public void move( final Localizable localizable )
 	{
-		source.max( max );
+		sourceA.move( localizable );
 	}
 
 	@Override
-	public void max( final Positionable max )
+	public void move( final int[] distance )
 	{
-		source.max( max );
+		sourceA.move( distance );
 	}
 
 	@Override
-	public void dimensions( final long[] dimensions )
+	public void move( final long[] distance )
 	{
-		source.dimensions( dimensions );
+		sourceA.move( distance );
 	}
 
 	@Override
-	public long dimension( final int d )
+	public void setPosition( final Localizable localizable )
 	{
-		return source.dimension( d );
+		sourceA.setPosition( localizable );
 	}
 
 	@Override
-	public double realMin( final int d )
+	public void setPosition( final int[] position )
 	{
-		return source.realMin( d );
+		sourceA.setPosition( position );
 	}
 
 	@Override
-	public void realMin( final double[] min )
+	public void setPosition( final long[] position )
 	{
-		source.realMin( min );
+		sourceA.setPosition( position );
 	}
 
 	@Override
-	public void realMin( final RealPositionable min )
+	public void setPosition( final int position, final int d )
 	{
-		source.realMin( min );
+		sourceA.setPosition( position, d );
 	}
 
 	@Override
-	public double realMax( final int d )
+	public void setPosition( final long position, final int d )
 	{
-		return source.realMax( d );
+		sourceA.setPosition( position, d );
 	}
 
 	@Override
-	public void realMax( final double[] max )
+	abstract public AbstractCombinedRandomAccess< A, B, C > copy();
+
+	@Override
+	public AbstractCombinedRandomAccess< A, B, C > copyRandomAccess()
 	{
-		source.realMax( max );
+		return copy();
 	}
-
-	@Override
-	public void realMax( final RealPositionable max )
-	{
-		source.realMax( max );
-	}
-
-	@Override
-	public long size()
-	{
-		return source.size();
-	}
-
-	@Override
-	public Object iterationOrder()
-	{
-		return source.iterationOrder();
-	}
-
-	@Override
-	public boolean equalIterationOrder( final IterableRealInterval< ? > f )
-	{
-		return iterationOrder().equals( f.iterationOrder() );
-	}
-
-	@Override
-	public Iterator< B > iterator()
-	{
-		return cursor();
-	}
-
-	@Override
-	public B firstElement()
-	{
-		return cursor().next();
-	}
-
-	@Override
-	abstract public AbstractConvertedCursor< A, B > cursor();
-
-	@Override
-	abstract public AbstractConvertedCursor< A, B > localizingCursor();
 }
