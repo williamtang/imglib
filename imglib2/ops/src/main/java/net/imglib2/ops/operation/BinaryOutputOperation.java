@@ -40,9 +40,9 @@ package net.imglib2.ops.operation;
  * 
  * @author Christian Dietz
  */
-public interface BinaryOutputOperation< INPUT1, INPUT2, OUTPUT > extends BinaryOperation< INPUT1, INPUT2, OUTPUT >
+public interface BinaryOutputOperation< A, B, C > extends BinaryOperation< A, B, C >
 {
-	OUTPUT createEmptyOutput( INPUT1 in1, INPUT2 in2 );
+	C createEmptyOutput( A inputA, B inputB );
 
-	OUTPUT compute( INPUT1 in1, INPUT2 in2 );
+	C compute( A inputA, B inputB );
 }

@@ -36,54 +36,48 @@
 
 package net.imglib2.ops.img;
 
-import net.imglib2.ops.operation.BinaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
 
 /**
- * @author Christian Dietz (University of Konstanz)
+ * 
+ * @author Christian Dietz
  */
-public abstract class ConcatenatedBufferedBinaryOperation< T, V > implements BinaryOperation< T, V, T >
-{
+public abstract class ConcatenatedUnaryOperation<T> implements
+		UnaryOperation<T, T> {
 
-	private final BinaryOperation< T, V, T >[] m_operations;
+	private UnaryOperation<T, T>[] operations;
 
-	public ConcatenatedBufferedBinaryOperation( BinaryOperation< T, V, T >... operations )
-	{
-		m_operations = operations;
+	public ConcatenatedUnaryOperation(
+			UnaryOperation<T, T>... operations) {
+		this.operations = operations;
 	}
 
 	@Override
-	public T compute( T input1, V input2, T output )
-	{
-		// Check wether there exists only one solution
-		if ( m_operations.length == 1 )
-			return m_operations[ 0 ].compute( input1, input2, output );
+	public T compute(T input, T output) {
 
-		T buffer = getBuffer( input1 );
+		if (operations.length == 1)
+			return operations[0].compute(input, output);
 
-		if ( buffer == null )
-			throw new IllegalArgumentException( "Buffer can't be null in ConcatenatedBufferedUnaryOperation" );
+		T buffer = getBuffer();
 
 		T tmpOutput = output;
 		T tmpInput = buffer;
 		T tmp;
 
-		// Check needs to be done as the number of operations may be
-		// uneven and
+		// Check needs to be done as the number of operations may be uneven and
 		// the result may not be written to output
-		if ( m_operations.length % 2 == 0 )
-		{
+		if (operations.length % 2 == 0) {
 			tmpOutput = buffer;
 			tmpInput = output;
 		}
 
-		m_operations[ 0 ].compute( input1, input2, tmpOutput );
+		operations[0].compute(input, tmpOutput);
 
-		for ( int i = 1; i < m_operations.length; i++ )
-		{
+		for (int i = 1; i < operations.length; i++) {
 			tmp = tmpInput;
 			tmpInput = tmpOutput;
 			tmpOutput = tmp;
-			m_operations[ i ].compute( tmpInput, input2, tmpOutput );
+			operations[i].compute(tmpInput, tmpOutput);
 		}
 
 		return output;
@@ -94,9 +88,23 @@ public abstract class ConcatenatedBufferedBinaryOperation< T, V > implements Bin
 	 * 
 	 * @return
 	 */
-	protected abstract T getBuffer( T input );
+	protected abstract T getBuffer();
 
 	@Override
-	public abstract BinaryOperation< T, V, T > copy();
+	public UnaryOperation<T, T> copy() {
+		@SuppressWarnings("unchecked")
+		UnaryOperation<T, T>[] operationCopy = new UnaryOperation[operations.length];
 
+		for (int i = 0; i < operationCopy.length; i++) {
+			operationCopy[i] = operations[i].copy();
+		}
+
+		return new ConcatenatedUnaryOperation<T>(operations) {
+
+			@Override
+			protected T getBuffer() {
+				return this.getBuffer();
+			}
+		};
+	}
 }

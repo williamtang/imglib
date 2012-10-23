@@ -30,7 +30,7 @@ public abstract class BinaryUnaryOperationAdapter< A, B, C, D > implements Binar
 			@Override
 			protected C getBinaryOpBuffer()
 			{
-				return this.getBinaryOpBuffer();
+				return BinaryUnaryOperationAdapter.this.getBinaryOpBuffer();
 			}
 		};
 	}

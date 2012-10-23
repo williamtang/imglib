@@ -33,13 +33,13 @@ public abstract class UnaryBinaryOperationAdapter< A, B, C, D > implements Unary
 			@Override
 			protected B getOp1Buffer()
 			{
-				return this.getOp1Buffer();
+				return UnaryBinaryOperationAdapter.this.getOp1Buffer();
 			}
 
 			@Override
 			protected C getOp2Buffer()
 			{
-				return this.getOp2Buffer();
+				return UnaryBinaryOperationAdapter.this.getOp2Buffer();
 			}
 
 		};

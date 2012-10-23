@@ -34,51 +34,39 @@
  * #L%
  */
 
-package net.imglib2.ops.operation.img.unary;
+package net.imglib2.ops.img;
 
-import net.imglib2.img.Img;
-import net.imglib2.ops.img.ConcatenatedBufferedUnaryOperation;
 import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.type.numeric.RealType;
 
-public class IterativeImgToImgOperation< TT extends RealType< TT >> extends ConcatenatedBufferedUnaryOperation< Img< TT >>
-{
+public abstract class UnaryOperationBridge<A, B, C> implements
+		UnaryOperation<A, C> {
 
-	private final UnaryOperation< Img< TT >, Img< TT >> m_op;
+	private final UnaryOperation<A, B> first;
 
-	private final int m_numIterations;
+	private final UnaryOperation<B, C> second;
 
-	public IterativeImgToImgOperation( UnaryOperation< Img< TT >, Img< TT >> op, int numIterations )
-	{
-		super( getOpArray( op, numIterations ) );
-		m_op = op;
-		m_numIterations = numIterations;
-
-	}
-
-	private static < TTT extends RealType< TTT >> UnaryOperation< Img< TTT >, Img< TTT >>[] getOpArray( UnaryOperation< Img< TTT >, Img< TTT >> op, int numIterations )
-	{
-
-		@SuppressWarnings( "unchecked" )
-		UnaryOperation< Img< TTT >, Img< TTT >>[] ops = new UnaryOperation[ numIterations ];
-
-		for ( int i = 0; i < numIterations; i++ )
-		{
-			ops[ i ] = op.copy();
-		}
-
-		return ops;
+	public UnaryOperationBridge(UnaryOperation<A, B> first,
+			UnaryOperation<B, C> second) {
+		this.first = first;
+		this.second = second;
 	}
 
 	@Override
-	protected Img< TT > getBuffer( Img< TT > input )
-	{
-		return input.factory().create( input, input.firstElement().createVariable() );
+	public C compute(A input, C output) {
+		return second.compute(first.compute(input, getBuffer()), output);
 	}
 
 	@Override
-	public UnaryOperation< Img< TT >, Img< TT >> copy()
-	{
-		return new IterativeImgToImgOperation< TT >( m_op.copy(), m_numIterations );
+	public UnaryOperation<A, C> copy() {
+		return new UnaryOperationBridge<A, B, C>(first.copy(), second.copy()) {
+
+			@Override
+			public B getBuffer() {
+				return UnaryOperationBridge.this.getBuffer();
+			}
+
+		};
 	}
-}
+
+	public abstract B getBuffer();
+};
