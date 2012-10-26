@@ -35,36 +35,45 @@
  */
 
 
-package net.imglib2.ops.function.general;
+package net.imglib2.ops.function.bool;
 
 import net.imglib2.ops.function.Function;
+import net.imglib2.type.logic.BitType;
 
 
 /**
+ * Returns a boolean constant value whenever queried (regardless of input data).
  * 
  * @author Barry DeZonia
  */
-public class NullPointSetFunction<PointSet, T> implements Function<PointSet,T> {
+public class BooleanConstantFunction<INPUT>
+	implements Function<INPUT,BitType>
+{
+	// -- instance variables --
+	
+	private final boolean bool;
 
+	// -- constructor --
+	
+	public BooleanConstantFunction(boolean b) {
+		bool = b;
+	}
+	
+	// -- Function methods --
+	
 	@Override
-	public void compute(PointSet points, T output) {
-		// do nothing
-		// TODO : Could set to NaN?
+	public void compute(INPUT input, BitType b) {
+		b.set(bool);
+	}
+	
+	@Override
+	public BooleanConstantFunction<INPUT> copy() {
+		return new BooleanConstantFunction<INPUT>(bool);
 	}
 
 	@Override
-	public T createOutput() {
-		return null;
-		// TODO - returning null is sort of a problem. Though it makes sense.
-		//  However if we only pass NullFunctions at outermost loop maybe we can avoid
-		//  this method ever being called.
-		//  What good is a null function if outermost loop can count on its own? Null
-		//  function idea originally came about as a way to collect stats without
-		//  destroying existing data. That need may now be obsolete. Investigate.
-	}
-
-	@Override
-	public NullPointSetFunction<PointSet,T> copy() {
-		return new NullPointSetFunction<PointSet,T>();
+	public BitType createOutput() {
+		return new BitType();
 	}
 }
+
