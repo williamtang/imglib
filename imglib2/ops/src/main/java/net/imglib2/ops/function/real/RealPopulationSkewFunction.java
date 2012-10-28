@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,76 +27,63 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
+ * 
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
  * #L%
  */
 
-package net.imglib2.ops.img;
 
-import net.imglib2.ops.operation.UnaryOperation;
+package net.imglib2.ops.function.real;
+
+import net.imglib2.ops.function.Function;
+import net.imglib2.ops.pointset.PointSet;
+import net.imglib2.type.numeric.RealType;
+
 
 /**
+ * Computes the skew of a population of values of another function.
+ * Normally one is interested in the skew of a sample of values and
+ * in such cases one should use {@link RealSampleSkewFunction}. But if
+ * the values in the region contain the full population of values then use this.
  * 
- * @author Christian Dietz
+ * @author Barry DeZonia
  */
-public abstract class ConcatenatedBufferedUnaryOperation< T > implements UnaryOperation< T, T >
+public class RealPopulationSkewFunction<T extends RealType<T>>
+	implements Function<PointSet,T>
 {
-
-	private UnaryOperation< T, T >[] m_operations;
-
-	public ConcatenatedBufferedUnaryOperation( UnaryOperation< T, T >... operations )
+	// -- instance variables --
+	
+	private final Function<long[],T> otherFunc;
+	private StatCalculator<T> calculator;
+	
+	// -- constructor --
+	
+	public RealPopulationSkewFunction(Function<long[],T> otherFunc)
 	{
-		m_operations = operations;
+		this.otherFunc = otherFunc;
+		this.calculator = null;
+	}
+	
+	// -- Function methods --
+	
+	@Override
+	public RealPopulationSkewFunction<T> copy() {
+		return new RealPopulationSkewFunction<T>(otherFunc.copy());
 	}
 
 	@Override
-	public T compute( T input, T output )
-	{
-		// Check wether there exists only one solution
-		if ( m_operations.length == 1 )
-			return m_operations[ 0 ].compute( input, output );;
-
-		T buffer = getBuffer( input );
-
-		if ( buffer == null )
-			throw new IllegalArgumentException( "Buffer can't be null in ConcatenatedBufferedUnaryOperation" );
-
-		T tmpOutput = output;
-		T tmpInput = buffer;
-		T tmp;
-
-		// Check needs to be done as the number of operations may be uneven and
-		// the result may not be written to output
-		if ( m_operations.length % 2 == 0 )
-		{
-			tmpOutput = buffer;
-			tmpInput = output;
-		}
-
-		m_operations[ 0 ].compute( input, tmpOutput );
-
-		for ( int i = 1; i < m_operations.length; i++ )
-		{
-			tmp = tmpInput;
-			tmpInput = tmpOutput;
-			tmpOutput = tmp;
-			m_operations[ i ].compute( tmpInput, tmpOutput );
-		}
-
-		return output;
+	public void compute(PointSet input, T output) {
+		if (calculator == null) calculator = new StatCalculator<T>(otherFunc, input);
+		else calculator.reset(otherFunc, input);
+		double value = calculator.populationSkew();
+		output.setReal(value);
 	}
 
-	/**
-	 * Method to retrieve the Buffer
-	 * 
-	 * @return
-	 */
-	protected abstract T getBuffer( T input );
-
 	@Override
-	public abstract UnaryOperation< T, T > copy();
+	public T createOutput() {
+		return otherFunc.createOutput();
+	}
 
 }

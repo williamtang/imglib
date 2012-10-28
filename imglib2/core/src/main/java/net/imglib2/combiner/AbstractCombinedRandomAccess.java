@@ -34,163 +34,157 @@
  * #L%
  */
 
-package net.imglib2.view;
+package net.imglib2.combiner;
 
-import net.imglib2.AbstractLocalizable;
 import net.imglib2.Localizable;
 import net.imglib2.RandomAccess;
-import net.imglib2.transform.Transform;
 
 /**
  * TODO
- *
  */
-public final class SequentializeRandomAccess< T > extends AbstractLocalizable implements RandomAccess< T >
+abstract public class AbstractCombinedRandomAccess< A, B, C > implements RandomAccess< C >
 {
-	private final RandomAccess< T > s;
+	final protected RandomAccess< A > sourceA;
 
-	private final Transform transformToSource;
+	final protected RandomAccess< B > sourceB;
 
-	// source dimension
-	private final int m;
-
-	private final long[] tmp;
-
-	SequentializeRandomAccess( final RandomAccess< T > source, final Transform transformToSource )
+	public AbstractCombinedRandomAccess( final RandomAccess< A > sourceA, final RandomAccess< B > sourceB )
 	{
-		super( transformToSource.numSourceDimensions() );
-
-		assert source.numDimensions() == transformToSource.numTargetDimensions();
-		this.m = source.numDimensions();
-		this.s = source;
-		this.transformToSource = transformToSource;
-		this.tmp = new long[ m ];
+		this.sourceA = sourceA;
+		this.sourceB = sourceB;
 	}
 
-	protected SequentializeRandomAccess( final SequentializeRandomAccess< T > randomAccess )
+	@Override
+	public void localize( final int[] position )
 	{
-		super( randomAccess.numDimensions() );
+		sourceA.localize( position );
+	}
 
-		this.s = randomAccess.s.copyRandomAccess();
-		this.transformToSource = randomAccess.transformToSource;
-		this.m = randomAccess.m;
-		this.tmp = randomAccess.tmp.clone();
+	@Override
+	public void localize( final long[] position )
+	{
+		sourceA.localize( position );
+	}
+
+	@Override
+	public int getIntPosition( final int d )
+	{
+		return sourceA.getIntPosition( d );
+	}
+
+	@Override
+	public long getLongPosition( final int d )
+	{
+		return sourceA.getLongPosition( d );
+	}
+
+	@Override
+	public void localize( final float[] position )
+	{
+		sourceA.localize( position );
+	}
+
+	@Override
+	public void localize( final double[] position )
+	{
+		sourceA.localize( position );
+	}
+
+	@Override
+	public float getFloatPosition( final int d )
+	{
+		return sourceA.getFloatPosition( d );
+	}
+
+	@Override
+	public double getDoublePosition( final int d )
+	{
+		return sourceA.getDoublePosition( d );
+	}
+
+	@Override
+	public int numDimensions()
+	{
+		return sourceA.numDimensions();
 	}
 
 	@Override
 	public void fwd( final int d )
 	{
-		++position[ d ];
-		transformToSource.apply( position, tmp );
-		s.setPosition( tmp );
+		sourceA.fwd( d );
 	}
 
 	@Override
 	public void bck( final int d )
 	{
-		--position[ d ];
-		transformToSource.apply( position, tmp );
-		s.setPosition( tmp );
+		sourceA.bck( d );
 	}
 
 	@Override
 	public void move( final int distance, final int d )
 	{
-		position[ d ] += distance;
-		transformToSource.apply( position, tmp );
-		s.setPosition( tmp );
+		sourceA.move( distance, d );
 	}
 
 	@Override
 	public void move( final long distance, final int d )
 	{
-		position[ d ] += distance;
-		transformToSource.apply( position, tmp );
-		s.setPosition( tmp );
+		sourceA.move( distance, d );
 	}
 
 	@Override
 	public void move( final Localizable localizable )
 	{
-		for ( int d = 0; d < n; ++d )
-			position[ d ] += localizable.getLongPosition( d );
-		transformToSource.apply( position, tmp );
-		s.setPosition( tmp );
+		sourceA.move( localizable );
 	}
 
 	@Override
 	public void move( final int[] distance )
 	{
-		for ( int d = 0; d < n; ++d )
-			position[ d ] += distance[ d ];
-		transformToSource.apply( position, tmp );
-		s.setPosition( tmp );
+		sourceA.move( distance );
 	}
 
 	@Override
 	public void move( final long[] distance )
 	{
-		for ( int d = 0; d < n; ++d )
-			position[ d ] += distance[ d ];
-		transformToSource.apply( position, tmp );
-		s.setPosition( tmp );
+		sourceA.move( distance );
 	}
 
 	@Override
 	public void setPosition( final Localizable localizable )
 	{
-		localizable.localize( position );
-		transformToSource.apply( position, tmp );
-		s.setPosition( tmp );
+		sourceA.setPosition( localizable );
 	}
+
 	@Override
 	public void setPosition( final int[] position )
 	{
-		for( int d = 0; d < n; ++d )
-			this.position[ d ] = position[ d ];
-		transformToSource.apply( this.position, tmp );
-		s.setPosition( tmp );
+		sourceA.setPosition( position );
 	}
 
 	@Override
 	public void setPosition( final long[] position )
 	{
-		for( int d = 0; d < n; ++d )
-			this.position[ d ] = position[ d ];
-		transformToSource.apply( this.position, tmp );
-		s.setPosition( tmp );
+		sourceA.setPosition( position );
 	}
 
 	@Override
 	public void setPosition( final int position, final int d )
 	{
-		this.position[ d ] = position;
-		transformToSource.apply( this.position, tmp );
-		s.setPosition( tmp );
+		sourceA.setPosition( position, d );
 	}
 
 	@Override
 	public void setPosition( final long position, final int d )
 	{
-		this.position[ d ] = position;
-		transformToSource.apply( this.position, tmp );
-		s.setPosition( tmp );
+		sourceA.setPosition( position, d );
 	}
 
 	@Override
-	public T get()
-	{
-		return s.get();
-	}
+	abstract public AbstractCombinedRandomAccess< A, B, C > copy();
 
 	@Override
-	public SequentializeRandomAccess< T > copy()
-	{
-		return new SequentializeRandomAccess< T >( this );
-	}
-
-	@Override
-	public SequentializeRandomAccess< T > copyRandomAccess()
+	public AbstractCombinedRandomAccess< A, B, C > copyRandomAccess()
 	{
 		return copy();
 	}

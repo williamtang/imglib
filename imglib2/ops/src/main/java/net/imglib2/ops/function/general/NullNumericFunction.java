@@ -35,59 +35,44 @@
  */
 
 
-package net.imglib2.ops.function.real;
-
+package net.imglib2.ops.function.general;
 
 import net.imglib2.ops.function.Function;
-import net.imglib2.ops.pointset.PointSet;
-import net.imglib2.ops.pointset.PointSetIterator;
-import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.ComplexType;
 
 
 /**
+ * A {@link Function} that always returns NaN values.
  * 
  * @author Barry DeZonia
  */
-public abstract class AbstractRealPointSetFunction<T extends RealType<T>> {
-
-	private final Function<long[],T> otherFunc;
-	private final T variable;
-	private PointSet lastPointSet;
-	private PointSetIterator iter;
-
-	protected abstract void initValue(PointSet ps);
-	protected abstract void updateValue(long[] pt, double value);
-	protected abstract double finalValue();
+public class NullNumericFunction<INPUT, T extends ComplexType<T>>
+	implements Function<INPUT,T>
+{
+	// -- instance variables --
 	
-	public AbstractRealPointSetFunction(Function<long[],T> otherFunc)
-	{
-		this.otherFunc = otherFunc;
-		this.variable = createOutput();
-		this.lastPointSet = null;
-		this.iter = null;
+	private T type;
+	
+	// -- constructor --
+	
+	public NullNumericFunction(T type) {
+		this.type = type;
 	}
 	
-	public void compute(PointSet ps, T output) {
-		if (ps != lastPointSet) {
-			lastPointSet = ps;
-			iter = ps.createIterator();
-		}
-		else {
-			iter.reset();
-		}
-		initValue(ps);
-		long[] pt;
-		while (iter.hasNext()) {
-			pt = iter.next();
-			otherFunc.compute(pt, variable);
-			updateValue(pt, variable.getRealDouble());
-		}
-		output.setReal(finalValue());
-	}
+	// -- Function methods --
 	
+	@Override
+	public void compute(INPUT point, T output) {
+		output.setComplexNumber(Double.NaN, Double.NaN);
+	}
+
+	@Override
 	public T createOutput() {
-		return otherFunc.createOutput();
+		return type.createVariable();
 	}
-	
-	public Function<long[],T> getOtherFunction() { return otherFunc; }
+
+	@Override
+	public NullNumericFunction<INPUT,T> copy() {
+		return new NullNumericFunction<INPUT,T>(type.copy());
+	}
 }

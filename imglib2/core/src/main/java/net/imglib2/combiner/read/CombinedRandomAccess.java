@@ -34,37 +34,40 @@
  * #L%
  */
 
+package net.imglib2.combiner.read;
 
-package net.imglib2.ops.function.general;
-
-import net.imglib2.ops.function.Function;
-
+import net.imglib2.RandomAccess;
+import net.imglib2.combiner.AbstractCombinedRandomAccess;
+import net.imglib2.combiner.Combiner;
+import net.imglib2.type.Type;
 
 /**
+ * TODO
  * 
- * @author Barry DeZonia
  */
-public class NullPointSetFunction<PointSet, T> implements Function<PointSet,T> {
+final public class CombinedRandomAccess< A, B, C extends Type< C > > extends AbstractCombinedRandomAccess< A, B, C >
+{
+	final protected Combiner< A, B, C > combiner;
 
-	@Override
-	public void compute(PointSet points, T output) {
-		// do nothing
-		// TODO : Could set to NaN?
+	final protected C combined;
+
+	public CombinedRandomAccess( final RandomAccess< A > sourceA, final RandomAccess< B > sourceB, final Combiner< A, B, C > combiner, final C c )
+	{
+		super( sourceA, sourceB );
+		this.combiner = combiner;
+		this.combined = c.copy();
 	}
 
 	@Override
-	public T createOutput() {
-		return null;
-		// TODO - returning null is sort of a problem. Though it makes sense.
-		//  However if we only pass NullFunctions at outermost loop maybe we can avoid
-		//  this method ever being called.
-		//  What good is a null function if outermost loop can count on its own? Null
-		//  function idea originally came about as a way to collect stats without
-		//  destroying existing data. That need may now be obsolete. Investigate.
+	public C get()
+	{
+		combiner.combine( sourceA.get(), sourceB.get(), combined );
+		return combined;
 	}
 
 	@Override
-	public NullPointSetFunction<PointSet,T> copy() {
-		return new NullPointSetFunction<PointSet,T>();
+	public CombinedRandomAccess< A, B, C > copy()
+	{
+		return new CombinedRandomAccess< A, B, C >( sourceA.copyRandomAccess(), sourceB.copyRandomAccess(), combiner, combined );
 	}
 }

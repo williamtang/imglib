@@ -34,37 +34,33 @@
  * #L%
  */
 
+package net.imglib2.combiner;
 
-package net.imglib2.ops.function.bool;
-
-import net.imglib2.ops.function.Function;
-import net.imglib2.type.logic.BitType;
-
+import net.imglib2.Interval;
+import net.imglib2.RandomAccessible;
 
 /**
- * 
- * @author Barry DeZonia
+ * TODO
  */
-public class ConstantBoolFunction<INPUT> implements Function<INPUT,BitType> {
-	private final boolean bool;
+abstract public class AbstractCombinedRandomAccessible< A, B, C > implements RandomAccessible< C >
+{
 
-	public ConstantBoolFunction(boolean b) {
-		bool = b;
-	}
-	
-	@Override
-	public void compute(INPUT input, BitType b) {
-		b.set(bool);
-	}
-	
-	@Override
-	public ConstantBoolFunction<INPUT> copy() {
-		return new ConstantBoolFunction<INPUT>(bool);
+	private int n;
+
+	public AbstractCombinedRandomAccessible( int numDimensions )
+	{
+		this.n = numDimensions;
 	}
 
 	@Override
-	public BitType createOutput() {
-		return new BitType();
+	public int numDimensions()
+	{
+		return n;
 	}
+
+	@Override
+	abstract public AbstractCombinedRandomAccess< A, B, C > randomAccess();
+
+	@Override
+	abstract public AbstractCombinedRandomAccess< A, B, C > randomAccess( final Interval interval );
 }
-

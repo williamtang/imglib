@@ -34,93 +34,124 @@
  * #L%
  */
 
-package net.imglib2.ops.operation.img.unary;
+package net.imglib2.combiner;
 
-import net.imglib2.img.Img;
-import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.ops.operation.UnaryOutputOperation;
-import net.imglib2.type.numeric.RealType;
+import net.imglib2.Cursor;
 
-public class ImgUnaryOutputOpWrapper< T extends RealType< T >> implements UnaryOutputOperation< Img< T >, Img< T >>
+/**
+ * TODO
+ * 
+ */
+abstract public class AbstractCombinedCursor< A, B, C > implements Cursor< C >
 {
+	final protected Cursor< A > sourceA;
 
-	private final UnaryOperation< Img< T >, Img< T >> m_op;
+	final protected Cursor< B > sourceB;
 
-	public ImgUnaryOutputOpWrapper( UnaryOperation< Img< T >, Img< T >> op )
+	public AbstractCombinedCursor( final Cursor< A > sourceA, final Cursor< B > sourceB )
 	{
-		m_op = op;
+		this.sourceA = sourceA;
+		this.sourceB = sourceB;
+
 	}
 
 	@Override
-	public Img< T > compute( Img< T > input, Img< T > output )
+	public void localize( final int[] position )
 	{
-		return m_op.compute( input, output );
+		sourceA.localize( position );
 	}
 
 	@Override
-	public UnaryOutputOperation< Img< T >, Img< T >> copy()
+	public void localize( final long[] position )
 	{
-		return new ImgUnaryOutputOpWrapper< T >( m_op.copy() );
+		sourceA.localize( position );
 	}
 
 	@Override
-	public Img< T > createEmptyOutput( Img< T > in )
+	public int getIntPosition( final int d )
 	{
-		return in.factory().create( in, in.firstElement() );
+		return sourceA.getIntPosition( d );
 	}
 
 	@Override
-	public Img< T > compute( Img< T > in )
+	public long getLongPosition( final int d )
 	{
-		return compute( in, createEmptyOutput( in ) );
+		return sourceA.getLongPosition( d );
 	}
 
-	public < C > UnaryOutputOperation< C, Img< T >> concatenate( final UnaryOutputOperation< C, Img< T >> op )
+	@Override
+	public void localize( final float[] position )
 	{
-		return new ConcatenatedUnaryOutputOperation< C, Img< T >, Img< T >>( op, this );
+		sourceA.localize( position );
 	}
 
-	public < C > UnaryOutputOperation< Img< T >, C > preConcatenate( final UnaryOutputOperation< Img< T >, C > op )
+	@Override
+	public void localize( final double[] position )
 	{
-		return new ConcatenatedUnaryOutputOperation< Img< T >, Img< T >, C >( this, op );
+		sourceA.localize( position );
+	}
+
+	@Override
+	public float getFloatPosition( final int d )
+	{
+		return sourceA.getFloatPosition( d );
+	}
+
+	@Override
+	public double getDoublePosition( final int d )
+	{
+		return sourceA.getDoublePosition( d );
+	}
+
+	@Override
+	public int numDimensions()
+	{
+		return sourceA.numDimensions();
+	}
+
+	@Override
+	public void jumpFwd( final long steps )
+	{
+		sourceA.jumpFwd( steps );
+	}
+
+	@Override
+	public void fwd()
+	{
+		sourceA.fwd();
+	}
+
+	@Override
+	public void reset()
+	{
+		sourceA.reset();
+	}
+
+	@Override
+	public boolean hasNext()
+	{
+		return sourceA.hasNext();
+	}
+
+	@Override
+	public C next()
+	{
+		fwd();
+		return get();
+	}
+
+	@Override
+	public void remove()
+	{
+		sourceA.remove();
+	}
+
+	@Override
+	abstract public AbstractCombinedCursor< A, B, C > copy();
+
+	@Override
+	public AbstractCombinedCursor< A, B, C > copyCursor()
+	{
+		return copy();
 	}
 }
-
-class ConcatenatedUnaryOutputOperation< I, B, O > implements UnaryOutputOperation< I, O >
-{
-
-	private final UnaryOutputOperation< I, B > m_first;
-
-	private final UnaryOutputOperation< B, O > m_rest;
-
-	public ConcatenatedUnaryOutputOperation( UnaryOutputOperation< I, B > first, UnaryOutputOperation< B, O > rest )
-	{
-		super();
-		m_first = first;
-		m_rest = rest;
-	}
-
-	@Override
-	public O compute( I input, O output )
-	{
-		return m_rest.compute( m_first.compute( input ), output );
-	}
-
-	@Override
-	public UnaryOutputOperation< I, O > copy()
-	{
-		return new ConcatenatedUnaryOutputOperation< I, B, O >( m_first.copy(), m_rest.copy() );
-	}
-
-	@Override
-	public O createEmptyOutput( I in )
-	{
-		return m_rest.createEmptyOutput( m_first.createEmptyOutput( in ) );
-	}
-
-	@Override
-	public O compute( I in )
-	{
-		return m_rest.compute( m_first.compute( in ) );
-	}
-};

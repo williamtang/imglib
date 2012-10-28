@@ -37,13 +37,12 @@
 package net.imglib2.ops.operation;
 
 /**
- * TODO
- * 
  * @author Barry DeZonia
+ * @author Christian Dietz
  */
-public interface BinaryOperation< INPUT1_TYPE, INPUT2_TYPE, OUTPUT_TYPE >
+public interface BinaryOperation< A, B, C >
 {
-	OUTPUT_TYPE compute( INPUT1_TYPE input1, INPUT2_TYPE input2, OUTPUT_TYPE output );
+	C compute( A inputA, B inputB, C output );
 
-	BinaryOperation< INPUT1_TYPE, INPUT2_TYPE, OUTPUT_TYPE > copy();
+	BinaryOperation< A, B, C > copy();
 }

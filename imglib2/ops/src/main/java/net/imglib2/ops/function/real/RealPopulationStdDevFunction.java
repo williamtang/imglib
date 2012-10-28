@@ -34,35 +34,56 @@
  * #L%
  */
 
-package net.imglib2.ops.img;
 
-import net.imglib2.converter.Converter;
-import net.imglib2.ops.operation.UnaryOperation;
+package net.imglib2.ops.function.real;
+
+import net.imglib2.ops.function.Function;
+import net.imglib2.ops.pointset.PointSet;
 import net.imglib2.type.numeric.RealType;
 
+
 /**
+ * Computes the standard deviation of a population of values of another function.
+ * Normally one is interested in the standard deviation of a sample of values
+ * and in such cases one should use {@link RealSampleStdDevFunction}. But if
+ * the values in the region contain the full population of values then use this.
  * 
- * Converter using an UnaryOperation to convert pixels
- * 
- * @author dietzc
- * 
- * @param <T>
- * @param <V>
+ * @author Barry DeZonia
  */
-public class OpBasedConverter< T extends RealType< T >, V extends RealType< V >> implements Converter< T, V >
+public class RealPopulationStdDevFunction<T extends RealType<T>>
+	implements Function<PointSet,T>
 {
-
-	private final UnaryOperation< T, V > m_op;
-
-	public OpBasedConverter( UnaryOperation< T, V > op )
+	// -- instance variables --
+	
+	private final Function<long[],T> otherFunc;
+	private StatCalculator<T> calculator;
+	
+	// -- constructor --
+	
+	public RealPopulationStdDevFunction(Function<long[],T> otherFunc)
 	{
-		m_op = op;
+		this.otherFunc = otherFunc;
+		this.calculator = null;
+	}
+	
+	// -- Function methods --
+	
+	@Override
+	public RealPopulationStdDevFunction<T> copy() {
+		return new RealPopulationStdDevFunction<T>(otherFunc.copy());
 	}
 
 	@Override
-	public void convert( T input, V output )
-	{
-		m_op.compute( input, output );
+	public void compute(PointSet input, T output) {
+		if (calculator == null) calculator = new StatCalculator<T>(otherFunc, input);
+		else calculator.reset(otherFunc, input);
+		double value = calculator.populationStdDev();
+		output.setReal(value);
+	}
+
+	@Override
+	public T createOutput() {
+		return otherFunc.createOutput();
 	}
 
 }

@@ -45,7 +45,7 @@ import net.imglib2.RealPositionable;
 
 /**
  * TODO
- *
+ * 
  */
 abstract public class AbstractConvertedIterableInterval< A, B > implements IterableInterval< B >
 {

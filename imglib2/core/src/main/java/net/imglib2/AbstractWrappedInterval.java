@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,58 +27,73 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
  * #L%
  */
+package net.imglib2;
 
-package net.imglib2.ops.operation.img.unary;
-
-import net.imglib2.img.Img;
-import net.imglib2.ops.img.ConcatenatedBufferedUnaryOperation;
-import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.type.numeric.RealType;
-
-public class IterativeImgToImgOperation< TT extends RealType< TT >> extends ConcatenatedBufferedUnaryOperation< Img< TT >>
+/**
+ * Convenient base class for {@link IterableInterval IterableIntervals},
+ * {@link RandomAccessibleInterval RandomAccessibleIntervals}, etc that forward
+ * the {@link Interval} interface to, for example, their source accessible.
+ *
+ * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
+ */
+public abstract class AbstractWrappedInterval< I extends Interval > extends AbstractWrappedRealInterval< I > implements Interval
 {
-
-	private final UnaryOperation< Img< TT >, Img< TT >> m_op;
-
-	private final int m_numIterations;
-
-	public IterativeImgToImgOperation( UnaryOperation< Img< TT >, Img< TT >> op, int numIterations )
+	public AbstractWrappedInterval( final I source )
 	{
-		super( getOpArray( op, numIterations ) );
-		m_op = op;
-		m_numIterations = numIterations;
-
-	}
-
-	private static < TTT extends RealType< TTT >> UnaryOperation< Img< TTT >, Img< TTT >>[] getOpArray( UnaryOperation< Img< TTT >, Img< TTT >> op, int numIterations )
-	{
-
-		@SuppressWarnings( "unchecked" )
-		UnaryOperation< Img< TTT >, Img< TTT >>[] ops = new UnaryOperation[ numIterations ];
-
-		for ( int i = 0; i < numIterations; i++ )
-		{
-			ops[ i ] = op.copy();
-		}
-
-		return ops;
+		super( source );
 	}
 
 	@Override
-	protected Img< TT > getBuffer( Img< TT > input )
+	public void dimensions( final long[] dimensions )
 	{
-		return input.factory().create( input, input.firstElement().createVariable() );
+		source.dimensions( dimensions );
 	}
 
 	@Override
-	public UnaryOperation< Img< TT >, Img< TT >> copy()
+	public long dimension( final int d )
 	{
-		return new IterativeImgToImgOperation< TT >( m_op.copy(), m_numIterations );
+		return source.dimension( d );
+	}
+
+	@Override
+	public long min( final int d )
+	{
+		return source.min( d );
+	}
+
+	@Override
+	public void min( final long[] min )
+	{
+		source.min( min );
+	}
+
+	@Override
+	public void min( final Positionable min )
+	{
+		source.min( min );
+	}
+
+	@Override
+	public long max( final int d )
+	{
+		return source.max( d );
+	}
+
+	@Override
+	public void max( final long[] max )
+	{
+		source.max( max );
+	}
+
+	@Override
+	public void max( final Positionable max )
+	{
+		source.max( max );
 	}
 }
