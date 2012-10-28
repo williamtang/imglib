@@ -43,8 +43,7 @@ import net.imglib2.ops.operation.UnaryOperation;
  * 
  * Converter using an UnaryOperation to convert pixels
  * 
- * @author Christian Dietz
- * 
+ * @author Christian Dietz (University of Konstanz)
  * @param <A>
  * @param <B>
  */

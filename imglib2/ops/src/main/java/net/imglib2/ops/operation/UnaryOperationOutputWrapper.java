@@ -1,11 +1,7 @@
 package net.imglib2.ops.operation;
 
 /**
- * 
- * TODO
- * 
  * @author Christian Dietz
- * 
  */
 public abstract class UnaryOperationOutputWrapper<A, B> implements
 		UnaryOutputOperation<A, B> {

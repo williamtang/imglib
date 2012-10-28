@@ -42,8 +42,7 @@ import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.util.Util;
 
 /**
- * 
- * @author Christian Dietz
+ * @author Christian Dietz (University of Konstanz)
  */
 public class UnaryOperationAssignment<T, V> implements
 		UnaryOperation<IterableInterval<T>, IterableInterval<V>> {

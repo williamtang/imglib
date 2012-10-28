@@ -42,8 +42,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPositionable;
 
 /**
- * 
- * @author Christian Dietz
+ * @author Christian Dietz (University of Konstanz)
  */
 abstract public class AbstractCombinedRandomAccessibleInterval< A, B, C > implements RandomAccessibleInterval< C >
 {

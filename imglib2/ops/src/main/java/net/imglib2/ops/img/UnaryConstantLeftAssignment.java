@@ -43,8 +43,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Util;
 
 /**
- * 
- * @author Christian Dietz
+ * @author Christian Dietz (University of Konstanz)
  */
 public class UnaryConstantLeftAssignment<V extends RealType<V>, T extends RealType<T>, O extends RealType<O>>
 		implements BinaryOperation<V, IterableInterval<T>, IterableInterval<O>> {

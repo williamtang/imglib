@@ -39,8 +39,7 @@ package net.imglib2.ops.img;
 import net.imglib2.ops.operation.UnaryOperation;
 
 /**
- * 
- * @author Christian Dietz
+ * @author Christian Dietz (University of Konstanz)
  */
 public abstract class ConcatenatedUnaryOperation<T> implements
 		UnaryOperation<T, T> {

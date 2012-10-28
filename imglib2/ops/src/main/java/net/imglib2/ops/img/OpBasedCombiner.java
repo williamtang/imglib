@@ -42,9 +42,9 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * 
- * Converter using an UnaryOperation to convert pixels
+ * Combiner using an BinaryOperation to convert pixels
  * 
- * @author dietzc
+ * @author Christian Dietz (University of Konstanz)
  * 
  * @param <A>
  * @param <B>

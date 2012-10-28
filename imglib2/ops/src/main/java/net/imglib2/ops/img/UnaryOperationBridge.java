@@ -38,6 +38,13 @@ package net.imglib2.ops.img;
 
 import net.imglib2.ops.operation.UnaryOperation;
 
+/**
+ * @author Christian Dietz (University of Konstanz)
+ *
+ * @param <A>
+ * @param <B>
+ * @param <C>
+ */
 public abstract class UnaryOperationBridge<A, B, C> implements
 		UnaryOperation<A, C> {
 
