@@ -34,12 +34,13 @@ import net.imglib2.view.Views;
  * 
  * @author Stephan Preibisch
  */
-public class FFTConvolution < R extends RealType< R > > implements Runnable
+public class FFTConvolution < T extends RealType<T>, K extends RealType<K>, R extends RealType< R > > implements Runnable
 {
 	Img< ComplexFloatType > fftImg, fftKernel;
 	ImgFactory< ComplexFloatType > fftFactory;
 	
-	RandomAccessible< R > img, kernel;
+	RandomAccessible< T > img;
+	RandomAccessible< K > kernel;
 	Interval imgInterval, kernelInterval;
 	RandomAccessibleInterval< R > output;
 	
@@ -54,9 +55,9 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 	 * @param img - the image
 	 * @param kernel - the convolution kernel
 	 */
-	public FFTConvolution( final Img< R > img, final Img< R > kernel )
+	public static  <T extends RealType<T>, K extends RealType<K>> FFTConvolution< T, K, T > create( final Img< T > img, final Img< K > kernel )
 	{
-		this ( img, kernel, img );
+		return create( img, kernel, img );
 	}	
 
 	/**
@@ -69,9 +70,9 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 	 * @param kernel - the convolution kernel
 	 * @param output - the result of the convolution
 	 */
-	public FFTConvolution( final Img< R > img, final Img< R > kernel, final RandomAccessibleInterval< R > output )
+	public static  <T extends RealType<T>, K extends RealType<K>, R extends RealType<R>> FFTConvolution< T, K, R > create( final Img< T > img, final Img< K > kernel, final RandomAccessibleInterval< R > output )
 	{
-		this ( img, kernel, output, getFFTFactory( img ) );
+		return create( img, kernel, output, getFFTFactory( img ) );
 	}
 	
 	/**
@@ -82,9 +83,9 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 	 * @param kernel - the convolution kernel
 	 * @param factory - the {@link ImgFactory} to create the fourier transforms
 	 */
-	public FFTConvolution( final RandomAccessibleInterval< R > img, final RandomAccessibleInterval< R > kernel, final ImgFactory< ComplexFloatType > factory )
+	public static  <T extends RealType<T>, K extends RealType<K>> FFTConvolution< T, K, T >  create( final RandomAccessibleInterval< T > img, final RandomAccessibleInterval< K > kernel, final ImgFactory< ComplexFloatType > factory )
 	{
-		this ( img, kernel, img, factory );
+		return create(img, kernel, img, factory );
 	}
 
 	/**
@@ -96,9 +97,9 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 	 * @param output - the output
 	 * @param factory - the {@link ImgFactory} to create the fourier transforms
 	 */
-	public FFTConvolution( final RandomAccessibleInterval< R > img, final RandomAccessibleInterval< R > kernel, final RandomAccessibleInterval< R > output, final ImgFactory< ComplexFloatType > factory )
+	public static  <T extends RealType<T>, K extends RealType<K>, R extends RealType<R>> FFTConvolution< T, K, R >  create(final RandomAccessibleInterval< T > img, final RandomAccessibleInterval< K > kernel, final RandomAccessibleInterval< R > output, final ImgFactory< ComplexFloatType > factory )
 	{
-		this ( Views.extendMirrorSingle( img ), img, Views.extendValue( kernel, Util.getTypeFromInterval( kernel ).createVariable() ), kernel, output, factory );
+		return create ( Views.extendMirrorSingle( img ), img, Views.extendValue( kernel, Util.getTypeFromInterval( kernel ).createVariable() ), kernel, output, factory );
 	}
 
 	/**
@@ -114,9 +115,13 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 	 * @param kernelInterval - the kernel interval
 	 * @param factory - the {@link ImgFactory} to create the fourier transforms
 	 */
-	public FFTConvolution( final RandomAccessible< R > img, final Interval imgInterval, final RandomAccessible< R > kernel, final Interval kernelInterval, final ImgFactory< ComplexFloatType > factory )
+	public static  <T extends RealType<T>, K extends RealType<K>> FFTConvolution< T, K, T>  create( final RandomAccessible< T > img, final Interval imgInterval, final RandomAccessible< K > kernel, final Interval kernelInterval, final ImgFactory< ComplexFloatType > factory )
 	{
-		this( img, imgInterval, kernel, kernelInterval, Views.interval( img, imgInterval ), factory );
+		return create( img, imgInterval, kernel, kernelInterval, Views.interval( img, imgInterval ), factory );
+	}
+	
+	public static  <T extends RealType<T>, K extends RealType<K>, R extends RealType<R>> FFTConvolution<T,K,R> create(final RandomAccessible< T > img, final Interval imgInterval, final RandomAccessible< K > kernel, final Interval kernelInterval, final RandomAccessibleInterval< R > output, final ImgFactory< ComplexFloatType > factory ){
+		return new FFTConvolution<T, K, R>(img, imgInterval, kernel, kernelInterval, output, factory);
 	}
 
 	/**
@@ -133,7 +138,7 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 	 * @param output - the output data+interval
 	 * @param factory - the {@link ImgFactory} to create the fourier transforms
 	 */
-	public FFTConvolution( final RandomAccessible< R > img, final Interval imgInterval, final RandomAccessible< R > kernel, final Interval kernelInterval, final RandomAccessibleInterval< R > output, final ImgFactory< ComplexFloatType > factory )
+	private FFTConvolution( final RandomAccessible< T > img, final Interval imgInterval, final RandomAccessible< K > kernel, final Interval kernelInterval, final RandomAccessibleInterval< R > output, final ImgFactory< ComplexFloatType > factory )
 	{
 		this.img = img;
 		this.imgInterval = imgInterval;
@@ -143,28 +148,28 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 		this.fftFactory = factory;
 	}
 
-	public void setImg( final RandomAccessibleInterval< R > img )
+	public void setImg( final RandomAccessibleInterval< T > img )
 	{
 		this.img = Views.extendMirrorSingle( img );
 		this.imgInterval = img;
 		this.fftImg = null;
 	}
 
-	public void setImg( final RandomAccessible< R > img, final Interval imgInterval )
+	public void setImg( final RandomAccessible< T > img, final Interval imgInterval )
 	{
 		this.img = img;
 		this.imgInterval = imgInterval;
 		this.fftImg = null;
 	}
 
-	public void setKernel( final RandomAccessibleInterval< R > kernel )
+	public void setKernel( final RandomAccessibleInterval< K > kernel )
 	{
 		this.kernel = Views.extendValue( kernel, Util.getTypeFromInterval( kernel ).createVariable() );
 		this.kernelInterval = kernel;
 		this.fftKernel = null;
 	}
 
-	public void setKernel( final RandomAccessible< R > kernel, final Interval kernelInterval )
+	public void setKernel( final RandomAccessible< K > kernel, final Interval kernelInterval )
 	{
 		this.kernel = kernel;
 		this.kernelInterval = kernelInterval;
@@ -217,8 +222,8 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 		}
 		
 		// assemble the correct kernel (size of the input + extended periodic + top left at center of input kernel)
-		final RandomAccessibleInterval< R > kernelInput = Views.interval( Views.extendPeriodic( Views.interval( kernel, kernelConvolutionInterval ) ), new FinalInterval( min, max ) );
-		final RandomAccessibleInterval< R > imgInput = Views.interval( img, imgConvolutionInterval );
+		final RandomAccessibleInterval< K > kernelInput = Views.interval( Views.extendPeriodic( Views.interval( kernel, kernelConvolutionInterval ) ), new FinalInterval( min, max ) );
+		final RandomAccessibleInterval< T > imgInput = Views.interval( img, imgConvolutionInterval );
 		
 		// compute the FFT's if they do not exist yet
 		if ( fftImg == null )
@@ -241,7 +246,7 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 		FFT.complexToRealUnpad( fftconvolved, output );
 	}
 	
-	final public static < R extends RealType< R > > void convolve( final RandomAccessible< R > img, final Interval imgInterval, final RandomAccessible< R > kernel, final Interval kernelInterval, final RandomAccessibleInterval< R > output, final ImgFactory< ComplexFloatType > factory )
+	final public static < T extends RealType<T>, K extends RealType<K>, R extends RealType< R > > void convolve( final RandomAccessible< T > img, final Interval imgInterval, final RandomAccessible< K > kernel, final Interval kernelInterval, final RandomAccessibleInterval< R > output, final ImgFactory< ComplexFloatType > factory )
 	{
 		final int numDimensions = imgInterval.numDimensions();
 		
@@ -277,8 +282,8 @@ public class FFTConvolution < R extends RealType< R > > implements Runnable
 		}
 		
 		// assemble the correct kernel (size of the input + extended periodic + top left at center of input kernel)
-		final RandomAccessibleInterval< R > kernelInput = Views.interval( Views.extendPeriodic( Views.interval( kernel, kernelConvolutionInterval ) ), new FinalInterval( min, max ) );
-		final RandomAccessibleInterval< R > imgInput = Views.interval( img, imgConvolutionInterval );
+		final RandomAccessibleInterval< K > kernelInput = Views.interval( Views.extendPeriodic( Views.interval( kernel, kernelConvolutionInterval ) ), new FinalInterval( min, max ) );
+		final RandomAccessibleInterval< T> imgInput = Views.interval( img, imgConvolutionInterval );
 		
 		// compute the FFT's
 		final Img<ComplexFloatType> fftImg = FFT.realToComplex( imgInput, factory );
