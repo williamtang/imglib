@@ -9,8 +9,7 @@ import net.imglib2.type.numeric.RealType;
  * @author Christian Dietz (University of Konstanz)
  * @author Martin Horn (University of Konstanz)
  */
-public interface Convolver<T extends RealType<T>, K extends RealType<K>, O extends RealType<O>>
-		extends
-		BinaryOperation<RandomAccessible<T>, RandomAccessibleInterval<K>, RandomAccessibleInterval<O>> {
+public interface Convolver< T extends RealType< T >, K extends RealType< K >, O extends RealType< O >> extends BinaryOperation< RandomAccessible< T >, RandomAccessibleInterval< K >, RandomAccessibleInterval< O >>
+{
 
 }

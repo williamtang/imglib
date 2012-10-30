@@ -11,6 +11,7 @@ import net.imglib2.type.numeric.complex.ComplexFloatType;
  * Convolution, using ImgLib2Fourier implementation
  * 
  * @author Christian Dietz (University of Konstanz)
+ * @author Martin Horn (University of Konstanz)
  */
 public class ImgLib2FourierConvolver< T extends RealType< T >, K extends RealType< K >, O extends RealType< O >> implements Convolver< T, K, O >
 {

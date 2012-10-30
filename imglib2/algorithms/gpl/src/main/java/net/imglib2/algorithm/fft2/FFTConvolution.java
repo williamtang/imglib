@@ -327,7 +327,7 @@ public class FFTConvolution< T extends RealType< T >, K extends RealType< K >, R
 		FFT.complexToRealUnpad( fftconvolved, output );
 	}
 
-	final public static <T extends RealType<T>, K extends RealType<K>, R extends RealType< R > > void convolve( final RandomAccessible< T > img, final Interval imgInterval, final RandomAccessible< K > kernel, final Interval kernelInterval, final RandomAccessibleInterval< R > output, final ImgFactory< ComplexFloatType > factory )
+	final public static < T extends RealType< T >, K extends RealType< K >, R extends RealType< R > > void convolve( final RandomAccessible< T > img, final Interval imgInterval, final RandomAccessible< K > kernel, final Interval kernelInterval, final RandomAccessibleInterval< R > output, final ImgFactory< ComplexFloatType > factory )
 	{
 		final int numDimensions = imgInterval.numDimensions();
 
