@@ -8,8 +8,7 @@ import net.imglib2.type.numeric.RealType;
 /**
  * @author Christian Dietz (Universit�t Konstanz)
  */
-public interface MultiKernelConvolver<T extends RealType<T>, O extends RealType<O>, K extends RealType<K>>
-                extends
-                BinaryOperation<RandomAccessible<T>, RandomAccessibleInterval<K>[], RandomAccessibleInterval<O>> {
+public interface MultiKernelConvolver< T extends RealType< T >, K extends RealType< K >, O extends RealType< O >> extends BinaryOperation< RandomAccessible< T >, RandomAccessibleInterval< K >[], RandomAccessibleInterval< O >>
+{
 
 }
