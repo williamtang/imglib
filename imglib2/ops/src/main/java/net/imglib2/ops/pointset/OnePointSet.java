@@ -101,7 +101,7 @@ public class OnePointSet implements PointSet {
 	}
 	
 	@Override
-	public PointSetIterator createIterator() {
+	public PointSetIterator iterator() {
 		return new OnePointSetIterator();
 	}
 
@@ -127,5 +127,9 @@ public class OnePointSet implements PointSet {
 			hasNext = true;
 		}
 		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 }

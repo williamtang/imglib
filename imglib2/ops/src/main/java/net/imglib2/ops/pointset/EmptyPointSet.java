@@ -69,7 +69,7 @@ public class EmptyPointSet implements PointSet {
 	}
 
 	@Override
-	public PointSetIterator createIterator() {
+	public PointSetIterator iterator() {
 		return new EmptyPointSetIterator();
 	}
 
@@ -122,6 +122,10 @@ public class EmptyPointSet implements PointSet {
 			// do nothing
 		}
 		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 }

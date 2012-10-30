@@ -41,12 +41,12 @@ package net.imglib2.ops.operation;
  * advance. For example if the operation produces an double[] of unknown size,
  * this algorithm should know what to do.
  * 
- * If the output can be known, e.g. {@link Img<T>} to {@link Img<T>} of same
- * dimensionality {@link UnaryOperation} should be used.
+ * If the type of output is known, e.g. {@link Img<T>} to {@link Img<T>} of same
+ * dimensionality, an {@link UnaryOperation} should be used.
  * 
- * @author dietzc (University of Konstanz)
+ * @author Christian Dietz (University of Konstanz)
  */
-public interface UnaryOutputOperation< INPUT_TYPE, OUTPUT_TYPE > extends UnaryOperation< INPUT_TYPE, OUTPUT_TYPE >
+public interface UnaryOutputOperation< A, OUTPUT_TYPE > extends UnaryOperation< A, OUTPUT_TYPE >
 {
 	/**
 	 * Creates an empty output for the given input.
@@ -55,7 +55,7 @@ public interface UnaryOutputOperation< INPUT_TYPE, OUTPUT_TYPE > extends UnaryOp
 	 *            Input to be processed
 	 * @return Output object, which can be used to store the result
 	 */
-	OUTPUT_TYPE createEmptyOutput( INPUT_TYPE in );
+	OUTPUT_TYPE createEmptyOutput( A in );
 
 	/**
 	 * 
@@ -64,10 +64,10 @@ public interface UnaryOutputOperation< INPUT_TYPE, OUTPUT_TYPE > extends UnaryOp
 	 * @return Output object storing the result
 	 * 
 	 */
-	OUTPUT_TYPE compute( INPUT_TYPE in );
+	OUTPUT_TYPE compute( A in );
 
 	/**
 	 * {@inheritDoc}
 	 */
-	UnaryOutputOperation< INPUT_TYPE, OUTPUT_TYPE > copy();
+	UnaryOutputOperation< A, OUTPUT_TYPE > copy();
 }

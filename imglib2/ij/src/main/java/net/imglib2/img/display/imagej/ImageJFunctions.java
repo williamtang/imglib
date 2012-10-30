@@ -234,7 +234,7 @@ public class ImageJFunctions
 	 *
 	 * @param <T>
 	 * @param img
-	 * @param converter
+	 * @param combiner
 	 * @param title
 	 * @return
 	 */

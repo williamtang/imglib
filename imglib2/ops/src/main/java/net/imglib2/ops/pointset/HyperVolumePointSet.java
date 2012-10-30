@@ -129,7 +129,7 @@ public class HyperVolumePointSet implements PointSet {
 	}
 	
 	@Override
-	public PointSetIterator createIterator() {
+	public PointSetIterator iterator() {
 		return new HyperVolumePointSetIterator();
 	}
 	
@@ -219,6 +219,11 @@ public class HyperVolumePointSet implements PointSet {
 			}
 			
 			throw new IllegalArgumentException("can't call next() beyond last position");
+		}
+		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
 		}
 	}
 }

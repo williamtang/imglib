@@ -78,7 +78,7 @@ public class RoiPointSet implements PointSet {
 	@Override
 	public long[] getOrigin() {
 		for (int i = 0; i < numD; i++)
-			origin[i] = (long) Math.ceil(roi.realMin(i));
+			origin[i] = (long) Math.floor(roi.realMin(i));
 		return origin;
 	}
 
@@ -90,7 +90,7 @@ public class RoiPointSet implements PointSet {
 	}
 
 	@Override
-	public PointSetIterator createIterator() {
+	public PointSetIterator iterator() {
 		return new RoiPointSetIterator();
 	}
 
@@ -102,7 +102,7 @@ public class RoiPointSet implements PointSet {
 	@Override
 	public long[] findBoundMin() {
 		for (int i = 0; i < numD; i++) {
-			boundMin[i] = (long) Math.ceil(roi.realMin(i));
+			boundMin[i] = (long) Math.floor(roi.realMin(i));
 		}
 		return boundMin;
 	}
@@ -110,7 +110,7 @@ public class RoiPointSet implements PointSet {
 	@Override
 	public long[] findBoundMax() {
 		for (int i = 0; i < numD; i++) {
-			boundMax[i] = (long) Math.floor(roi.realMax(i));
+			boundMax[i] = (long) Math.ceil(roi.realMax(i));
 		}
 		return boundMax;
 	}
@@ -126,7 +126,7 @@ public class RoiPointSet implements PointSet {
 	@Override
 	public long calcSize() {
 		long numElems = 0;
-		PointSetIterator iter = createIterator();
+		PointSetIterator iter = iterator();
 		while (iter.hasNext()) {
 			iter.next();
 			numElems++;
@@ -169,10 +169,15 @@ public class RoiPointSet implements PointSet {
 
 		@Override
 		public void reset() {
+			// can't just reset iterator as Roi may have moved. recalc bounds.
 			HyperVolumePointSet vol =
 				new HyperVolumePointSet(findBoundMin(), findBoundMax());
-			iter = vol.createIterator();
+			iter = vol.iterator();
 		}
 		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 }

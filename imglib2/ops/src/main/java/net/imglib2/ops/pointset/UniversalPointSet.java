@@ -69,7 +69,7 @@ public class UniversalPointSet implements PointSet {
 	}
 
 	@Override
-	public PointSetIterator createIterator() {
+	public PointSetIterator iterator() {
 		return new UniversalPointSetIterator();
 	}
 
@@ -120,6 +120,11 @@ public class UniversalPointSet implements PointSet {
 		@Override
 		public void reset() {
 			// nothing to do
+		}
+		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
 		}
 		
 	}

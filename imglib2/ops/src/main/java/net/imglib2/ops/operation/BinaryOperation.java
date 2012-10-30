@@ -37,13 +37,16 @@
 package net.imglib2.ops.operation;
 
 /**
- * TODO
+ * This interface specifies a contract for combining two inputs into a single
+ * output. Data is changed by reference and it is implicit in the design that
+ * no changes to the inputs are to be made by implementors of this interface.
  * 
  * @author Barry DeZonia
+ * @author Christian Dietz
  */
-public interface BinaryOperation< INPUT1_TYPE, INPUT2_TYPE, OUTPUT_TYPE >
+public interface BinaryOperation< A, B, C >
 {
-	OUTPUT_TYPE compute( INPUT1_TYPE input1, INPUT2_TYPE input2, OUTPUT_TYPE output );
+	C compute( A inputA, B inputB, C output );
 
-	BinaryOperation< INPUT1_TYPE, INPUT2_TYPE, OUTPUT_TYPE > copy();
+	BinaryOperation< A, B, C > copy();
 }

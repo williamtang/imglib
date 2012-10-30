@@ -41,14 +41,16 @@ import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.ops.img.UnaryOperationAssignment;
 import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.ops.operation.real.binary.Normalize;
+import net.imglib2.ops.operation.real.unary.Normalize;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Pair;
 
 /**
+ * @author Christian Dietz (University of Konstanz)
+ * @author Martin Horn (University of Konstanz)
+ * @author Felix Schoenenberger (University of Konstanz)
  * 
- * @author dietzc, hornm, schoenenbergerf University of Konstanz
  * @param <T>
  *            The type of the {@link Img} which will be normalized. Must be
  *            {@link RealType}

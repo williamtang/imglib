@@ -39,6 +39,7 @@ package net.imglib2.util;
 import java.util.List;
 
 import net.imglib2.Interval;
+import net.imglib2.IterableInterval;
 import net.imglib2.Localizable;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
@@ -1183,5 +1184,19 @@ public class Util
 	    }
 	    while ( v > 1 );
 	    return c;
+	}
+	
+	/**
+	 * Checks iteration order
+	 */
+	public final static boolean sameIterationOrder(IterableInterval<?> a,
+			IterableInterval<?> b, IterableInterval<?> c) {
+		return a.iterationOrder().equals(b.iterationOrder())
+				&& b.iterationOrder().equals(c.iterationOrder());
+	}
+
+	public final static boolean sameIterationOrder(IterableInterval<?> a,
+			IterableInterval<?> b) {
+		return a.iterationOrder().equals(b.iterationOrder());
 	}
 }
