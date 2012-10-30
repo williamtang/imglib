@@ -33,57 +33,24 @@
  * policies, either expressed or implied, of any organization.
  * #L%
  */
+
 package net.imglib2.ops.img;
 
 import net.imglib2.ops.buffer.BufferFactory;
-import net.imglib2.ops.operation.BinaryOperation;
-import net.imglib2.ops.operation.UnaryOperation;
 
 /**
  * 
  * @author Christian Dietz (University of Konstanz)
  * 
  * @param <A>
- * @param <B>
- * @param <C>
- * @param <D>
  */
-public class BinaryUnaryOperationAdapter< A, B, C, D > implements BinaryOperation< A, B, D >, BufferedOperation< C >
+public interface DoubleBufferedOperation< A, B >
 {
+	void setBufferFactoryA( BufferFactory< A > buffer );
 
-	private final BinaryOperation< A, B, C > binaryOp;
+	void setBufferFactoryB( BufferFactory< B > buffer );
 
-	private final UnaryOperation< C, D > unaryOp1;
+	BufferFactory< A > bufferFactoryA();
 
-	private BufferFactory< C > fac;
-
-	public BinaryUnaryOperationAdapter( BufferFactory< C > buff, BinaryOperation< A, B, C > binaryOp, UnaryOperation< C, D > op1 )
-	{
-		this.fac = buff;
-		this.binaryOp = binaryOp;
-		this.unaryOp1 = op1;
-	}
-
-	public D compute( A input1, B input2, D output )
-	{
-		return unaryOp1.compute( binaryOp.compute( input1, input2, fac.instantiate() ), output );
-	};
-
-	@Override
-	public BinaryOperation< A, B, D > copy()
-	{
-		return new BinaryUnaryOperationAdapter< A, B, C, D >( fac, binaryOp.copy(), unaryOp1.copy() );
-	}
-
-	@Override
-	public void setBufferFactory( BufferFactory< C > fac )
-	{
-		this.fac = fac;
-	}
-
-	@Override
-	public BufferFactory< C > bufferFactory()
-	{
-		return fac;
-	}
+	BufferFactory< B > bufferFactoryB();
 }

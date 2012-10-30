@@ -35,18 +35,19 @@
  */
 package net.imglib2.ops.img;
 
+import net.imglib2.ops.buffer.BufferFactory;
 import net.imglib2.ops.operation.BinaryOperation;
 import net.imglib2.ops.operation.UnaryOperation;
 
 /**
  * @author Christian Dietz (University of Konstanz)
- *
+ * 
  * @param <A>
  * @param <B>
  * @param <C>
  * @param <D>
  */
-public abstract class UnaryBinaryOperationAdapter< A, B, C, D > implements UnaryOperation< A, D >
+public class UnaryBinaryOperationAdapter< A, B, C, D > implements UnaryOperation< A, D >, DoubleBufferedOperation< B, C >
 {
 
 	private final BinaryOperation< B, C, D > binaryOp;
@@ -55,8 +56,14 @@ public abstract class UnaryBinaryOperationAdapter< A, B, C, D > implements Unary
 
 	private final UnaryOperation< A, C > unaryOp2;
 
-	public UnaryBinaryOperationAdapter( UnaryOperation< A, B > op1, UnaryOperation< A, C > op2, BinaryOperation< B, C, D > binaryOp )
+	private BufferFactory< B > buf1;
+
+	private BufferFactory< C > buf2;
+
+	public UnaryBinaryOperationAdapter( UnaryOperation< A, B > op1, UnaryOperation< A, C > op2, BinaryOperation< B, C, D > binaryOp, BufferFactory< B > buf1, BufferFactory< C > buf2 )
 	{
+		this.buf1 = buf1;
+		this.buf2 = buf2;
 		this.binaryOp = binaryOp;
 		this.unaryOp1 = op1;
 		this.unaryOp2 = op2;
@@ -64,32 +71,36 @@ public abstract class UnaryBinaryOperationAdapter< A, B, C, D > implements Unary
 
 	public D compute( A input, D output )
 	{
-		return binaryOp.compute( unaryOp1.compute( input, getOp1Buffer() ), unaryOp2.compute( input, getOp2Buffer() ), output );
+		return binaryOp.compute( unaryOp1.compute( input, buf1.instantiate() ), unaryOp2.compute( input, buf2.instantiate() ), output );
 	};
 
 	@Override
 	public UnaryOperation< A, D > copy()
 	{
-		return new UnaryBinaryOperationAdapter< A, B, C, D >( unaryOp1.copy(), unaryOp2.copy(), binaryOp.copy() )
-		{
-
-			@Override
-			protected B getOp1Buffer()
-			{
-				return UnaryBinaryOperationAdapter.this.getOp1Buffer();
-			}
-
-			@Override
-			protected C getOp2Buffer()
-			{
-				return UnaryBinaryOperationAdapter.this.getOp2Buffer();
-			}
-
-		};
+		return new UnaryBinaryOperationAdapter< A, B, C, D >( unaryOp1.copy(), unaryOp2.copy(), binaryOp.copy(), buf1, buf2 );
 	}
 
-	protected abstract B getOp1Buffer();
+	@Override
+	public void setBufferFactoryA( BufferFactory< B > buffer )
+	{
+		this.buf1 = buffer;
+	}
 
-	protected abstract C getOp2Buffer();
+	@Override
+	public void setBufferFactoryB( BufferFactory< C > buffer )
+	{
+		this.buf2 = buffer;
+	}
 
+	@Override
+	public BufferFactory< B > bufferFactoryA()
+	{
+		return this.buf1;
+	}
+
+	@Override
+	public BufferFactory< C > bufferFactoryB()
+	{
+		return this.buf2;
+	}
 }

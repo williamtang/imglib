@@ -36,44 +36,54 @@
 
 package net.imglib2.ops.img;
 
+import net.imglib2.ops.buffer.BufferFactory;
 import net.imglib2.ops.operation.UnaryOperation;
 
 /**
  * @author Christian Dietz (University of Konstanz)
- *
+ * 
  * @param <A>
  * @param <B>
  * @param <C>
  */
-public abstract class UnaryOperationBridge<A, B, C> implements
-		UnaryOperation<A, C> {
+public class UnaryOperationBridge< A, B, C > implements UnaryOperation< A, C >, BufferedOperation< B >
+{
 
-	private final UnaryOperation<A, B> first;
+	private final UnaryOperation< A, B > first;
 
-	private final UnaryOperation<B, C> second;
+	private final UnaryOperation< B, C > second;
 
-	public UnaryOperationBridge(UnaryOperation<A, B> first,
-			UnaryOperation<B, C> second) {
+	private BufferFactory< B > buff;
+
+	public UnaryOperationBridge( BufferFactory< B > buff, UnaryOperation< A, B > first, UnaryOperation< B, C > second )
+	{
+		this.buff = buff;
 		this.first = first;
 		this.second = second;
 	}
 
 	@Override
-	public C compute(A input, C output) {
-		return second.compute(first.compute(input, getBuffer()), output);
+	public C compute( A input, C output )
+	{
+		return second.compute( first.compute( input, buff.instantiate() ), output );
 	}
 
 	@Override
-	public UnaryOperation<A, C> copy() {
-		return new UnaryOperationBridge<A, B, C>(first.copy(), second.copy()) {
-
-			@Override
-			public B getBuffer() {
-				return UnaryOperationBridge.this.getBuffer();
-			}
-
-		};
+	public UnaryOperation< A, C > copy()
+	{
+		return new UnaryOperationBridge< A, B, C >( buff, first.copy(), second.copy() );
 	}
 
-	public abstract B getBuffer();
+	@Override
+	public void setBufferFactory( BufferFactory< B > buffer )
+	{
+		this.buff = buffer;
+	}
+
+	@Override
+	public BufferFactory< B > bufferFactory()
+	{
+		return buff;
+	}
+
 };
