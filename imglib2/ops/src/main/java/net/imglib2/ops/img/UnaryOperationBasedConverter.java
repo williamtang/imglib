@@ -47,17 +47,20 @@ import net.imglib2.ops.operation.UnaryOperation;
  * @param <A>
  * @param <B>
  */
-public class UnaryOperationBasedConverter<A, B> implements Converter<A, B> {
+public class UnaryOperationBasedConverter< A, B > implements Converter< A, B >
+{
 
-	private final UnaryOperation<A, B> op;
+	private final UnaryOperation< A, B > op;
 
-	public UnaryOperationBasedConverter(UnaryOperation<A, B> op) {
+	public UnaryOperationBasedConverter( UnaryOperation< A, B > op )
+	{
 		this.op = op;
 	}
 
 	@Override
-	public void convert(A input, B output) {
-		op.compute(input, output);
+	public void convert( A input, B output )
+	{
+		op.compute( input, output );
 	}
 
 }

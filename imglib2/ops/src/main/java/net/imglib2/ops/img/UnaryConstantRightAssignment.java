@@ -45,38 +45,39 @@ import net.imglib2.util.Util;
 /**
  * @author Christian Dietz (University of Konstanz)
  */
-public class UnaryConstantRightAssignment<T extends RealType<T>, V extends RealType<V>, O extends RealType<O>>
-		implements BinaryOperation<IterableInterval<T>, V, IterableInterval<O>> {
+public class UnaryConstantRightAssignment< T extends RealType< T >, V extends RealType< V >, O extends RealType< O >> implements BinaryOperation< IterableInterval< T >, V, IterableInterval< O >>
+{
 
-	private BinaryOperation<T, V, O> op;
+	private BinaryOperation< T, V, O > op;
 
-	public UnaryConstantRightAssignment(BinaryOperation<T, V, O> op) {
+	public UnaryConstantRightAssignment( BinaryOperation< T, V, O > op )
+	{
 		this.op = op;
 	}
 
 	@Override
-	public IterableInterval<O> compute(IterableInterval<T> input, V constant,
-			IterableInterval<O> output) {
+	public IterableInterval< O > compute( IterableInterval< T > input, V constant, IterableInterval< O > output )
+	{
 
-		if (!Util.sameIterationOrder(input, output)) {
-			throw new IllegalArgumentException("Incompatible IterationOrders");
-		}
+		if ( !Util.sameIterationOrder( input, output ) ) { throw new IllegalArgumentException( "Incompatible IterationOrders" ); }
 
-		Cursor<T> inCursor = input.cursor();
-		Cursor<O> outCursor = output.cursor();
+		Cursor< T > inCursor = input.cursor();
+		Cursor< O > outCursor = output.cursor();
 
-		while (inCursor.hasNext() && outCursor.hasNext()) {
+		while ( inCursor.hasNext() && outCursor.hasNext() )
+		{
 			inCursor.fwd();
 			outCursor.fwd();
-			op.compute(inCursor.get(), constant, outCursor.get());
+			op.compute( inCursor.get(), constant, outCursor.get() );
 		}
 
 		return output;
 	}
 
 	@Override
-	public BinaryOperation<IterableInterval<T>, V, IterableInterval<O>> copy() {
-		return new UnaryConstantRightAssignment<T, V, O>(op);
+	public BinaryOperation< IterableInterval< T >, V, IterableInterval< O >> copy()
+	{
+		return new UnaryConstantRightAssignment< T, V, O >( op );
 	}
 
 }

@@ -33,57 +33,36 @@
  * policies, either expressed or implied, of any organization.
  * #L%
  */
+
 package net.imglib2.ops.img;
 
-import net.imglib2.ops.buffer.BufferFactory;
+import net.imglib2.combiner.Combiner;
 import net.imglib2.ops.operation.BinaryOperation;
-import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.type.numeric.RealType;
 
 /**
+ * 
+ * Combiner using an BinaryOperation to convert pixels
  * 
  * @author Christian Dietz (University of Konstanz)
  * 
  * @param <A>
  * @param <B>
- * @param <C>
- * @param <D>
  */
-public class BinaryUnaryOperationAdapter< A, B, C, D > implements BinaryOperation< A, B, D >, BufferedOperation< C >
+public class BinaryOperationBasedCombiner< A extends RealType< A >, B extends RealType< B >, C extends RealType< C >> implements Combiner< A, B, C >
 {
 
-	private final BinaryOperation< A, B, C > binaryOp;
+	private final BinaryOperation< A, B, C > m_op;
 
-	private final UnaryOperation< C, D > unaryOp1;
-
-	private BufferFactory< C > fac;
-
-	public BinaryUnaryOperationAdapter( BufferFactory< C > buff, BinaryOperation< A, B, C > binaryOp, UnaryOperation< C, D > op1 )
+	public BinaryOperationBasedCombiner( BinaryOperation< A, B, C > op )
 	{
-		this.fac = buff;
-		this.binaryOp = binaryOp;
-		this.unaryOp1 = op1;
-	}
-
-	public D compute( A input1, B input2, D output )
-	{
-		return unaryOp1.compute( binaryOp.compute( input1, input2, fac.instantiate() ), output );
-	};
-
-	@Override
-	public BinaryOperation< A, B, D > copy()
-	{
-		return new BinaryUnaryOperationAdapter< A, B, C, D >( fac, binaryOp.copy(), unaryOp1.copy() );
+		m_op = op;
 	}
 
 	@Override
-	public void setBufferFactory( BufferFactory< C > fac )
+	public void combine( A inputT, B inputV, C output )
 	{
-		this.fac = fac;
+		m_op.compute( inputT, inputV, output );
 	}
 
-	@Override
-	public BufferFactory< C > bufferFactory()
-	{
-		return fac;
-	}
 }

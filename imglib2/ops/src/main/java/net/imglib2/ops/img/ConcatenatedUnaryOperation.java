@@ -36,28 +36,33 @@
 
 package net.imglib2.ops.img;
 
+import net.imglib2.ops.buffer.BufferFactory;
 import net.imglib2.ops.operation.UnaryOperation;
 
 /**
  * @author Christian Dietz (University of Konstanz)
  */
-public abstract class ConcatenatedUnaryOperation<T> implements
-		UnaryOperation<T, T> {
+public class ConcatenatedUnaryOperation< T > implements UnaryOperation< T, T >, BufferedOperation< T >
+{
 
-	private UnaryOperation<T, T>[] operations;
+	private UnaryOperation< T, T >[] operations;
 
-	public ConcatenatedUnaryOperation(
-			UnaryOperation<T, T>... operations) {
+	private BufferFactory< T > fac;
+
+	public ConcatenatedUnaryOperation( final BufferFactory< T > buff, UnaryOperation< T, T >... operations )
+	{
+		this.fac = buff;
 		this.operations = operations;
 	}
 
 	@Override
-	public T compute(T input, T output) {
+	public T compute( T input, T output )
+	{
 
-		if (operations.length == 1)
-			return operations[0].compute(input, output);
+		if ( operations.length == 1 )
+			return operations[ 0 ].compute( input, output );
 
-		T buffer = getBuffer();
+		T buffer = fac.instantiate();
 
 		T tmpOutput = output;
 		T tmpInput = buffer;
@@ -65,45 +70,48 @@ public abstract class ConcatenatedUnaryOperation<T> implements
 
 		// Check needs to be done as the number of operations may be uneven and
 		// the result may not be written to output
-		if (operations.length % 2 == 0) {
+		if ( operations.length % 2 == 0 )
+		{
 			tmpOutput = buffer;
 			tmpInput = output;
 		}
 
-		operations[0].compute(input, tmpOutput);
+		operations[ 0 ].compute( input, tmpOutput );
 
-		for (int i = 1; i < operations.length; i++) {
+		for ( int i = 1; i < operations.length; i++ )
+		{
 			tmp = tmpInput;
 			tmpInput = tmpOutput;
 			tmpOutput = tmp;
-			operations[i].compute(tmpInput, tmpOutput);
+			operations[ i ].compute( tmpInput, tmpOutput );
 		}
 
 		return output;
 	}
 
-	/**
-	 * Method to retrieve the Buffer
-	 * 
-	 * @return
-	 */
-	protected abstract T getBuffer();
-
 	@Override
-	public UnaryOperation<T, T> copy() {
-		@SuppressWarnings("unchecked")
-		UnaryOperation<T, T>[] operationCopy = new UnaryOperation[operations.length];
+	public UnaryOperation< T, T > copy()
+	{
+		@SuppressWarnings( "unchecked" )
+		UnaryOperation< T, T >[] operationCopy = new UnaryOperation[ operations.length ];
 
-		for (int i = 0; i < operationCopy.length; i++) {
-			operationCopy[i] = operations[i].copy();
+		for ( int i = 0; i < operationCopy.length; i++ )
+		{
+			operationCopy[ i ] = operations[ i ].copy();
 		}
 
-		return new ConcatenatedUnaryOperation<T>(operations) {
+		return new ConcatenatedUnaryOperation< T >( fac, operations );
+	}
 
-			@Override
-			protected T getBuffer() {
-				return this.getBuffer();
-			}
-		};
+	@Override
+	public void setBufferFactory( BufferFactory< T > fac )
+	{
+		this.fac = fac;
+	}
+
+	@Override
+	public BufferFactory< T > bufferFactory()
+	{
+		return fac;
 	}
 }

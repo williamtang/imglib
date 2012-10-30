@@ -46,48 +46,48 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Util;
 
 /**
- * 
  * @author Christian Dietz
  */
-public class BinaryRelationAssigment<A extends RealType<A>, B extends RealType<B>>
-		implements
-		BinaryOperation<IterableInterval<A>, IterableInterval<B>, IterableInterval<BitType>> {
+public class BinaryRelationAssigment< A extends RealType< A >, B extends RealType< B >> implements BinaryOperation< IterableInterval< A >, IterableInterval< B >, IterableInterval< BitType >>
+{
 
-	private BinaryRelation<A, B> relation;
+	private BinaryRelation< A, B > relation;
 
-	private ImgFactory<BitType> fac;
+	private ImgFactory< BitType > fac;
 
-	public BinaryRelationAssigment(ImgFactory<BitType> fac,
-			BinaryRelation<A, B> rel) {
+	public BinaryRelationAssigment( ImgFactory< BitType > fac, BinaryRelation< A, B > rel )
+	{
 		this.relation = rel;
 		this.fac = fac;
 	}
 
 	@Override
-	public IterableInterval<BitType> compute(IterableInterval<A> inputA,
-			IterableInterval<B> inputB, IterableInterval<BitType> output) {
-		if (!Util.sameIterationOrder(inputA, inputB, output))
-			throw new IllegalStateException("Incompatible IterationOrder");
+	public IterableInterval< BitType > compute( IterableInterval< A > inputA, IterableInterval< B > inputB, IterableInterval< BitType > output )
+	{
+		if ( !Util.sameIterationOrder( inputA, inputB, output ) )
+			throw new IllegalStateException( "Incompatible IterationOrder" );
 
-		Cursor<A> inCursorA = inputA.cursor();
-		Cursor<B> inCursorB = inputB.cursor();
+		Cursor< A > inCursorA = inputA.cursor();
+		Cursor< B > inCursorB = inputB.cursor();
 
-		Cursor<BitType> outCursor = output.cursor();
+		Cursor< BitType > outCursor = output.cursor();
 
-		while (outCursor.hasNext()) {
+		while ( outCursor.hasNext() )
+		{
 			outCursor.fwd();
 			inCursorA.fwd();
 			inCursorB.fwd();
 
-			outCursor.get().set(relation.holds(inCursorA.get(), inCursorB.get()));
+			outCursor.get().set( relation.holds( inCursorA.get(), inCursorB.get() ) );
 		}
 		return output;
 
 	}
 
 	@Override
-	public BinaryOperation<IterableInterval<A>, IterableInterval<B>, IterableInterval<BitType>> copy() {
-		return new BinaryRelationAssigment<A, B>(fac, relation.copy());
+	public BinaryOperation< IterableInterval< A >, IterableInterval< B >, IterableInterval< BitType >> copy()
+	{
+		return new BinaryRelationAssigment< A, B >( fac, relation.copy() );
 	}
 
 }
