@@ -37,89 +37,127 @@
 
 package net.imglib2.ops.pointset;
 
+import net.imglib2.Cursor;
+import net.imglib2.IterableInterval;
 
 /**
- * EmptyPointSet is a {@link PointSet} that has no members. It is meant for
- * use by PointSets that may combine other PointSets.
+ * This class is an adapter that allows any {@link IterableInterval} to be
+ * treated as a {@link PointSet}. The only limitation is that this PointSet
+ * implementation does not support the translate() method.
  * 
  * @author Barry DeZonia
+ *
  */
-public class EmptyPointSet implements PointSet {
-
+public class IterableIntervalPointSet implements PointSet
+{
 	// -- instance variables --
 	
-	private final long[] origin;
+	private final IterableInterval<?> interval;
+	private final long[] boundMin, boundMax;
+	private final long size;
 	
 	// -- constructor --
 	
-	public EmptyPointSet() {
-		origin = new long[0];
+	public IterableIntervalPointSet(IterableInterval<?> interval) {
+		this.interval = interval;
+		int numDims = interval.numDimensions();
+		boundMin = new long[numDims];
+		boundMax = new long[numDims];
+		interval.min(boundMin);
+		interval.max(boundMax);
+		long sum = 1;
+		for (int i = 0; i < numDims; i++) {
+			sum *= 1 + boundMax[i] - boundMin[i];
+		}
+		size = sum;
 	}
 	
 	// -- PointSet methods --
 	
 	@Override
 	public long[] getOrigin() {
-		return origin;
+		return boundMin;
 	}
 
+	/** Note: this method unsupported! */
 	@Override
-	public void translate(long[] deltas) {
-		throw new IllegalArgumentException("cannot translate an EmptyPointSet");
+	public void translate(long[] delta) {
+		throw new UnsupportedOperationException(
+				"IterableIntervals cannot be moved through space");
 	}
 
 	@Override
 	public PointSetIterator iterator() {
-		return new EmptyPointSetIterator();
+		return new IntervalIterator();
 	}
 
 	@Override
 	public int numDimensions() {
-		return 0;
+		return interval.numDimensions();
 	}
 
 	@Override
 	public long[] findBoundMin() {
-		return origin;
+		return boundMin;
 	}
 
 	@Override
 	public long[] findBoundMax() {
-		return origin;
+		return boundMax;
 	}
 
 	@Override
 	public boolean includes(long[] point) {
-		return false;
+		for (int i = 0; i < point.length; i++) {
+			long val = point[i];
+			if (val < boundMin[i] || val > boundMax[i]) return false;
+		}
+		return true;
 	}
-	
+
 	@Override
 	public long calcSize() {
-		return 0;
+		return size;
 	}
-	
+
 	@Override
-	public EmptyPointSet copy() {
-		return new EmptyPointSet();
+	public IterableIntervalPointSet copy() {
+		return new IterableIntervalPointSet(interval);
 	}
 	
 	// -- private helpers --
 	
-	private class EmptyPointSetIterator implements PointSetIterator {
-
+	private class IntervalIterator implements PointSetIterator {
+		
+		// -- instance variables --
+		
+		private final Cursor<?> cursor;
+		private final long[] pos;
+		
+		// -- constructor --
+		
+		public IntervalIterator() {
+			cursor = interval.localizingCursor();
+			pos = new long[interval.numDimensions()];
+		}
+		
+		// -- PointSetIterator methods --
+		
 		@Override
 		public boolean hasNext() {
-			return false;
+			return cursor.hasNext();
 		}
 
 		@Override
 		public long[] next() {
-			throw new IllegalArgumentException("cannot iterate EmptyPointSet");
+			cursor.next();
+			cursor.localize(pos);
+			return pos;
 		}
 
 		@Override
 		public void reset() {
-			// do nothing
+			cursor.reset();
 		}
 		
 		@Override
@@ -127,5 +165,4 @@ public class EmptyPointSet implements PointSet {
 			throw new UnsupportedOperationException();
 		}
 	}
-
 }

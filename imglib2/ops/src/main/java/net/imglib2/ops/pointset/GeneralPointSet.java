@@ -99,7 +99,7 @@ public class GeneralPointSet implements PointSet {
 	}
 	
 	@Override
-	public PointSetIterator createIterator() {
+	public PointSetIterator iterator() {
 		return new GeneralPointSetIterator();
 	}
 	
@@ -149,7 +149,7 @@ public class GeneralPointSet implements PointSet {
 	
 	public static GeneralPointSet explode(PointSet ps) {
 		final List<long[]> points = new ArrayList<long[]>();
-		final PointSetIterator iter = ps.createIterator();
+		final PointSetIterator iter = ps.iterator();
 		while (iter.hasNext()) {
 			points.add(iter.next().clone());
 		}
@@ -199,6 +199,11 @@ public class GeneralPointSet implements PointSet {
 		@Override
 		public void reset() {
 			index = -1;
+		}
+		
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
 		}
 	}
 }
