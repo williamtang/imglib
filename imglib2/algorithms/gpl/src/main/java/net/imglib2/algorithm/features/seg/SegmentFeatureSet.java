@@ -65,10 +65,12 @@ import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.ops.operation.iterableinterval.unary.CalculateDiameter;
 import net.imglib2.ops.operation.randomaccessibleinterval.unary.ConvexHull2D;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.real.DoubleType;
 
 /**
  * 
- * Calculates features iterable intervals (size, centroid, weighted centroid, circularity...)
+ * Calculates features iterable intervals (size, centroid, weighted centroid,
+ * circularity...)
  * 
  * @author hornm, dietzc, University of Konstanz
  */
@@ -168,8 +170,6 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 				|| m_enabled.get(m_defaultAxis.length + 3)
 				|| m_enabled.get(m_defaultAxis.length + 5)) {
 			if (activeDims > 2) {
-				System.out
-						.println("Perimeter, Convexity and Circularity and Diameter can only be calculated on 2 dimensional segments. Settings them to Double.Nan");
 				m_solidity = Double.NaN;
 				m_perimeter = Double.NaN;
 				m_circularity = Double.NaN;
@@ -199,7 +199,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 				}
 
 				if (m_enabled.get(5 + m_defaultAxis.length)) {
-					m_diameter = m_calculateDiameter.compute(m_outline).get();
+					m_diameter = m_calculateDiameter.compute(m_outline,
+							new DoubleType()).get();
 				}
 			}
 		}
