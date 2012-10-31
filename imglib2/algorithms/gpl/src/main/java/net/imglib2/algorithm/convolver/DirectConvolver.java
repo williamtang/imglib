@@ -37,7 +37,7 @@ public class DirectConvolver< T extends RealType< T >, K extends RealType< K >, 
 
 		final Cursor< K > kernelC = Views.iterable( kernel ).localizingCursor();
 
-		final Cursor< O > resC = Views.iterable( Views.offsetInterval( output, output ) ).localizingCursor();
+		final Cursor< O > resC = Views.iterable( output ).localizingCursor();
 
 		final long[] pos = new long[ input.numDimensions() ];
 		final long[] kernelRadius = new long[ kernel.numDimensions() ];
@@ -45,8 +45,6 @@ public class DirectConvolver< T extends RealType< T >, K extends RealType< K >, 
 		{
 			kernelRadius[ i ] = kernel.dimension( i ) / 2;
 		}
-
-		O accessRes = resC.get();
 
 		float val;
 
@@ -82,7 +80,7 @@ public class DirectConvolver< T extends RealType< T >, K extends RealType< K >, 
 				val += srcRA.get().getRealDouble() * kernelC.get().getRealDouble();
 			}
 
-			accessRes.setReal( val );
+			resC.get().setReal( val );
 		}
 
 		return output;
