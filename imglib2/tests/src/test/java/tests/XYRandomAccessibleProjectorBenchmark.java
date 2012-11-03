@@ -45,6 +45,6 @@ public class XYRandomAccessibleProjectorBenchmark
 	public static void main( final String[] args ) throws IncompatibleTypeException, ImgIOException
 	{
 		new ImageJ();
-		new XYRandomAccessibleProjectorBenchmark( "/home/tobias/workspace/data/DrosophilaWing.tif" );
+		new XYRandomAccessibleProjectorBenchmark( "C:\\Users\\Mia\\Desktop\\DrosophilaWing.tif" );
 	}
 }
