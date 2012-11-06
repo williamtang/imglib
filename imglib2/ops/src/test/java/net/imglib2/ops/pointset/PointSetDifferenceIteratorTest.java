@@ -34,61 +34,65 @@
  * #L%
  */
 
-
 package net.imglib2.ops.pointset;
 
-import net.imglib2.IterableInterval;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 /**
- * PointSets define a set of point indices (long[]). PointSets can be moved
- * to new locations in space. This allows one to do sliding window type of
- * analyses. But a PointSet can be irregularly shaped.
- * 
  * @author Barry DeZonia
  */
-public interface PointSet extends IterableInterval<long[]> {
-	
-	/**
-	 * Gets the current origin point of the PointSet
-	 */
-	long[] getOrigin();
+public class PointSetDifferenceIteratorTest {
 
-	/**
-	 * Moves the PointSet by a set of deltas. Any existing
-	 * PointSetIterators will automatically iterate the new bounds.
-	 */
-	void translate(long[] delta);
-	
-	/**
-	 * Creates an iterator that can be used to pull point indices out of the
-	 * PointSet.
-	 */
-	@Override
-	// overriding to specify better javadoc
-	PointSetIterator iterator();
+	@Test
+	public void test() {
+		PointSet ps1 = new HyperVolumePointSet(new long[] { 8 });
+		PointSet ps2 = new HyperVolumePointSet(new long[] { 4 }, new long[] { 10 });
+		PointSet ps = new PointSetDifference(ps1, ps2);
+		PointSetIterator iter = ps.iterator();
 
-	/**
-	 * Returns the dimensionality of the points contained in the PointSet
-	 */
-	@Override
-	// overriding to specify better javadoc
-	int numDimensions();
-	
-	/**
-	 * Returns true if a given point is a member of the PointSet
-	 */
-	boolean includes(long[] point);
-	
-	/**
-	 * Calculates the number of elements in the PointSet. This can be an
-	 * expensive operation (potentially iterating the whole set to count).
-	 */
-	@Override
-	long size();
-	
-	/**
-	 * Make a copy of self. This is useful for multithreaded parallel computation
-	 */
-	PointSet copy();
+		// regular sequence
+		assertTrue(iter.hasNext());
+		assertArrayEquals(new long[] { 0 }, iter.next());
+		assertTrue(iter.hasNext());
+		assertArrayEquals(new long[] { 1 }, iter.next());
+		assertTrue(iter.hasNext());
+		assertArrayEquals(new long[] { 2 }, iter.next());
+		assertTrue(iter.hasNext());
+		assertArrayEquals(new long[] { 3 }, iter.next());
+		assertFalse(iter.hasNext());
+
+		// another regular sequence
+		iter.reset();
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertArrayEquals(new long[] { 0 }, iter.get());
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertArrayEquals(new long[] { 1 }, iter.get());
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertArrayEquals(new long[] { 2 }, iter.get());
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertArrayEquals(new long[] { 3 }, iter.get());
+		assertFalse(iter.hasNext());
+
+		// irregular sequences
+		iter.reset();
+		iter.next();
+		assertArrayEquals(new long[] { 0 }, iter.get());
+		iter.fwd();
+		assertArrayEquals(new long[] { 1 }, iter.get());
+		iter.next();
+		assertArrayEquals(new long[] { 2 }, iter.get());
+		iter.fwd();
+		assertArrayEquals(new long[] { 3 }, iter.get());
+		assertFalse(iter.hasNext());
+		assertArrayEquals(new long[] { 3 }, iter.get());
+	}
+
 }
-

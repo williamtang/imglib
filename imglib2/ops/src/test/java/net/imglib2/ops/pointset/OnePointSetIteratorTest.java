@@ -34,53 +34,55 @@
  * #L%
  */
 
-
 package net.imglib2.ops.pointset;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 /**
- * Helper class for tracking bounds of a region. Used by some {@link PointSet}
- * implementations.
- * 
  * @author Barry DeZonia
  */
-public abstract class AbstractBoundedRegion {
-	
-	// -- instance variables --
-	
-	private long[] min, max;
+public class OnePointSetIteratorTest {
 
-	// -- constructor --
-	
-	public AbstractBoundedRegion() {
+	@Test
+	public void test() {
+
+		long[] point = new long[] { 1, 2, 3 };
+		PointSet ps = new OnePointSet(point);
+		PointSetIterator iter = ps.iterator();
+
+		// regular test
+
+		assertTrue(iter.hasNext());
+		assertTrue(iter.hasNext());
+		assertArrayEquals(point, iter.next());
+		assertFalse(iter.hasNext());
+		assertFalse(iter.hasNext());
+
+		// another regular test
+		iter.reset();
+		assertTrue(iter.hasNext());
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertArrayEquals(point, iter.get());
+		assertFalse(iter.hasNext());
+		assertFalse(iter.hasNext());
+
+		// weird orders
+		iter.reset();
+		assertTrue(iter.hasNext());
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertEquals(1, iter.getLongPosition(0));
+		assertEquals(2, iter.getLongPosition(1));
+		assertEquals(3, iter.getLongPosition(2));
+		assertArrayEquals(point, iter.get());
+		assertFalse(iter.hasNext());
+		assertFalse(iter.hasNext());
 	}
-	
-	// -- protected API --
-	
-	protected long[] getMin() {
-		return min;
-	}
-	
-	protected long[] getMax() {
-		return max;
-	}
-	
-	protected void setMin(long[] p) {
-		min = p.clone();
-	}
-	
-	protected void setMax(long[] p) {
-		max = p.clone();
-	}
-	
-	protected void updateMin(long[] p) {
-		for (int i = 0; i < min.length; i++) {
-			if (p[i] < min[i]) min[i] = p[i];
-		}
-	}
-	
-	protected void updateMax(long[] p) {
-		for (int i = 0; i < max.length; i++) {
-			if (p[i] > max[i]) max[i] = p[i];
-		}
-	}
+
 }

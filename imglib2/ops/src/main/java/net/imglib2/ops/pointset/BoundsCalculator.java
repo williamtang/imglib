@@ -37,58 +37,69 @@
 
 package net.imglib2.ops.pointset;
 
-import net.imglib2.IterableInterval;
-
 /**
- * PointSets define a set of point indices (long[]). PointSets can be moved
- * to new locations in space. This allows one to do sliding window type of
- * analyses. But a PointSet can be irregularly shaped.
+ * Helper class for tracking bounds of a region. Used by some {@link PointSet}
+ * implementations.
  * 
  * @author Barry DeZonia
  */
-public interface PointSet extends IterableInterval<long[]> {
+public class BoundsCalculator {
 	
-	/**
-	 * Gets the current origin point of the PointSet
-	 */
-	long[] getOrigin();
+	// -- instance variables --
+	
+	private long[] min, max;
 
-	/**
-	 * Moves the PointSet by a set of deltas. Any existing
-	 * PointSetIterators will automatically iterate the new bounds.
-	 */
-	void translate(long[] delta);
+	// -- constructor --
 	
-	/**
-	 * Creates an iterator that can be used to pull point indices out of the
-	 * PointSet.
-	 */
-	@Override
-	// overriding to specify better javadoc
-	PointSetIterator iterator();
+	public BoundsCalculator() {
+	}
+	
+	// -- BoundsCalculator methods --
+	
+	public long[] getMin() {
+		return min;
+	}
+	
+	public long[] getMax() {
+		return max;
+	}
+	
+	public void calc(PointSet ps) {
+		PointSetIterator iter = ps.iterator();
+		boolean invalid = true;
+		while (iter.hasNext()) {
+			long[] point = iter.next();
+			if (invalid) {
+				invalid = false;
+				setMax(point);
+				setMin(point);
+			}
+			else {
+				updateMax(point);
+				updateMin(point);
+			}
+		}
+	}
 
-	/**
-	 * Returns the dimensionality of the points contained in the PointSet
-	 */
-	@Override
-	// overriding to specify better javadoc
-	int numDimensions();
+	// -- private helpers --
+
+	private void setMin(long[] p) {
+		min = p.clone();
+	}
 	
-	/**
-	 * Returns true if a given point is a member of the PointSet
-	 */
-	boolean includes(long[] point);
+	private void setMax(long[] p) {
+		max = p.clone();
+	}
 	
-	/**
-	 * Calculates the number of elements in the PointSet. This can be an
-	 * expensive operation (potentially iterating the whole set to count).
-	 */
-	@Override
-	long size();
+	private void updateMin(long[] p) {
+		for (int i = 0; i < min.length; i++) {
+			if (p[i] < min[i]) min[i] = p[i];
+		}
+	}
 	
-	/**
-	 * Make a copy of self. This is useful for multithreaded parallel computation
-	 */
-	PointSet copy();
+	private void updateMax(long[] p) {
+		for (int i = 0; i < max.length; i++) {
+			if (p[i] > max[i]) max[i] = p[i];
+		}
+	}
 }
-
