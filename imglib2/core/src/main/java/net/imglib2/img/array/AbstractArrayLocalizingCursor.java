@@ -42,14 +42,14 @@ import net.imglib2.util.IntervalIndexer;
 
 /**
  * Localizing {@link Cursor} on an {@link ArrayImg}.
- * 
+ *
  * @param <T>
- * 
+ *
  * @author Stephan Preibisch
  * @author Stephan Saalfeld
  * @author Christian Dietz
  * @author Tobias Pietzsch
- * 
+ *
  */
 public abstract class AbstractArrayLocalizingCursor< T extends NativeType< T > > extends AbstractLocalizingCursorInt< T >
 {
@@ -94,7 +94,7 @@ public abstract class AbstractArrayLocalizingCursor< T extends NativeType< T > >
 		reset();
 	}
 
-	public AbstractArrayLocalizingCursor( final ArrayImg< T, ? > img, int offset, int size )
+	public AbstractArrayLocalizingCursor( final ArrayImg< T, ? > img, final int offset, final int size )
 	{
 		super( img.numDimensions() );
 
@@ -170,8 +170,7 @@ public abstract class AbstractArrayLocalizingCursor< T extends NativeType< T > >
 	{
 		type.updateIndex( offset - 1 );
 
-		IntervalIndexer.indexToPosition( offset - 1, img.dim, position );
-
+		IntervalIndexer.indexToPosition( offset, img.dim, position );
 		position[ 0 ]--;
 
 		type.updateContainer( this );
