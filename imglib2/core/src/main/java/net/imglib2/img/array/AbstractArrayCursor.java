@@ -34,84 +34,117 @@
  * #L%
  */
 
-package net.imglib2.ops.img;
+package net.imglib2.img.array;
 
-import net.imglib2.ops.buffer.BufferFactory;
-import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.AbstractCursorInt;
+import net.imglib2.type.NativeType;
+import net.imglib2.util.IntervalIndexer;
 
 /**
- * @author Christian Dietz (University of Konstanz)
+ * {@link Cursor} on an {@link ArrayImg}.
+ * 
+ * @param <T>
+ * 
+ * @author Stephan Preibisch
+ * @author Stephan Saalfeld
+ * @author Christian Dietz
+ * @author Tobias Pietzsch
  */
-public class ConcatenatedUnaryOperation< T > implements UnaryOperation< T, T >, BufferedOperation< T >
+public abstract class AbstractArrayCursor< T extends NativeType< T > > extends AbstractCursorInt< T >
 {
 
-	private UnaryOperation< T, T >[] operations;
+	protected final int offset;
 
-	private BufferFactory< T > fac;
+	protected final int size;
 
-	public ConcatenatedUnaryOperation( final BufferFactory< T > buff, UnaryOperation< T, T >... operations )
+	protected final T type;
+
+	protected final ArrayImg< T, ? > img;
+
+	protected final int lastIndex;
+
+	protected AbstractArrayCursor( final AbstractArrayCursor< T > cursor )
 	{
-		this.fac = buff;
-		this.operations = operations;
+		super( cursor.numDimensions() );
+
+		this.img = cursor.img;
+		this.type = img.createLinkedType();
+		this.offset = cursor.offset;
+		this.size = cursor.size;
+		this.lastIndex = cursor.lastIndex;
+
+		type.updateIndex( cursor.type.getIndex() );
+		type.updateContainer( this );
+
+		reset();
+	}
+
+	public AbstractArrayCursor( final ArrayImg< T, ? > img, int offset, int size )
+	{
+		super( img.numDimensions() );
+
+		this.type = img.createLinkedType();
+		this.img = img;
+		this.lastIndex = offset + size - 1;
+		this.offset = offset;
+		this.size = size;
+
+		reset();
 	}
 
 	@Override
-	public T compute( T input, T output )
+	public T get()
 	{
-
-		if ( operations.length == 1 )
-			return operations[ 0 ].compute( input, output );
-
-		T buffer = fac.instantiate();
-
-		T tmpOutput = output;
-		T tmpInput = buffer;
-		T tmp;
-
-		// Check needs to be done as the number of operations may be uneven and
-		// the result may not be written to output
-		if ( operations.length % 2 == 0 )
-		{
-			tmpOutput = buffer;
-			tmpInput = output;
-		}
-
-		operations[ 0 ].compute( input, tmpOutput );
-
-		for ( int i = 1; i < operations.length; i++ )
-		{
-			tmp = tmpInput;
-			tmpInput = tmpOutput;
-			tmpOutput = tmp;
-			operations[ i ].compute( tmpInput, tmpOutput );
-		}
-
-		return output;
+		return type;
 	}
 
 	@Override
-	public UnaryOperation< T, T > copy()
+	public boolean hasNext()
 	{
-		@SuppressWarnings( "unchecked" )
-		UnaryOperation< T, T >[] operationCopy = new UnaryOperation[ operations.length ];
-
-		for ( int i = 0; i < operationCopy.length; i++ )
-		{
-			operationCopy[ i ] = operations[ i ].copy();
-		}
-
-		return new ConcatenatedUnaryOperation< T >( fac, operations );
+		return type.getIndex() < lastIndex;
 	}
 
 	@Override
-	public void setBufferFactory( BufferFactory< T > fac )
+	public void jumpFwd( final long steps )
 	{
-		this.fac = fac;
+		type.incIndex( ( int ) steps );
 	}
 
 	@Override
-	public BufferFactory< T > bufferFactory()
+	public void fwd()
 	{
-		return fac;
+		type.incIndex();
 	}
+
+	@Override
+	public void reset()
+	{
+		type.updateIndex( offset - 1 );
+		type.updateContainer( this );
+	}
+
+	@Override
+	public String toString()
+	{
+		return type.toString();
+	}
+
+	@Override
+	public int getIntPosition( final int dim )
+	{
+		return IntervalIndexer.indexToPosition( type.getIndex(), img.dim, dim );
+	}
+
+	@Override
+	public void localize( final int[] position )
+	{
+		IntervalIndexer.indexToPosition( type.getIndex(), img.dim, position );
+	}
+
+	@Override
+	public AbstractArrayCursor< T > copyCursor()
+	{
+		return ( AbstractArrayCursor< T > ) copy();
+	}
+
 }
