@@ -7,6 +7,8 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.basictypeaccess.array.ShortArray;
+import net.imglib2.ops.img.Operations;
+import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.ops.operation.img.unary.ImgConvert;
 import net.imglib2.ops.operation.img.unary.ImgConvert.ImgConversionTypes;
@@ -61,18 +63,13 @@ public class CalculatePerimeter implements
 	}
 
 	@Override
-	public DoubleType createEmptyOutput(final Img<BitType> op) {
-		return new DoubleType();
-	}
-
-	@Override
 	public DoubleType compute(final Img<BitType> op, final DoubleType r) {
 		Img<UnsignedShortType> img = null;
 		try {
 			img = (Img<UnsignedShortType>) m_convolve
 					.compute(
 							Views.extend(
-									m_convert.compute(op),
+									Operations.compute(m_convert, op),
 									new OutOfBoundsMirrorFactory<UnsignedShortType, Img<UnsignedShortType>>(
 											Boundary.SINGLE)), getKernel(),
 							op.factory().imgFactory(new UnsignedShortType())
@@ -124,7 +121,13 @@ public class CalculatePerimeter implements
 	}
 
 	@Override
-	public DoubleType compute(final Img<BitType> in) {
-		return compute(in, createEmptyOutput(in));
+	public UnaryObjectFactory<Img<BitType>, DoubleType> bufferFactory() {
+		return new UnaryObjectFactory<Img<BitType>, DoubleType>() {
+
+			@Override
+			public DoubleType instantiate(Img<BitType> a) {
+				return new DoubleType();
+			}
+		};
 	}
 }

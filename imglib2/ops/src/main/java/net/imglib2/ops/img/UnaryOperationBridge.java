@@ -36,7 +36,6 @@
 
 package net.imglib2.ops.img;
 
-import net.imglib2.ops.buffer.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 

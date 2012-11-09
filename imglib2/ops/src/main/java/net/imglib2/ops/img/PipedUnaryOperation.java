@@ -39,142 +39,97 @@ package net.imglib2.ops.img;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.imglib2.ops.buffer.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 
 /**
  * @author Christian Dietz (University of Konstanz)
  */
-public class PipedUnaryOperation< T > implements UnaryOutputOperation< T, T >
-{
+public class PipedUnaryOperation<T> implements UnaryOutputOperation<T, T> {
 
-	private UnaryOutputOperation< T, T >[] operations;
+	private UnaryOutputOperation<T, T>[] operations;
 
-	private UnaryObjectFactory< T, T > factory;
+	private UnaryObjectFactory<T, T> factory;
 
-	private boolean isSuccessor;
-
-	public PipedUnaryOperation( UnaryOutputOperation< T, T >[] operations )
-	{
-		this( operations[ 0 ].bufferFactory(), operations );
+	public PipedUnaryOperation(UnaryOutputOperation<T, T>... operations) {
+		this(operations[0].bufferFactory(), operations);
 	}
 
-	public PipedUnaryOperation( UnaryObjectFactory< T, T > bufferFactory, UnaryOutputOperation< T, T >[] operations )
-	{
+	public PipedUnaryOperation(UnaryObjectFactory<T, T> bufferFactory,
+			UnaryOutputOperation<T, T>[] operations) {
 		this.factory = bufferFactory;
-		this.operations = unpack( operations );
+		this.operations = unpack(operations);
 	}
 
-	@SuppressWarnings( "unchecked" )
-	private UnaryOutputOperation< T, T >[] unpack( UnaryOutputOperation< T, T >[] ops )
-	{
-		List< UnaryOutputOperation< T, T >> all = new ArrayList< UnaryOutputOperation< T, T >>();
+	@SuppressWarnings("unchecked")
+	private UnaryOutputOperation<T, T>[] unpack(UnaryOutputOperation<T, T>[] ops) {
+		List<UnaryOutputOperation<T, T>> all = new ArrayList<UnaryOutputOperation<T, T>>();
 
-		for ( int k = 0; k < ops.length; k++ )
-		{
-			if ( ops[ k ] instanceof PipedUnaryOperation )
-			{
-				for ( UnaryOutputOperation< T, T > op : unpack( ( ( PipedUnaryOperation< T > ) ops[ k ] ).ops() ) )
-				{
-					all.add( op );
+		for (int k = 0; k < ops.length; k++) {
+			if (ops[k] instanceof PipedUnaryOperation) {
+				for (UnaryOutputOperation<T, T> op : unpack(((PipedUnaryOperation<T>) ops[k])
+						.ops())) {
+					all.add(op);
 				}
-			}
-			else
-			{
-				all.add( ops[ k ] );
+			} else {
+				all.add(ops[k]);
 			}
 		}
 
-		return all.toArray( new UnaryOutputOperation[ all.size() ] );
+		return all.toArray(new UnaryOutputOperation[all.size()]);
 	}
 
 	@Override
-	public T compute( T input, T output )
-	{
-
-		if ( operations.length == 1 )
-			return operations[ 0 ].compute( input, output );
-
-		T buffer = operations[ 0 ].bufferFactory().instantiate( input );
-
-		T tmpOutput = output;
-		T tmpInput = buffer;
-		T tmp;
-
-		// Check needs to be done as the number of operations may be uneven and
-		// the result may not be written to output
-		if ( operations.length + ( isSuccessor ? 1 : 0 ) % 2 == 0 )
-		{
-			tmpOutput = buffer;
-			tmpInput = output;
-		}
-
-		operations[ 0 ].compute( input, tmpOutput );
-
-		for ( int i = 1; i < operations.length; i++ )
-		{
-			tmp = tmpInput;
-			tmpInput = tmpOutput;
-			tmpOutput = tmp;
-			operations[ i ].compute( tmpInput, tmpOutput );
-		}
-
-		return output;
+	public T compute(T input, T output) {
+		return Operations.compute(input, output, operations);
 	}
 
 	@Override
-	public UnaryOutputOperation< T, T > copy()
-	{
-		@SuppressWarnings( "unchecked" )
-		UnaryOutputOperation< T, T >[] operationCopy = new UnaryOutputOperation[ operations.length ];
+	public UnaryOutputOperation<T, T> copy() {
+		@SuppressWarnings("unchecked")
+		UnaryOutputOperation<T, T>[] operationCopy = new UnaryOutputOperation[operations.length];
 
-		for ( int i = 0; i < operationCopy.length; i++ )
-		{
-			operationCopy[ i ] = operations[ i ].copy();
+		for (int i = 0; i < operationCopy.length; i++) {
+			operationCopy[i] = operations[i].copy();
 		}
 
-		return new PipedUnaryOperation< T >( operations );
+		return new PipedUnaryOperation<T>(operations);
 	}
 
-	public void append( UnaryOutputOperation< T, T > op )
-	{
-		@SuppressWarnings( "unchecked" )
-		UnaryOutputOperation< T, T >[] res = new UnaryOutputOperation[ operations.length + 1 ];
+	public void append(UnaryOutputOperation<T, T> op) {
+		@SuppressWarnings("unchecked")
+		UnaryOutputOperation<T, T>[] res = new UnaryOutputOperation[operations.length + 1];
 
-		for ( int i = 0; i < operations.length; i++ )
-			res[ i ] = operations[ i ];
+		for (int i = 0; i < operations.length; i++)
+			res[i] = operations[i];
 
-		res[ operations.length ] = op;
+		res[operations.length] = op;
 
 		operations = res;
 	}
 
-	public void append( UnaryOutputOperation< T, T >[] ops )
-	{
-		@SuppressWarnings( "unchecked" )
-		UnaryOutputOperation< T, T >[] res = new UnaryOutputOperation[ operations.length + ops.length ];
+	public void append(UnaryOutputOperation<T, T>[] ops) {
+		@SuppressWarnings("unchecked")
+		UnaryOutputOperation<T, T>[] res = new UnaryOutputOperation[operations.length
+				+ ops.length];
 
-		for ( int i = 0; i < operations.length; i++ )
-			res[ i ] = operations[ i ];
+		for (int i = 0; i < operations.length; i++)
+			res[i] = operations[i];
 
-		for ( int i = operations.length; i < ops.length; i++ )
-			res[ i ] = ops[ i ];
+		for (int i = operations.length; i < operations.length + ops.length; i++)
+			res[i] = ops[i-operations.length ];
 
 		operations = res;
 	}
 
-	public UnaryObjectFactory< T, T > bufferFactory()
-	{
+	public UnaryObjectFactory<T, T> bufferFactory() {
 		return factory;
 	}
 
-	public UnaryOutputOperation< T, T >[] ops()
-	{
+	public UnaryOutputOperation<T, T>[] ops() {
 		return operations;
 	}
 
-	public int numOps()
-	{
+	public int numOps() {
 		return operations.length;
 	}
 }

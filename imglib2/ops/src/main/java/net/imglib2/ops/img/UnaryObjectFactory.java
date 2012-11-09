@@ -1,4 +1,4 @@
-package net.imglib2.ops.buffer;
+package net.imglib2.ops.img;
 
 public interface UnaryObjectFactory< A, B >
 {

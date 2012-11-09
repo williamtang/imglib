@@ -36,7 +36,7 @@
 
 package net.imglib2.ops.operation;
 
-import net.imglib2.ops.buffer.UnaryObjectFactory;
+import net.imglib2.ops.img.UnaryObjectFactory;
 
 /**
  * tbd.

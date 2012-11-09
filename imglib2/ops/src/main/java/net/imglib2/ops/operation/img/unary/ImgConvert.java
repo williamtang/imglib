@@ -38,7 +38,7 @@ package net.imglib2.ops.operation.img.unary;
 
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
-import net.imglib2.ops.buffer.UnaryObjectFactory;
+import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.img.UnaryOperationAssignment;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.NormalizeIterableInterval;

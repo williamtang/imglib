@@ -62,6 +62,7 @@ import net.imglib2.algorithm.features.SharesObjects;
 import net.imglib2.img.Img;
 import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.ops.img.Operations;
 import net.imglib2.ops.operation.iterableinterval.unary.CalculateDiameter;
 import net.imglib2.ops.operation.randomaccessibleinterval.unary.ConvexHull2D;
 import net.imglib2.type.logic.BitType;
@@ -179,7 +180,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 				final Img<BitType> bitMask = m_ocac.binaryMask2D(interval);
 				m_outline = m_outlineOp.compute(bitMask, bitMask.factory()
 						.create(bitMask, new BitType()));
-				m_perimeter = m_calculatePerimeter.compute(m_outline).get();
+				m_perimeter = Operations.compute(m_calculatePerimeter,
+						m_outline).get();
 
 				if (m_enabled.get(1 + m_defaultAxis.length)
 						|| m_enabled.get(3 + m_defaultAxis.length)) {

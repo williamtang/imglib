@@ -41,7 +41,7 @@ import java.util.Comparator;
 
 import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
-import net.imglib2.ops.buffer.UnaryObjectFactory;
+import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 
 /**

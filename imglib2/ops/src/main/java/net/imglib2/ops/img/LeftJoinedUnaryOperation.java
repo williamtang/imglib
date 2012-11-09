@@ -1,54 +1,52 @@
 package net.imglib2.ops.img;
 
-import net.imglib2.ops.buffer.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 
-public class LeftJoinedUnaryOperation< A, B > implements UnaryOutputOperation< A, B >
-{
-	private UnaryOutputOperation< B, B > follower;
+public class LeftJoinedUnaryOperation<A, B> implements
+		UnaryOutputOperation<A, B> {
+	private UnaryOutputOperation<B, B> follower;
 
-	private UnaryOutputOperation< A, B > first;
+	private UnaryOutputOperation<A, B> first;
 
-	protected LeftJoinedUnaryOperation( UnaryOutputOperation< A, B > first, UnaryOutputOperation< B, B > follower )
-	{
+	@SuppressWarnings("unchecked")
+	protected LeftJoinedUnaryOperation(UnaryOutputOperation<A, B> first,
+			UnaryOutputOperation<B, B> follower) {
+		this(first, new PipedUnaryOperation<B>(follower));
+	}
+
+	protected LeftJoinedUnaryOperation(UnaryOutputOperation<A, B> first,
+			PipedUnaryOperation<B> follower) {
 		this.first = first;
 		this.follower = follower;
 	}
 
-	protected LeftJoinedUnaryOperation( UnaryOutputOperation< A, B > first, PipedUnaryOperation< B > follower )
-	{
-		// TODO handle pipes
-		this.first = first;
-		this.follower = follower;
+	@SuppressWarnings("unchecked")
+	@Override
+	public B compute(A input, B output) {
+		if (follower instanceof PipedUnaryOperation) {
+			return Operations.compute(input, output, first,
+					((PipedUnaryOperation<B>) follower).ops());
+		} else {
+			return Operations.compute(input, output, first, follower);
+		}
+
 	}
 
 	@Override
-	public B compute( A input, B output )
-	{
-		// TODO Auto-generated method stub
-		return null;
+	public UnaryObjectFactory<A, B> bufferFactory() {
+		return first.bufferFactory();
 	}
 
 	@Override
-	public UnaryObjectFactory< A, B > bufferFactory()
-	{
-		// TODO Auto-generated method stub
-		return null;
+	public UnaryOutputOperation<A, B> copy() {
+		return new LeftJoinedUnaryOperation<A, B>(first, follower);
 	}
 
-	@Override
-	public UnaryOutputOperation< A, B > copy()
-	{
-		return null;
-	}
-
-	public UnaryOutputOperation< A, B > first()
-	{
+	public UnaryOutputOperation<A, B> first() {
 		return first;
 	}
 
-	public UnaryOutputOperation< B, B > follower()
-	{
+	public UnaryOutputOperation<B, B> follower() {
 		return follower;
 	}
 }

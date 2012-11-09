@@ -38,7 +38,7 @@ package net.imglib2.ops.operation.iterableinterval.unary;
 
 import java.util.Iterator;
 
-import net.imglib2.ops.buffer.UnaryObjectFactory;
+import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.type.numeric.RealType;
 
