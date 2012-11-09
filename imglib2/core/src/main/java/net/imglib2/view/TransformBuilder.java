@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
@@ -44,6 +44,7 @@ import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.ImgPlus;
 import net.imglib2.transform.Transform;
 import net.imglib2.transform.integer.BoundingBox;
 import net.imglib2.transform.integer.BoundingBoxTransform;
@@ -51,7 +52,7 @@ import net.imglib2.transform.integer.Mixed;
 import net.imglib2.transform.integer.MixedTransform;
 import net.imglib2.transform.integer.SlicingTransform;
 import net.imglib2.transform.integer.TranslationTransform;
-import net.imglib2.util.Util;
+import net.imglib2.util.Intervals;
 
 /**
  * The "brain" of the Views framework. Simplifies View cascades to provide the
@@ -168,6 +169,10 @@ public class TransformBuilder< T >
 		{
 			visit( ( ( IntervalView< T > ) randomAccessible ).getSource() );
 		}
+		else if ( ImgPlus.class.isInstance( randomAccessible ) )
+		{
+			visit( ( ( ImgPlus< T > ) randomAccessible ).getImg() );
+		}
 		else
 		{
 			source = randomAccessible;
@@ -199,7 +204,7 @@ public class TransformBuilder< T >
 	protected void visitExtended( final ExtendedRandomAccessibleInterval< T, ? > randomAccessible )
 	{
 		final RandomAccessibleInterval< T > sourceInterval = randomAccessible.getSource();
-		if ( ( boundingBox != null ) && Util.contains( sourceInterval, boundingBox.getInterval() ) )
+		if ( ( boundingBox != null ) && Intervals.contains( sourceInterval, boundingBox.getInterval() ) )
 			visit( sourceInterval );
 		else
 			source = randomAccessible;

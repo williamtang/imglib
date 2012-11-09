@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,91 +27,73 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
+ * 
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
  * #L%
  */
 
-package net.imglib2.ops.img;
+package net.imglib2.ops.pointset;
 
-import net.imglib2.ops.buffer.BufferFactory;
-import net.imglib2.ops.operation.UnaryOperation;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 
 /**
- * @author Christian Dietz (University of Konstanz)
+ * @author Barry DeZonia
  */
-public class ConcatenatedUnaryOperation< T > implements UnaryOperation< T, T >, BufferedOperation< T >
-{
+public class PointSetIntersectionIteratorTest {
 
-	private UnaryOperation< T, T >[] operations;
+	@Test
+	public void test() {
+		PointSet ps1 = new HyperVolumePointSet(new long[] { 0 }, new long[] { 10 });
+		PointSet ps2 = new HyperVolumePointSet(new long[] { 7 }, new long[] { 15 });
+		PointSet ps = new PointSetIntersection(ps1, ps2);
+		PointSetIterator iter = ps.iterator();
 
-	private BufferFactory< T > fac;
+		// regular sequence
+		assertTrue(iter.hasNext());
+		assertArrayEquals(new long[] { 7 }, iter.next());
+		assertTrue(iter.hasNext());
+		assertArrayEquals(new long[] { 8 }, iter.next());
+		assertTrue(iter.hasNext());
+		assertArrayEquals(new long[] { 9 }, iter.next());
+		assertTrue(iter.hasNext());
+		assertArrayEquals(new long[] { 10 }, iter.next());
+		assertFalse(iter.hasNext());
 
-	public ConcatenatedUnaryOperation( final BufferFactory< T > buff, UnaryOperation< T, T >... operations )
-	{
-		this.fac = buff;
-		this.operations = operations;
+		// another regular sequence
+		iter.reset();
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertArrayEquals(new long[] { 7 }, iter.get());
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertArrayEquals(new long[] { 8 }, iter.get());
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertArrayEquals(new long[] { 9 }, iter.get());
+		assertTrue(iter.hasNext());
+		iter.fwd();
+		assertArrayEquals(new long[] { 10 }, iter.get());
+		assertFalse(iter.hasNext());
+
+		// irregular sequences
+		iter.reset();
+		iter.next();
+		assertArrayEquals(new long[] { 7 }, iter.get());
+		iter.fwd();
+		assertArrayEquals(new long[] { 8 }, iter.get());
+		iter.next();
+		assertArrayEquals(new long[] { 9 }, iter.get());
+		iter.fwd();
+		assertArrayEquals(new long[] { 10 }, iter.get());
+		assertFalse(iter.hasNext());
+		assertArrayEquals(new long[] { 10 }, iter.get());
 	}
 
-	@Override
-	public T compute( T input, T output )
-	{
-
-		if ( operations.length == 1 )
-			return operations[ 0 ].compute( input, output );
-
-		T buffer = fac.instantiate();
-
-		T tmpOutput = output;
-		T tmpInput = buffer;
-		T tmp;
-
-		// Check needs to be done as the number of operations may be uneven and
-		// the result may not be written to output
-		if ( operations.length % 2 == 0 )
-		{
-			tmpOutput = buffer;
-			tmpInput = output;
-		}
-
-		operations[ 0 ].compute( input, tmpOutput );
-
-		for ( int i = 1; i < operations.length; i++ )
-		{
-			tmp = tmpInput;
-			tmpInput = tmpOutput;
-			tmpOutput = tmp;
-			operations[ i ].compute( tmpInput, tmpOutput );
-		}
-
-		return output;
-	}
-
-	@Override
-	public UnaryOperation< T, T > copy()
-	{
-		@SuppressWarnings( "unchecked" )
-		UnaryOperation< T, T >[] operationCopy = new UnaryOperation[ operations.length ];
-
-		for ( int i = 0; i < operationCopy.length; i++ )
-		{
-			operationCopy[ i ] = operations[ i ].copy();
-		}
-
-		return new ConcatenatedUnaryOperation< T >( fac, operations );
-	}
-
-	@Override
-	public void setBufferFactory( BufferFactory< T > fac )
-	{
-		this.fac = fac;
-	}
-
-	@Override
-	public BufferFactory< T > bufferFactory()
-	{
-		return fac;
-	}
 }
