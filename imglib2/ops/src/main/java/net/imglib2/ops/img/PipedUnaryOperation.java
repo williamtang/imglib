@@ -68,7 +68,7 @@ public class PipedUnaryOperation< T > implements UnaryOutputOperation< T, T >
 	@SuppressWarnings( "unchecked" )
 	private UnaryOutputOperation< T, T >[] unpack( UnaryOutputOperation< T, T >[] ops )
 	{
-		List< UnaryOutputOperation< T, T >> all = new ArrayList<>();
+		List< UnaryOutputOperation< T, T >> all = new ArrayList< UnaryOutputOperation< T, T >>();
 
 		for ( int k = 0; k < ops.length; k++ )
 		{

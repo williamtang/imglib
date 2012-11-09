@@ -1,5 +1,6 @@
 package net.imglib2.ops.img;
 
+import net.imglib2.ops.buffer.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 
@@ -95,5 +96,13 @@ public class Operations
 	public static < A, B > B compute( UnaryOutputOperation< A, B > op, A in )
 	{
 		return op.compute( in, op.bufferFactory().instantiate( in ) );
+	}
+
+	/*
+	 * Helper to create output operation
+	 */
+	public static < A, B > UnaryOutputOperation< A, B > compute( final UnaryOperation< A, B > op, final UnaryObjectFactory< A, B > fac )
+	{
+		return new UnaryOperationWrapper< A, B >( op, fac );
 	}
 }
