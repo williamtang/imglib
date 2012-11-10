@@ -146,7 +146,7 @@ public final class SubsetOperations {
 		return (I) subsetview;
 	}
 
-	private static <T extends Type<T>> RandomAccessibleInterval<T> subsetview(
+	public static <T extends Type<T>> RandomAccessibleInterval<T> subsetview(
 			RandomAccessibleInterval<T> in, Interval i) {
 
 		boolean oneSizedDims = false;

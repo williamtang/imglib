@@ -10,6 +10,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.subset.views.ImgView;
 import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.NativeType;
@@ -84,7 +85,7 @@ public class KernelTools
 	public static < K extends RealType< K > & NativeType< K >> Img< K >[] decomposeKernel( Img< K > kernel )
 	{
 
-		SingularValueDecomposition svd = isDecomposable( SubsetViews.subsetView( kernel, kernel ) );
+		SingularValueDecomposition svd = isDecomposable( SubsetOperations.subsetview( kernel, kernel ) );
 
 		if ( svd != null )
 		{
