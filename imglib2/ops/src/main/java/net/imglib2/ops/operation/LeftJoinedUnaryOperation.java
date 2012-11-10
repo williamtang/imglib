@@ -4,15 +4,9 @@ import net.imglib2.ops.img.UnaryObjectFactory;
 
 public class LeftJoinedUnaryOperation<A, B> implements
 		UnaryOutputOperation<A, B> {
-	private UnaryOutputOperation<B, B> follower;
+	private PipedUnaryOperation<B> follower;
 
 	private UnaryOutputOperation<A, B> first;
-
-	@SuppressWarnings("unchecked")
-	protected LeftJoinedUnaryOperation(UnaryOutputOperation<A, B> first,
-			UnaryOutputOperation<B, B> follower) {
-		this(first, new PipedUnaryOperation<B>(follower));
-	}
 
 	protected LeftJoinedUnaryOperation(UnaryOutputOperation<A, B> first,
 			PipedUnaryOperation<B> follower) {
@@ -23,9 +17,9 @@ public class LeftJoinedUnaryOperation<A, B> implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public B compute(A input, B output) {
-		if (follower instanceof PipedUnaryOperation) {
-			return Operations.compute(input, output, first,
-					((PipedUnaryOperation<B>) follower).ops());
+		if (first instanceof PipedUnaryOperation) {
+			return Operations.compute((B) input, output,
+					(PipedUnaryOperation<B>) first, follower);
 		} else {
 			return Operations.compute(input, output, first, follower);
 		}

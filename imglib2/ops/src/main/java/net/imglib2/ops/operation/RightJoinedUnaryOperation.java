@@ -4,15 +4,9 @@ import net.imglib2.ops.img.UnaryObjectFactory;
 
 public class RightJoinedUnaryOperation<A, B> implements
 		UnaryOutputOperation<A, B> {
-	private UnaryOutputOperation<A, A> first;
+	private PipedUnaryOperation<A> first;
 
 	private UnaryOutputOperation<A, B> follower;
-
-	protected RightJoinedUnaryOperation(UnaryOutputOperation<A, A> first,
-			UnaryOutputOperation<A, B> follower) {
-		this.first = first;
-		this.follower = follower;
-	}
 
 	protected RightJoinedUnaryOperation(PipedUnaryOperation<A> first,
 			UnaryOutputOperation<A, B> follower) {
@@ -25,7 +19,7 @@ public class RightJoinedUnaryOperation<A, B> implements
 	public B compute(A input, B output) {
 
 		if (first.bufferFactory().equals(follower.bufferFactory())) {
-			return Operations.concat((UnaryOutputOperation<B, B>) first,
+			return Operations.concat((PipedUnaryOperation<B>) first,
 					(UnaryOutputOperation<B, B>) follower).compute((B) input,
 					output);
 		} else {
