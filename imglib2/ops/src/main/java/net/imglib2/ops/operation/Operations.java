@@ -1,9 +1,10 @@
-package net.imglib2.ops.img;
+package net.imglib2.ops.operation;
 
 import net.imglib2.IterableInterval;
-import net.imglib2.ops.operation.BinaryOutputOperation;
-import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.ops.operation.UnaryOutputOperation;
+import net.imglib2.ops.img.UnaryObjectFactory;
+import net.imglib2.ops.img.UnaryOperationAssignment;
+import net.imglib2.ops.img.UnaryOperationBridge;
+import net.imglib2.ops.img.UnaryOperationWrapper;
 
 public class Operations {
 

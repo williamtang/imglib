@@ -38,8 +38,8 @@ package net.imglib2.ops.operation.iterableinterval.unary.multilevelthresholder;
 
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.ops.img.Operations;
 import net.imglib2.ops.img.UnaryObjectFactory;
+import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
 import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;

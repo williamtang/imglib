@@ -62,7 +62,7 @@ import net.imglib2.algorithm.features.SharesObjects;
 import net.imglib2.img.Img;
 import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
-import net.imglib2.ops.img.Operations;
+import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.iterableinterval.unary.CalculateDiameter;
 import net.imglib2.ops.operation.randomaccessibleinterval.unary.ConvexHull2D;
 import net.imglib2.type.logic.BitType;

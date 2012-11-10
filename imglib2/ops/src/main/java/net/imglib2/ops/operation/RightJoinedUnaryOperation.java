@@ -1,6 +1,6 @@
-package net.imglib2.ops.img;
+package net.imglib2.ops.operation;
 
-import net.imglib2.ops.operation.UnaryOutputOperation;
+import net.imglib2.ops.img.UnaryObjectFactory;
 
 public class RightJoinedUnaryOperation<A, B> implements
 		UnaryOutputOperation<A, B> {

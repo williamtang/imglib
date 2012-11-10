@@ -38,23 +38,9 @@ package net.imglib2.ops.operation.interval.binary;
 
 import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
-import net.imglib2.ops.operation.randomaccessibleinterval.unary.IterateUnaryOperation;
 
-/**
- * Merges an interval array
- * 
- * {@link IntervalwiseUnaryManipulation}, {@link IterateUnaryOperation},
- * {@link IterateUnaryOperation} or {@link IterativeBinaryImgTransformation}.
- * 
- * @author Christian Dietz (University of Konstanz)
- */
 public class IntervalsFromDimSelection {
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @return
-	 */
 	public static Interval[] compute(int[] selectedDims,
 			Interval incomingInterval) {
 

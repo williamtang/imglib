@@ -1,4 +1,4 @@
-package net.imglib2.ops.img;
+package net.imglib2.ops.operation;
 
 public interface BinaryObjectFactory< A, B, C >
 {

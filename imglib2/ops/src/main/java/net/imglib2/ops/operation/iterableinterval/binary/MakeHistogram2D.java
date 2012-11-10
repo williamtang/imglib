@@ -39,7 +39,7 @@ package net.imglib2.ops.operation.iterableinterval.binary;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.ops.data.Histogram2D;
-import net.imglib2.ops.img.BinaryObjectFactory;
+import net.imglib2.ops.operation.BinaryObjectFactory;
 import net.imglib2.ops.operation.BinaryOutputOperation;
 import net.imglib2.type.numeric.RealType;
 

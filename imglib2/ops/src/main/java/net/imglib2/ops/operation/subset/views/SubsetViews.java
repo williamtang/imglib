@@ -39,16 +39,13 @@ package net.imglib2.ops.operation.subset.views;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
-import net.imglib2.type.Type;
 import net.imglib2.util.Intervals;
-import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
 /**

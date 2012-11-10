@@ -1,9 +1,9 @@
 package net.imglib2.ops.operations;
 
 import static org.junit.Assert.assertTrue;
-import net.imglib2.ops.img.Operations;
-import net.imglib2.ops.img.PipedUnaryOperation;
 import net.imglib2.ops.img.UnaryObjectFactory;
+import net.imglib2.ops.operation.Operations;
+import net.imglib2.ops.operation.PipedUnaryOperation;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.ops.operation.real.unary.RealAddConstant;
 import net.imglib2.ops.operation.real.unary.RealMultiplyConstant;

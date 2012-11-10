@@ -34,12 +34,12 @@
  * #L%
  */
 
-package net.imglib2.ops.img;
+package net.imglib2.ops.operation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.imglib2.ops.operation.UnaryOutputOperation;
+import net.imglib2.ops.img.UnaryObjectFactory;
 
 /**
  * @author Christian Dietz (University of Konstanz)

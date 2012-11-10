@@ -36,7 +36,6 @@
 
 package net.imglib2.ops.operation;
 
-import net.imglib2.ops.img.BinaryObjectFactory;
 
 /**
  * @author Christian Dietz
