@@ -42,7 +42,8 @@ public class OperationTests {
 				.wrap(new RealMultiplyConstant<DoubleType, DoubleType>(3),
 						createBuf);
 
-		assertTrue(Operations.pipe(multiply, Operations.pipe(add, substract))
+		assertTrue(Operations
+				.concat(multiply, Operations.concat(add, substract))
 				.compute(in, new DoubleType()).get() == ((in.get() * 3) + 10 - 8));
 
 		assertTrue(createBuf.numBufs == 1);
@@ -64,8 +65,8 @@ public class OperationTests {
 	public void testConcatIteration() {
 		CountingBuf createBuf = createBuf();
 
-		PipedUnaryOperation<DoubleType> combined = Operations
-				.pipe(Operations.wrap(
+		PipedUnaryOperation<DoubleType> combined = Operations.concatSameType(
+				Operations.wrap(
 						new RealSubtractConstant<DoubleType, DoubleType>(5),
 						createBuf), Operations.iterate(Operations.wrap(
 						new RealAddConstant<DoubleType, DoubleType>(5),
@@ -80,8 +81,8 @@ public class OperationTests {
 	public void testConcatIterationLeftJoin() {
 		CountingBuf createBuf = createBuf();
 
-		PipedUnaryOperation<DoubleType> combined = Operations
-				.pipe(Operations.wrap(
+		PipedUnaryOperation<DoubleType> combined = Operations.concatSameType(
+				Operations.wrap(
 						new RealSubtractConstant<DoubleType, DoubleType>(5),
 						createBuf), Operations.iterate(Operations.wrap(
 						new RealAddConstant<DoubleType, DoubleType>(5),
@@ -92,7 +93,7 @@ public class OperationTests {
 
 		// No buffer needs to be set
 		LeftJoinedUnaryOperation<FloatType, DoubleType> leftJoin = Operations
-				.leftJoin(Operations.wrap(adder,
+				.concat(Operations.wrap(adder,
 						new UnaryObjectFactory<FloatType, DoubleType>() {
 
 							@Override
@@ -111,8 +112,8 @@ public class OperationTests {
 	public void testConcatRightJoin() {
 		CountingBuf createBuf = createBuf();
 
-		PipedUnaryOperation<DoubleType> combined = Operations
-				.pipe(Operations.wrap(
+		PipedUnaryOperation<DoubleType> combined = Operations.concatSameType(
+				Operations.wrap(
 						new RealSubtractConstant<DoubleType, DoubleType>(5),
 						createBuf), Operations.iterate(Operations.wrap(
 						new RealAddConstant<DoubleType, DoubleType>(5),
@@ -123,10 +124,10 @@ public class OperationTests {
 
 		// No buffer needs to be set
 		RightJoinedUnaryOperation<DoubleType, FloatType> leftJoin = Operations
-				.rightJoin(combined, Operations.wrap(adder, null));
+				.concat(combined, Operations.wrap(adder, null));
 
 		assertTrue(leftJoin.compute(in, new FloatType(0)).get() == 55);
-		
+
 		// Here we actually really need two buffers...
 		assertTrue(createBuf.numBufs == 2);
 	}

@@ -36,13 +36,16 @@
 
 package net.imglib2.ops.operation;
 
+import net.imglib2.ops.img.BinaryObjectFactory;
+
 /**
- * 
  * @author Christian Dietz
  */
-public interface BinaryOutputOperation< A, B, C > extends BinaryOperation< A, B, C >
-{
-	C createEmptyOutput( A inputA, B inputB );
+public interface BinaryOutputOperation<A, B, C> extends
+		BinaryOperation<A, B, C> {
 
-	C compute( A inputA, B inputB );
+	BinaryObjectFactory<A, B, C> bufferFactory();
+
+	BinaryOutputOperation<A, B, C> copy();
+
 }

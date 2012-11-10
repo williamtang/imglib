@@ -1,12 +1,27 @@
 package net.imglib2.ops.img;
 
 import net.imglib2.IterableInterval;
+import net.imglib2.ops.operation.BinaryOutputOperation;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 
 public class Operations {
+
 	/*
-	 * Operation Links
+	 * Joiner
+	 */
+	public static <A, B> UnaryOutputOperation<A, B> joinLeft(
+			UnaryOutputOperation<A, B> op1, UnaryOutputOperation<B, B> op2) {
+		return new LeftJoinedUnaryOperation<A, B>(op1, op2);
+	}
+
+	public static <A, B> UnaryOutputOperation<A, B> joinRight(
+			UnaryOutputOperation<A, A> op1, UnaryOutputOperation<A, B> op2) {
+		return new RightJoinedUnaryOperation<A, B>(op1, op2);
+	}
+
+	/*
+	 * Concats
 	 */
 	public static <A, B> UnaryOutputOperation<A, B> concat(
 			final LeftJoinedUnaryOperation<A, B> leftLinked,
@@ -24,7 +39,7 @@ public class Operations {
 	public static <A, B> UnaryOutputOperation<A, B> concat(
 			final PipedUnaryOperation<A> pipe,
 			final RightJoinedUnaryOperation<A, B> rightJoin) {
-		return joinRight(rightJoin(pipe.ops(), rightJoin.first()),
+		return joinRight(concat(pipe.ops(), rightJoin.first()),
 				rightJoin.follower());
 	}
 
@@ -32,112 +47,88 @@ public class Operations {
 			final LeftJoinedUnaryOperation<A, B> leftLink,
 			final PipedUnaryOperation<B> pipe) {
 		return joinLeft(leftLink.first(),
-				leftJoin(leftLink.follower(), pipe.ops()));
+				concat(leftLink.follower(), pipe.ops()));
 	}
 
-	public static <A, B> LeftJoinedUnaryOperation<A, B> joinLeft(
+	public static <A, B> LeftJoinedUnaryOperation<A, B> concat(
 			UnaryOutputOperation<A, B> op, PipedUnaryOperation<B> piped) {
 		return new LeftJoinedUnaryOperation<A, B>(op, piped);
 	}
 
-	public static <A, B> RightJoinedUnaryOperation<A, B> joinLeft(
+	public static <A, B> RightJoinedUnaryOperation<A, B> concat(
 			PipedUnaryOperation<A> piped, UnaryOutputOperation<A, B> op) {
 		return new RightJoinedUnaryOperation<A, B>(piped, op);
 	}
 
+	public static <A, B> LeftJoinedUnaryOperation<A, B> concat(
+			UnaryOutputOperation<A, B> op1, UnaryOutputOperation<B, B>[] op2) {
+		return new LeftJoinedUnaryOperation<A, B>(op1, concat(op2));
+	}
+
+	public static <A, B> RightJoinedUnaryOperation<A, B> concat(
+			UnaryOutputOperation<A, A>[] op1, UnaryOutputOperation<A, B> op2) {
+		return new RightJoinedUnaryOperation<A, B>(concat(op1), op2);
+	}
+
+	public static <A> UnaryOutputOperation<A, A> concat(
+			UnaryOutputOperation<A, A>[] ops, PipedUnaryOperation<A> pipe) {
+		return concat(ops, pipe.ops());
+	}
+
+	public static <A> PipedUnaryOperation<A> concat(
+			PipedUnaryOperation<A> pipe1, PipedUnaryOperation<A> pipe2) {
+		return concat(pipe1.ops(), pipe2.ops());
+	}
+
+	public static <A> UnaryOutputOperation<A, A> concat(
+			PipedUnaryOperation<A> pipe, UnaryOutputOperation<A, A>[] ops) {
+		return concat(pipe.ops(), ops);
+	}
+
+	public static <A> PipedUnaryOperation<A> concat(
+			UnaryOutputOperation<A, A>[] ops1, UnaryOutputOperation<A, A>[] ops2) {
+		PipedUnaryOperation<A> piped = concat(ops1);
+		piped.append(ops2);
+		return piped;
+	}
+
+	public static <A> PipedUnaryOperation<A> concat(
+			UnaryOutputOperation<A, A>[] ops) {
+		return new PipedUnaryOperation<A>(ops);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <A> PipedUnaryOperation<A> concat(
+			UnaryOutputOperation<A, A> op1, UnaryOutputOperation<A, A> op2) {
+		return concat(new UnaryOutputOperation[] { op1, op2 });
+	}
+
+	/*
+	 * Bridges
+	 */
 	public static <A, B, C> UnaryOperationBridge<A, B, C> bridge(
 			UnaryOutputOperation<A, B> op1, UnaryOutputOperation<B, C> op2) {
 		return new UnaryOperationBridge<A, B, C>(op1, op2);
 	}
 
-	public static <A, B> UnaryOutputOperation<A, B> joinLeft(
-			UnaryOutputOperation<A, B> op1, UnaryOutputOperation<B, B> op2) {
-		return new LeftJoinedUnaryOperation<A, B>(op1, op2);
-	}
-
-	public static <A, B> UnaryOutputOperation<A, B> joinRight(
-			UnaryOutputOperation<A, A> op1, UnaryOutputOperation<A, B> op2) {
-		return new RightJoinedUnaryOperation<A, B>(op1, op2);
-	}
-
-	public static <A, B> LeftJoinedUnaryOperation<A, B> leftJoin(
-			UnaryOutputOperation<A, B> op1, UnaryOutputOperation<B, B>[] op2) {
-		return new LeftJoinedUnaryOperation<A, B>(op1, pipe(op2));
-	}
-
-	public static <A, B> LeftJoinedUnaryOperation<A, B> leftJoin(
-			UnaryOutputOperation<A, B> op1, PipedUnaryOperation<B> op2) {
-		return new LeftJoinedUnaryOperation<A, B>(op1, op2);
-	}
-
-	public static <A, B> RightJoinedUnaryOperation<A, B> rightJoin(
-			UnaryOutputOperation<A, A>[] op1, UnaryOutputOperation<A, B> op2) {
-		return new RightJoinedUnaryOperation<A, B>(pipe(op1), op2);
-	}
-
-	public static <A, B> RightJoinedUnaryOperation<A, B> rightJoin(
-			PipedUnaryOperation<A> op1, UnaryOutputOperation<A, B> op2) {
-		return new RightJoinedUnaryOperation<A, B>(op1, op2);
-	}
-
 	/*
 	 * Pipes
 	 */
-	public static <A> PipedUnaryOperation<A> pipe(
+	public static <A> PipedUnaryOperation<A> concatSameType(
 			final PipedUnaryOperation<A> pipe,
 			final UnaryOutputOperation<A, A> op) {
-		PipedUnaryOperation<A> res = pipe(pipe.ops());
+		PipedUnaryOperation<A> res = concat(pipe.ops());
 		res.append(op);
 		return res;
 	}
 
-	public static <A> PipedUnaryOperation<A> pipe(
+	public static <A> PipedUnaryOperation<A> concatSameType(
 			final UnaryOutputOperation<A, A> op,
 			final PipedUnaryOperation<A> pipe) {
 		@SuppressWarnings("unchecked")
 		PipedUnaryOperation<A> res = new PipedUnaryOperation<A>(op);
 		res.append(pipe.ops());
 		return res;
-	}
-
-	public static <A> UnaryOutputOperation<A, A> pipe(
-			UnaryOutputOperation<A, A>[] ops, PipedUnaryOperation<A> pipe) {
-		return pipe(ops, pipe.ops());
-	}
-
-	public static <A> PipedUnaryOperation<A> pipe(PipedUnaryOperation<A> pipe1,
-			PipedUnaryOperation<A> pipe2) {
-		return pipe(pipe1.ops(), pipe2.ops());
-	}
-
-	public static <A> UnaryOutputOperation<A, A> pipe(
-			PipedUnaryOperation<A> pipe, UnaryOutputOperation<A, A>[] ops) {
-		return pipe(pipe.ops(), ops);
-	}
-
-	public static <A> PipedUnaryOperation<A> pipe(
-			UnaryOutputOperation<A, A>[] ops1, UnaryOutputOperation<A, A>[] ops2) {
-		PipedUnaryOperation<A> piped = pipe(ops1);
-		piped.append(ops2);
-		return piped;
-	}
-
-	public static <A> PipedUnaryOperation<A> pipe(
-			UnaryOutputOperation<A, A>[] ops) {
-		return new PipedUnaryOperation<A>(ops);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <A> PipedUnaryOperation<A> pipe(
-			UnaryOutputOperation<A, A> op1, UnaryOutputOperation<A, A> op2) {
-		return pipe(new UnaryOutputOperation[] { op1, op2 });
-	}
-
-	/*
-	 * Makes things easier
-	 */
-	public static <A, B> B compute(UnaryOutputOperation<A, B> op, A in) {
-		return op.compute(in, op.bufferFactory().instantiate(in));
 	}
 
 	/*
@@ -152,7 +143,7 @@ public class Operations {
 		for (int i = 0; i < numIterations; i++)
 			ops[i] = op;
 
-		return pipe(ops);
+		return concat(ops);
 	}
 
 	/*
@@ -168,18 +159,33 @@ public class Operations {
 	 */
 	public static <A, B> UnaryOperation<IterableInterval<A>, IterableInterval<B>> map(
 			UnaryOperation<A, B> op) {
+
+		// TODO mapper can be optimized
+
 		return new UnaryOperationAssignment<A, B>(op);
 	}
 
-	@SuppressWarnings("unchecked")
+	/*
+	 * Compute
+	 */
+
+	/**
+	 * Compute several ops of the same type at once (using only one buffer)
+	 */
 	public static <A, B> B compute(B input, B output,
 			UnaryOutputOperation<B, B>[] ops) {
+		@SuppressWarnings("unchecked")
 		UnaryOutputOperation<B, B>[] follower = new UnaryOutputOperation[ops.length - 1];
 		System.arraycopy(ops, 1, follower, 0, follower.length);
 
 		return compute(input, output, ops[0], follower);
 	}
 
+	/**
+	 * First computes op1 and then all following. only one buffer is used
+	 * 
+	 * TODO: What happens if ops is a piped op? we need to unpack!
+	 */
 	public static <A, B> B compute(A input, B output,
 			UnaryOutputOperation<A, B> op1, UnaryOutputOperation<B, B>... ops) {
 
@@ -189,8 +195,6 @@ public class Operations {
 		B tmpInput = buffer;
 		B tmp;
 
-		// Check needs to be done as the number of operations may be uneven and
-		// the result may not be written to output
 		if (ops.length % 2 == 1) {
 			tmpOutput = buffer;
 			tmpInput = output;
@@ -206,6 +210,18 @@ public class Operations {
 		}
 
 		return output;
+	}
+
+	/**
+	 * Use op with in as input. output will be generated.
+	 */
+	public static <A, B> B compute(UnaryOutputOperation<A, B> op, A in) {
+		return op.compute(in, op.bufferFactory().instantiate(in));
+	}
+
+	public static <A, B, C> C compute(BinaryOutputOperation<A, B, C> op, A in1,
+			B in2) {
+		return op.compute(in1, in2, op.bufferFactory().instantiate(in1, in2));
 	}
 
 }
