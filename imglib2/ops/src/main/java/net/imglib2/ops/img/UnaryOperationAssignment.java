@@ -44,36 +44,39 @@ import net.imglib2.util.Util;
 /**
  * @author Christian Dietz (University of Konstanz)
  */
-public class UnaryOperationAssignment< T, V > implements UnaryOperation< IterableInterval< T >, IterableInterval< V >>
-{
+public class UnaryOperationAssignment<T, V> implements
+		UnaryOperation<IterableInterval<T>, IterableInterval<V>> {
 
-	private final UnaryOperation< T, V > op;
+	private final UnaryOperation<T, V> op;
 
-	public UnaryOperationAssignment( final UnaryOperation< T, V > op )
-	{
+	public UnaryOperationAssignment(final UnaryOperation<T, V> op) {
 		this.op = op;
 	}
 
-	@Override
-	public IterableInterval< V > compute( IterableInterval< T > input, IterableInterval< V > output )
-	{
-		if ( !Util.sameIterationOrder( input, output ) ) { throw new IllegalArgumentException( "Incompatible IterationOrders" ); }
+	public UnaryOperation<T, V> op() {
+		return op;
+	}
 
-		final Cursor< T > inCursor = input.cursor();
-		final Cursor< V > outCursor = output.cursor();
-		while ( inCursor.hasNext() )
-		{
+	@Override
+	public IterableInterval<V> compute(IterableInterval<T> input,
+			IterableInterval<V> output) {
+		if (!Util.sameIterationOrder(input, output)) {
+			throw new IllegalArgumentException("Incompatible IterationOrders");
+		}
+
+		final Cursor<T> inCursor = input.cursor();
+		final Cursor<V> outCursor = output.cursor();
+		while (inCursor.hasNext()) {
 			inCursor.fwd();
 			outCursor.fwd();
-			op.compute( inCursor.get(), outCursor.get() );
+			op.compute(inCursor.get(), outCursor.get());
 		}
 
 		return output;
 	}
 
 	@Override
-	public UnaryOperation< IterableInterval< T >, IterableInterval< V >> copy()
-	{
-		return new UnaryOperationAssignment< T, V >( op.copy() );
+	public UnaryOperation<IterableInterval<T>, IterableInterval<V>> copy() {
+		return new UnaryOperationAssignment<T, V>(op.copy());
 	}
 }

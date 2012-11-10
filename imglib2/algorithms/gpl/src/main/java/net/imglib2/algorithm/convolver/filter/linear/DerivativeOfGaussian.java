@@ -36,6 +36,7 @@ import net.imglib2.img.basictypeaccess.DoubleAccess;
 import net.imglib2.img.basictypeaccess.array.DoubleArray;
 import net.imglib2.img.list.ListImg;
 import net.imglib2.ops.img.BinaryOperationAssignment;
+import net.imglib2.ops.img.Operations;
 import net.imglib2.ops.img.UnaryConstantRightAssignment;
 import net.imglib2.ops.img.UnaryOperationAssignment;
 import net.imglib2.ops.operation.iterable.unary.Mean;
@@ -66,7 +67,8 @@ public class DerivativeOfGaussian extends ArrayImg<DoubleType, DoubleAccess> {
 		double sigma = (scale * supportRadius) / 3.0d;
 
 		// create rotated point matrices
-		Img<DoubleType> ptsMatrix = new MatMul<DoubleType>().compute(
+		Img<DoubleType> ptsMatrix = Operations.compute(
+				new MatMul<DoubleType>(),
 				FilterTools.createRotationMatrix(theta),
 				FilterTools.createPointSupport(supportRadius));
 

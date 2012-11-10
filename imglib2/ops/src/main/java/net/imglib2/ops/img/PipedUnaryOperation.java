@@ -61,7 +61,8 @@ public class PipedUnaryOperation<T> implements UnaryOutputOperation<T, T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private UnaryOutputOperation<T, T>[] unpack(UnaryOutputOperation<T, T>[] ops) {
+	public static <T> UnaryOutputOperation<T, T>[] unpack(
+			UnaryOutputOperation<T, T>[] ops) {
 		List<UnaryOutputOperation<T, T>> all = new ArrayList<UnaryOutputOperation<T, T>>();
 
 		for (int k = 0; k < ops.length; k++) {
@@ -116,7 +117,7 @@ public class PipedUnaryOperation<T> implements UnaryOutputOperation<T, T> {
 			res[i] = operations[i];
 
 		for (int i = operations.length; i < operations.length + ops.length; i++)
-			res[i] = ops[i-operations.length ];
+			res[i] = ops[i - operations.length];
 
 		operations = res;
 	}

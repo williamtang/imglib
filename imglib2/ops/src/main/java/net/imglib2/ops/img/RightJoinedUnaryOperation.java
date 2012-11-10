@@ -20,11 +20,20 @@ public class RightJoinedUnaryOperation<A, B> implements
 		this.follower = follower;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public B compute(A input, B output) {
-		return follower.compute(
-				first.compute(input, first.bufferFactory().instantiate(input)),
-				output);
+
+		if (first.bufferFactory().equals(follower.bufferFactory())) {
+			return Operations.concat((UnaryOutputOperation<B, B>) first,
+					(UnaryOutputOperation<B, B>) follower).compute((B) input,
+					output);
+		} else {
+			return follower.compute(
+					first.compute(input,
+							first.bufferFactory().instantiate(input)), output);
+		}
+
 	}
 
 	@Override

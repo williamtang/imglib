@@ -36,7 +36,6 @@
 
 package net.imglib2.ops.img;
 
-import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 
 /**
@@ -46,35 +45,53 @@ import net.imglib2.ops.operation.UnaryOutputOperation;
  * @param <B>
  * @param <C>
  */
-public class UnaryOperationBridge< A, B, C > implements UnaryOutputOperation< A, C >
-{
-	private final UnaryOutputOperation< A, B > first;
+public class UnaryOperationBridge<A, B, C> implements
+		UnaryOutputOperation<A, C> {
 
-	private final UnaryOperation< B, C > second;
+	private final UnaryOutputOperation<A, B> first;
 
-	public UnaryOperationBridge( UnaryOutputOperation< A, B > first, UnaryOperation< B, C > second )
-	{
+	private final UnaryOutputOperation<B, C> second;
+
+	// Some tmp variables
+	private B buf;
+
+	private A currentInput;
+
+	public UnaryOperationBridge(UnaryOutputOperation<A, B> first,
+			UnaryOutputOperation<B, C> second) {
 		this.first = first;
 		this.second = second;
+		this.buf = null;
+		this.currentInput = null;
 	}
 
 	@Override
-	public C compute( A input, C output )
-	{
-		return second.compute( first.compute( input, first.bufferFactory().instantiate( input ) ), output );
+	public C compute(A input, C output) {
+		return second.compute(first.compute(input, getBuf(input)), output);
+	}
+
+	private B getBuf(A input) {
+		if (buf == null && input != currentInput) {
+			currentInput = input;
+			buf = first.bufferFactory().instantiate(input);
+		}
+		return buf;
 	}
 
 	@Override
-	public UnaryOutputOperation< A, C > copy()
-	{
-		return new UnaryOperationBridge< A, B, C >( first.copy(), second.copy() );
+	public UnaryOutputOperation<A, C> copy() {
+		return new UnaryOperationBridge<A, B, C>(first.copy(), second.copy());
 	}
 
 	@Override
-	public UnaryObjectFactory< A, C > bufferFactory()
-	{
-		// TODO Auto-generated method stub
-		return null;
+	public UnaryObjectFactory<A, C> bufferFactory() {
+		return new UnaryObjectFactory<A, C>() {
+
+			@Override
+			public C instantiate(A a) {
+				return second.bufferFactory().instantiate(buf);
+			}
+		};
 	}
 
 };

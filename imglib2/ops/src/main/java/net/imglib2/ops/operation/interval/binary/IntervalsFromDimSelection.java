@@ -38,8 +38,6 @@ package net.imglib2.ops.operation.interval.binary;
 
 import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
-import net.imglib2.ops.img.BinaryObjectFactory;
-import net.imglib2.ops.operation.BinaryOutputOperation;
 import net.imglib2.ops.operation.randomaccessibleinterval.unary.IterateUnaryOperation;
 
 /**
@@ -50,70 +48,68 @@ import net.imglib2.ops.operation.randomaccessibleinterval.unary.IterateUnaryOper
  * 
  * @author Christian Dietz (University of Konstanz)
  */
-public class IntervalsFromDimSelection implements
-		BinaryOutputOperation<int[], Interval[], Interval[]> {
+public class IntervalsFromDimSelection {
 
 	/**
 	 * {@inheritDoc}
 	 * 
 	 * @return
 	 */
-	@Override
-	public Interval[] compute(int[] selectedDims, Interval[] incomingIntervals,
-			Interval[] resIntervals) {
+	public static Interval[] compute(int[] selectedDims,
+			Interval incomingInterval) {
+
+		int totalSteps = getNumIterationSteps(selectedDims, incomingInterval);
+		Interval[] res = new Interval[totalSteps];
 
 		int offset = 0;
-		for (int i = 0; i < incomingIntervals.length; i++) {
 
-			long[] min = new long[incomingIntervals[i].numDimensions()];
-			long[] pointCtr = new long[incomingIntervals[i].numDimensions()];
-			long[] srcDims = new long[incomingIntervals[i].numDimensions()];
+		long[] min = new long[incomingInterval.numDimensions()];
+		long[] pointCtr = new long[incomingInterval.numDimensions()];
+		long[] srcDims = new long[incomingInterval.numDimensions()];
 
-			incomingIntervals[i].min(min);
-			incomingIntervals[i].max(pointCtr);
-			incomingIntervals[i].dimensions(srcDims);
+		incomingInterval.min(min);
+		incomingInterval.max(pointCtr);
+		incomingInterval.dimensions(srcDims);
 
-			long[] max = pointCtr.clone();
+		long[] max = pointCtr.clone();
 
-			int[] unselectedDims = getUnselectedDimIndices(selectedDims,
-					srcDims.length);
+		int[] unselectedDims = getUnselectedDimIndices(selectedDims,
+				srcDims.length);
 
-			long[] indicators = new long[unselectedDims.length];
-			Interval interval = new FinalInterval(min, pointCtr);
+		long[] indicators = new long[unselectedDims.length];
+		Interval interval = new FinalInterval(min, pointCtr);
 
-			for (int j = indicators.length - 1; j > -1; j--) {
-				indicators[j] = 1;
-				if (j < indicators.length - 1)
-					indicators[j] = (srcDims[unselectedDims[j + 1]])
-							* indicators[j + 1];
+		for (int j = indicators.length - 1; j > -1; j--) {
+			indicators[j] = 1;
+			if (j < indicators.length - 1)
+				indicators[j] = (srcDims[unselectedDims[j + 1]])
+						* indicators[j + 1];
+		}
+
+		for (int u : unselectedDims) {
+			pointCtr[u] = -1;
+		}
+
+		for (int n = 0; n < getNumIterationSteps(selectedDims, incomingInterval); n++) {
+			max = pointCtr.clone();
+
+			for (int j = 0; j < indicators.length; j++) {
+				if (n % indicators[j] == 0)
+					pointCtr[unselectedDims[j]]++;
+
+				if (srcDims[unselectedDims[j]] == pointCtr[unselectedDims[j]])
+					pointCtr[unselectedDims[j]] = 0;
 			}
 
 			for (int u : unselectedDims) {
-				pointCtr[u] = -1;
+				max[u] = pointCtr[u] + min[u];
+				min[u] = max[u];
 			}
 
-			for (int n = 0; n < getNumIterationSteps(selectedDims,
-					incomingIntervals[i]); n++) {
-				max = pointCtr.clone();
-
-				for (int j = 0; j < indicators.length; j++) {
-					if (n % indicators[j] == 0)
-						pointCtr[unselectedDims[j]]++;
-
-					if (srcDims[unselectedDims[j]] == pointCtr[unselectedDims[j]])
-						pointCtr[unselectedDims[j]] = 0;
-				}
-
-				for (int u : unselectedDims) {
-					max[u] = pointCtr[u] + min[u];
-					min[u] = max[u];
-				}
-
-				resIntervals[offset + n] = new FinalInterval(min, max);
-				interval.min(min);
-			}
+			res[offset + n] = new FinalInterval(min, max);
+			interval.min(min);
 		}
-		return resIntervals;
+		return res;
 	}
 
 	/**
@@ -161,26 +157,4 @@ public class IntervalsFromDimSelection implements
 		return res;
 
 	}
-
-	@Override
-	public BinaryOutputOperation<int[], Interval[], Interval[]> copy() {
-		return new IntervalsFromDimSelection();
-	}
-
-	@Override
-	public BinaryObjectFactory<int[], Interval[], Interval[]> bufferFactory() {
-		return new BinaryObjectFactory<int[], Interval[], Interval[]>() {
-
-			@Override
-			public Interval[] instantiate(final int[] op0, final Interval[] op1) {
-
-				int totalSteps = 0;
-				for (int i = 0; i < op1.length; i++) {
-					totalSteps += getNumIterationSteps(op0, op1[i]);
-				}
-				return new Interval[totalSteps];
-			}
-		};
-	}
-
 }
