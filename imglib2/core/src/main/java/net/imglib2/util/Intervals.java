@@ -260,29 +260,8 @@ public class Intervals {
 	}
 
 	/**
-	 * Tests weather two intervals are equal in their dimensionality
-	 * 
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	public static boolean intervalEquals(Interval a, Interval b) {
-
-		if (a.numDimensions() != b.numDimensions()) {
-			return false;
-		}
-
-		for (int d = 0; d < a.numDimensions(); d++) {
-			if (a.min(d) != b.min(d) || a.max(d) != b.max(d))
-				return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Compute the number of elements contained in an (integer) {@link Interval}
-	 * .
+	 * * Compute the number of elements contained in an (integer)
+	 * {@link Interval} .
 	 * 
 	 * @return number of elements in {@code interval}.
 	 */
@@ -292,5 +271,24 @@ public class Intervals {
 		for (int d = 1; d < n; ++d)
 			numPixels *= interval.dimension(d);
 		return numPixels;
+	}
+
+	/**
+	 * Tests weather two intervals are equal in their min / max
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static boolean equals(Interval a, Interval b) {
+
+		if (a.numDimensions() != b.numDimensions())
+			return false;
+
+		for (int d = 0; d < a.numDimensions(); d++)
+			if (a.min(d) != b.min(d) || a.max(d) != b.max(d))
+				return false;
+
+		return true;
 	}
 }
