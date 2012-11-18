@@ -12,8 +12,9 @@ import net.imglib2.view.Views;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IterableSubIntervalCursorBenchmark {
-	ArrayImg<IntType, ?> intImg;
+public class IterableArrayImgSubIntervalCursorBenchmark
+{
+	ArrayImg< IntType, ? > intImg;
 
 	private final int numRuns = 100;
 

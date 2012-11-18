@@ -1,6 +1,5 @@
-package net.imglib2.img.array;
+package net.imglib2.img.planar;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -13,12 +12,11 @@ import net.imglib2.RandomAccess;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.IntervalIndexer;
 import net.imglib2.view.Views;
-import net.imglib2.view.iteration.SlicingCursor;
 
 import org.junit.Before;
 import org.junit.Test;
 
-public class ArrayImgIterableSubIntervalCursorTest
+public class PlanarImgIterableSubIntervalCursorTest
 {
 	long[] dimensions;
 
@@ -30,7 +28,7 @@ public class ArrayImgIterableSubIntervalCursorTest
 
 	long intDataSum;
 
-	ArrayImg< IntType, ? > intImg;
+	PlanarImg< IntType, ? > intImg;
 
 	@Before
 	public void createSourceData()
@@ -61,7 +59,7 @@ public class ArrayImgIterableSubIntervalCursorTest
 			intDataSum += intData[ i ];
 		}
 
-		intImg = ( ArrayImg< IntType, ? > ) new ArrayImgFactory< IntType >().create( dimensions, new IntType() );
+		intImg = ( PlanarImg< IntType, ? > ) new PlanarImgFactory< IntType >().create( dimensions, new IntType() );
 
 		long[] pos = new long[ dimensions.length ];
 		RandomAccess< IntType > a = intImg.randomAccess();
