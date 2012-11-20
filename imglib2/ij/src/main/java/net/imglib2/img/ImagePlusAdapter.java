@@ -70,6 +70,18 @@ public class ImagePlusAdapter
 		return ( ImagePlusImg< T, ? > ) wrapLocal( imp );
 	}
 
+	@SuppressWarnings( { "rawtypes" } )
+	public static ImagePlusImg wrapReal( final ImagePlus imp )
+	{
+		return wrapLocalReal( imp );
+	}
+
+	@SuppressWarnings( { "rawtypes" } )
+	public static ImagePlusImg wrapNumeric( final ImagePlus imp )
+	{
+		return wrapLocal( imp );
+	}
+
 	public static < T extends NumericType< T > & NativeType< T > > ImgPlus< T > wrapImgPlus( final ImagePlus imp )
 	{
 		Img< T > img = wrap( imp );
@@ -82,7 +94,6 @@ public class ImagePlusAdapter
 		image.setName( imp.getTitle() );
 
 		// set axes
-
 		setAxesFromImagePlus( image, imp );
 
 		return image;
@@ -111,6 +122,29 @@ public class ImagePlusAdapter
 		default :
 		{
 			throw new RuntimeException("Only 8, 16, 32-bit and RGB supported!");
+		}
+		}
+	}
+
+	protected static ImagePlusImg< ?, ? > wrapLocalReal( final ImagePlus imp )
+	{
+		switch( imp.getType() )
+		{		
+		case ImagePlus.GRAY8 : 
+		{
+			return wrapByte( imp );
+		}
+		case ImagePlus.GRAY16 : 
+		{
+			return wrapShort( imp );
+		}
+		case ImagePlus.GRAY32 : 
+		{
+			return wrapFloat( imp );
+		}
+		default :
+		{
+			throw new RuntimeException("Only 8, 16 and 32-bit supported!");
 		}
 		}
 	}
@@ -278,7 +312,7 @@ public class ImagePlusAdapter
 		@Override
 		public void convert(final ARGBType input, final FloatType output) {
 			final int v = input.get();
-			output.setReal((v >> 24) * (((v >> 16) & 0xff) * 0.299 + ((v >> 8) & 0xff) * 0.587 + (v & 0xff) * 0.144));
+			output.setReal( ((v >> 24) & 0xff) * (((v >> 16) & 0xff) * 0.299 + ((v >> 8) & 0xff) * 0.587 + (v & 0xff) * 0.144));
 		}
 	}
 

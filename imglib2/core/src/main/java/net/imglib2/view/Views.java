@@ -41,6 +41,7 @@ import net.imglib2.ExtendedRandomAccessibleInterval;
 import net.imglib2.FlatIterationOrder;
 import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
+import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RandomAccessibleOnRealRandomAccessible;
@@ -61,8 +62,16 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Util;
 
 /**
- * TODO
+ * Create light-weight views into {@link RandomAccessible RandomAccessibles}.
  *
+ * A view is itself a {@link RandomAccessible} or
+ * {@link RandomAccessibleInterval} that provides {@link RandomAccess accessors}
+ * that transform coordinates on-the-fly without copying the underlying data.
+ * Consecutive transformations are concatenated and simplified to provide
+ * optimally efficient accessors. Note, that accessors provided by a view are
+ * read/write. Changing pixels in a view changes the underlying image data.
+ *
+ * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
 public class Views
 {
@@ -300,13 +309,104 @@ public class Views
 	}
 
 	/**
-	 * Translate such that pixel at offset in randomAccessible is
-	 * pixel 0 in the resulting view.
+	 * Create view with permuted axes. fromAxis and toAxis are swapped.
+	 *
+	 * If fromAxis=0 and toAxis=2, this means that the X-axis of the source view
+	 * is mapped to the Z-Axis of the permuted view and vice versa. For a XYZ
+	 * source, a ZYX view would be created.
+	 */
+	public static < T > MixedTransformView< T > permute( final RandomAccessible< T > randomAccessible, final int fromAxis, final int toAxis )
+	{
+		final int n = randomAccessible.numDimensions();
+		final int[] component = new int[ n ];
+		for ( int e = 0; e < n; ++e )
+			component[ e ] = e;
+		component[ fromAxis ] = toAxis;
+		component[ toAxis ] = fromAxis;
+		final MixedTransform t = new MixedTransform( n, n );
+		t.setComponentMapping( component );
+		return new MixedTransformView< T >( randomAccessible, t );
+	}
+
+	/**
+	 * Create view with permuted axes. fromAxis and toAxis are swapped.
+	 *
+	 * If fromAxis=0 and toAxis=2, this means that the X-axis of the source view
+	 * is mapped to the Z-Axis of the permuted view and vice versa. For a XYZ
+	 * source, a ZYX view would be created.
+	 */
+	public static < T > IntervalView< T > permute( final RandomAccessibleInterval< T > interval, final int fromAxis, final int toAxis )
+	{
+		final int n = interval.numDimensions();
+		final long[] min = new long[ n ];
+		final long[] max = new long[ n ];
+		interval.min( min );
+		interval.max( max );
+		final long fromMinNew = min[ toAxis ];
+		final long fromMaxNew = max[ toAxis ];
+		min[ toAxis ] = min[ fromAxis ];
+		max[ toAxis ] = max[ fromAxis ];
+		min[ fromAxis ] = fromMinNew;
+		max[ fromAxis ] = fromMaxNew;
+		return interval( permute( ( RandomAccessible< T > ) interval, fromAxis, toAxis ), min, max );
+	}
+
+	/**
+	 * Translate the source view by the given translation vector. Pixel
+	 * <em>x</em> in the source view has coordinates <em>(x + translation)</em>
+	 * in the resulting view.
 	 *
 	 * @param randomAccessible
 	 *            the source
+	 * @param translation
+	 *            offset of the source view. The pixel at offset becomes the
+	 *            origin of resulting view.
 	 */
-	public static < T > MixedTransformView< T > translate( final RandomAccessible< T > randomAccessible, final long... offset )
+	public static < T > MixedTransformView< T > translate( final RandomAccessible< T > randomAccessible, final long... translation )
+	{
+		final int n = randomAccessible.numDimensions();
+		final MixedTransform t = new MixedTransform( n, n );
+		t.setInverseTranslation( translation );
+		return new MixedTransformView< T >( randomAccessible, t );
+	}
+
+	/**
+	 * Translate the source view by the given translation vector. Pixel
+	 * <em>x</em> in the source view has coordinates <em>(x + translation)</em>
+	 * in the resulting view.
+	 *
+	 * @param randomAccessible
+	 *            the source
+	 * @param translation
+	 *            offset of the source view. The pixel at offset becomes the
+	 *            origin of resulting view.
+	 */
+	public static < T > IntervalView< T > translate( final RandomAccessibleInterval< T > interval, final long... translation )
+	{
+		final int n = interval.numDimensions();
+		final long[] min = new long[ n ];
+		final long[] max = new long[ n ];
+		interval.min( min );
+		interval.max( max );
+		for ( int d = 0; d < n; ++d )
+		{
+			min[ d ] += translation[ d ];
+			max[ d ] += translation[ d ];
+		}
+		return interval( translate( ( RandomAccessible< T > ) interval, translation ), min, max );
+	}
+
+	/**
+	 * Translate such that pixel at offset in randomAccessible is at the origin
+	 * in the resulting view. This is equivalent to translating by -offset.
+	 *
+	 * @param randomAccessible
+	 *            the source
+	 * @param offset
+	 *            offset of the source view. The pixel at offset becomes the
+	 *            origin of resulting view.
+	 */
+	public static < T > MixedTransformView< T > offset( final RandomAccessible< T > randomAccessible, final long... offset )
 	{
 		final int n = randomAccessible.numDimensions();
 		final MixedTransform t = new MixedTransform( n, n );
@@ -315,13 +415,16 @@ public class Views
 	}
 
 	/**
-	 * Translate such that pixel at offset in interval is
-	 * pixel 0 in the resulting view.
+	 * Translate such that pixel at offset in interval is at the origin in the
+	 * resulting view. This is equivalent to translating by -offset.
 	 *
 	 * @param randomAccessible
 	 *            the source
+	 * @param offset
+	 *            offset of the source view. The pixel at offset becomes the
+	 *            origin of resulting view.
 	 */
-	public static < T > IntervalView< T > translate( final RandomAccessibleInterval< T > interval, final long... offset )
+	public static < T > IntervalView< T > offset( final RandomAccessibleInterval< T > interval, final long... offset )
 	{
 		final int n = interval.numDimensions();
 		final long[] min = new long[ n ];
@@ -333,7 +436,7 @@ public class Views
 			min[ d ] -= offset[ d ];
 			max[ d ] -= offset[ d ];
 		}
-		return interval( translate( ( RandomAccessible< T > ) interval, offset ), min, max );
+		return interval( offset( ( RandomAccessible< T > ) interval, offset ), min, max );
 	}
 
 	/**
@@ -422,6 +525,55 @@ public class Views
 	}
 
 	/**
+	 * Create view which adds a dimension to the source {@link RandomAccessible}.
+	 *
+	 * The additional dimension is the last dimension. For example, an XYZ view
+	 * is created for an XY source. When accessing an XYZ sample in the view,
+	 * the final coordinate is discarded and the source XY sample is accessed.
+	 *
+	 * @param randomAccessible
+	 *            the source
+	 */
+	public static < T > MixedTransformView< T > addDimension( final RandomAccessible< T > randomAccessible )
+	{
+		final int m = randomAccessible.numDimensions();
+		final int n = m + 1;
+		final MixedTransform t = new MixedTransform( n, m );
+		return new MixedTransformView< T >( randomAccessible, t );
+	}
+
+	/**
+	 * Create view which adds a dimension to the source
+	 * {@link RandomAccessibleInterval}. The {@link Interval} boundaries in the
+	 * additional dimension are set to the specified values.
+	 *
+	 * The additional dimension is the last dimension. For example, an XYZ view
+	 * is created for an XY source. When accessing an XYZ sample in the view,
+	 * the final coordinate is discarded and the source XY sample is accessed.
+	 *
+	 * @param interval
+	 *            the source
+	 * @param minOfNewDim
+	 *            Interval min in the additional dimension.
+	 * @param maxOfNewDim
+	 *            Interval max in the additional dimension.
+	 */
+	public static < T > IntervalView< T > addDimension( final RandomAccessibleInterval< T > interval, final long minOfNewDim, final long maxOfNewDim )
+	{
+		final int m = interval.numDimensions();
+		final long[] min = new long[ m + 1 ];
+		final long[] max = new long[ m + 1 ];
+		for ( int d = 0; d < m; ++d )
+		{
+			min[ d ] = interval.min( d );
+			max[ d ] = interval.max( d );
+		}
+		min[ m ] = minOfNewDim;
+		max[ m ] = maxOfNewDim;
+		return interval( addDimension( interval ), min, max );
+	}
+
+	/**
 	 * Invert the d-axis.
 	 *
 	 * @param randomAccessible
@@ -483,7 +635,7 @@ public class Views
 		final long[] max = new long[ n ];
 		for ( int d = 0; d < n; ++d )
 			max[ d ] = dimension[ d ] - 1;
-		return interval( translate( randomAccessible, offset ), min, max );
+		return interval( offset( randomAccessible, offset ), min, max );
 	}
 
 	/**
@@ -507,7 +659,7 @@ public class Views
 		interval.max( max );
 		for ( int d = 0; d < n; ++d )
 			max[ d ] -= offset[ d ];
-		return interval( translate( randomAccessible, offset ), min, max );
+		return interval( offset( randomAccessible, offset ), min, max );
 	}
 
 	/**

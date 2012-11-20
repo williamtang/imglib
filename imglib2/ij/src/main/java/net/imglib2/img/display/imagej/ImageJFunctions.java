@@ -80,6 +80,17 @@ public class ImageJFunctions
 
 	public static <T extends NumericType<T> & NativeType<T>> Img< T > wrap( final ImagePlus imp ) { return ImagePlusAdapter.wrap( imp ); }
 
+	@SuppressWarnings("unchecked")
+	public static < T extends RealType<T> > Img< T > wrapReal( final ImagePlus imp ) { return ImagePlusAdapter.wrapReal( imp ); }
+
+	@SuppressWarnings("unchecked")
+	public static < T extends RealType<T> & NativeType<T>> Img< T > wrapRealNative( final ImagePlus imp ) { return ImagePlusAdapter.wrapReal( imp ); }
+
+	@SuppressWarnings("unchecked")
+	public static < T extends NumericType<T> > Img< T > wrapNumeric( final ImagePlus imp ) { return ImagePlusAdapter.wrapNumeric( imp ); }
+
+	public static < T extends NumericType<T> & NativeType<T>> Img< T > wrapNumericNative( final ImagePlus imp ) { return wrap( imp ); }
+
 	public static Img<UnsignedByteType> wrapByte( final ImagePlus imp ) { return ImagePlusAdapter.wrapByte( imp ); }
 
 	public static Img<UnsignedShortType> wrapShort( final ImagePlus imp ) { return ImagePlusAdapter.wrapShort( imp ); }
@@ -232,7 +243,28 @@ public class ImageJFunctions
 			final String title )
 	{
 		final ImageJVirtualStackFloat< T > stack = new ImageJVirtualStackFloat< T >( img, new RealFloatConverter< T >() );
-		return new ImagePlus( title, stack );
+		final ImagePlus imp = new ImagePlus( title, stack );
+		final int n = img.numDimensions();
+		if ( n > 2 )
+		{
+			imp.setOpenAsHyperStack( true );
+			final int c = ( int )img.dimension( 2 ), s, f;
+			if ( n > 3 )
+			{
+				s = ( int )img.dimension( 3 );
+				if ( n > 4 )
+					f = ( int )img.dimension( 4 );
+				else
+					f = 1;
+			}
+			else
+			{
+				s = 1;
+				f = 1;
+			}
+			imp.setDimensions( c, s, f );
+		}
+		return imp;
 	}
 
 	/**
