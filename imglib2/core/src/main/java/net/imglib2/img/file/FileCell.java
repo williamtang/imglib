@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
@@ -44,11 +44,9 @@ import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.img.cell.AbstractCell;
 
 /**
- * Default (empty) implementation of the {@link AbstractCell}.
- * 
- * 
- * @author ImgLib2 developers
- * @author Tobias Pietzsch
+ * TODO
+ *
+ * @author Martin Horn
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
 public final class FileCell< A extends ArrayDataAccess< A > & ExternalizableType< A >> extends AbstractCell< A > implements ExternalizableType< FileCell< A >>
@@ -78,9 +76,10 @@ public final class FileCell< A extends ArrayDataAccess< A > & ExternalizableType
 	/**
 	 * {@inheritDoc}
 	 */
-	public void writeExternal( ObjectOutput out ) throws IOException
+	@Override
+	public void writeExternal( final ObjectOutput out ) throws IOException
 	{
-		byte[] clazz = data.getClass().getCanonicalName().getBytes();
+		final byte[] clazz = data.getClass().getCanonicalName().getBytes();
 		out.writeInt( clazz.length );
 		out.write( clazz );
 		out.writeInt( this.n );
@@ -97,20 +96,21 @@ public final class FileCell< A extends ArrayDataAccess< A > & ExternalizableType
 	/**
 	 * {@inheritDoc}
 	 */
-	public void readExternal( ObjectInput in ) throws IOException, ClassNotFoundException
+	@Override
+	public void readExternal( final ObjectInput in ) throws IOException, ClassNotFoundException
 	{
-		byte[] clazz = new byte[ in.readInt() ];
+		final byte[] clazz = new byte[ in.readInt() ];
 		in.read( clazz );
 		try
 		{
 			data = ( A ) Class.forName( new String( clazz ) ).newInstance();
 		}
-		catch ( Exception e )
+		catch ( final Exception e )
 		{
 			new RuntimeException( e );
 		}
-		int[] dim = new int[ in.readInt() ];
-		long[] min = new long[ dim.length ];
+		final int[] dim = new int[ in.readInt() ];
+		final long[] min = new long[ dim.length ];
 		for ( int i = 0; i < dim.length; i++ )
 		{
 			dim[ i ] = in.readInt();
@@ -146,14 +146,14 @@ public final class FileCell< A extends ArrayDataAccess< A > & ExternalizableType
 	@Override
 	public FileCell< A > emptyCopy()
 	{
-		int[] dim = new int[ n ];
-		long[] min = new long[ n ];
+		final int[] dim = new int[ n ];
+		final long[] min = new long[ n ];
 		for ( int i = 0; i < dim.length; i++ )
 		{
 			dim[ i ] = dimension( i );
 			min[ i ] = min( i );
 		}
-		FileCell< A > fileCell = new FileCell< A >( data.emptyCopy(), dim, min, entitiesPerPixel );
+		final FileCell< A > fileCell = new FileCell< A >( data.emptyCopy(), dim, min, entitiesPerPixel );
 		return fileCell;
 	}
 
