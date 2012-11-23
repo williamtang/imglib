@@ -36,7 +36,6 @@
 
 package net.imglib2.img.cell;
 
-import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.util.IntervalIndexer;
 
 /**
@@ -47,7 +46,7 @@ import net.imglib2.util.IntervalIndexer;
  * @author Tobias Pietzsch
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
-public abstract class AbstractCell<A extends ArrayDataAccess<A>> {
+public abstract class AbstractCell<A> {
 	protected int n;
 
 	int[] dimensions;

@@ -39,7 +39,6 @@ package net.imglib2.img.cell;
 import net.imglib2.img.AbstractNativeImg;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
-import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.type.NativeType;
 
 /**
@@ -55,7 +54,7 @@ import net.imglib2.type.NativeType;
  *
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
-final public class CellImg< T extends NativeType< T >, A extends ArrayDataAccess< A >, C extends AbstractCell< A > > extends AbstractNativeImg< T, A >
+final public class CellImg< T extends NativeType< T >, A, C extends AbstractCell< A > > extends AbstractNativeImg< T, A >
 {
 	final protected CellImgFactory< T > factory;
 
@@ -88,7 +87,7 @@ final public class CellImg< T extends NativeType< T >, A extends ArrayDataAccess
 	 * This interface is implemented by all samplers on the {@link CellImg}. It
 	 * allows the container to ask for the cell the sampler is currently in.
 	 */
-	public interface CellContainerSampler< T extends NativeType< T >, A extends ArrayDataAccess< A >, C extends AbstractCell< A > >
+	public interface CellContainerSampler< T extends NativeType< T >, A, C extends AbstractCell< A > >
 	{
 		/**
 		 * @return the cell the sampler is currently in.

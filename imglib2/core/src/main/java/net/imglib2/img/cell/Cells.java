@@ -39,7 +39,6 @@ package net.imglib2.img.cell;
 import net.imglib2.Cursor;
 import net.imglib2.EuclideanSpace;
 import net.imglib2.RandomAccess;
-import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 
 /**
  * An array of {@link AbstractCell}s to store the data of a {@link CellImg}.
@@ -47,10 +46,9 @@ import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
  *
  *
  * @author ImgLib2 developers
- * @author Tobias Pietzsch
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
-public interface Cells< A extends ArrayDataAccess< A >, C extends AbstractCell< A > > extends EuclideanSpace
+public interface Cells< A, C extends AbstractCell< A > > extends EuclideanSpace
 {
 	/**
 	 * Write the number of pixels in each dimension into long[].

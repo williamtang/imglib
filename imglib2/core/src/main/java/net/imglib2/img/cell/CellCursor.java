@@ -38,7 +38,6 @@ package net.imglib2.img.cell;
 
 import net.imglib2.AbstractCursor;
 import net.imglib2.Cursor;
-import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.type.NativeType;
 
 /**
@@ -49,7 +48,7 @@ import net.imglib2.type.NativeType;
  * @author Tobias Pietzsch
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
-public class CellCursor< T extends NativeType< T >, A extends ArrayDataAccess< A >, C extends AbstractCell< A > > extends AbstractCursor< T > implements CellImg.CellContainerSampler< T, A, C >
+public class CellCursor< T extends NativeType< T >, A, C extends AbstractCell< A > > extends AbstractCursor< T > implements CellImg.CellContainerSampler< T, A, C >
 {
 	protected final T type;
 

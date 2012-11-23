@@ -39,7 +39,6 @@ package net.imglib2.img.cell;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
-import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 
 /**
  * Implementation of {@link Cells} that uses {@link DefaultCell}s and keeps them
@@ -47,10 +46,9 @@ import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
  * 
  * 
  * @author ImgLib2 developers
- * @author Tobias Pietzsch
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
-public abstract class AbstractImgCells< A extends ArrayDataAccess< A >, C extends AbstractCell< A > > implements Cells< A, C >
+public abstract class AbstractImgCells< A, C extends AbstractCell< A > > implements Cells< A, C >
 {
 	private final int entitiesPerPixel;
 

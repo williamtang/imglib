@@ -39,7 +39,6 @@ package net.imglib2.img.cell;
 import net.imglib2.AbstractLocalizable;
 import net.imglib2.Localizable;
 import net.imglib2.RandomAccess;
-import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.type.NativeType;
 
 /**
@@ -53,7 +52,7 @@ import net.imglib2.type.NativeType;
  * @author Tobias Pietzsch
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
-public class CellRandomAccess< T extends NativeType< T >, A extends ArrayDataAccess< A >, C extends AbstractCell< A > > extends AbstractLocalizable implements RandomAccess< T >, CellImg.CellContainerSampler< T, A, C >
+public class CellRandomAccess< T extends NativeType< T >, A, C extends AbstractCell< A > > extends AbstractLocalizable implements RandomAccess< T >, CellImg.CellContainerSampler< T, A, C >
 {
 	protected final CellImg< T, A, C > img;
 
