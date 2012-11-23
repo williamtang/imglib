@@ -57,11 +57,8 @@ public class EqualizeHistogram< T extends RealType< T >> implements UnaryOperati
 	public IterableInterval< T > compute( IterableInterval< T > in, IterableInterval< T > r )
 	{
 
-<<<<<<< HEAD
-=======
 		assert ( in.iterationOrder().equals( r.iterationOrder() ) );
 
->>>>>>> master
 		int[] histo = Operations.compute( new MakeHistogram< T >(), in ).hist();
 
 		T val = r.firstElement().createVariable();
