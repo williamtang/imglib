@@ -38,6 +38,7 @@ package net.imglib2.ops.operation.iterableinterval.unary;
 
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
+import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.type.numeric.RealType;
 
@@ -58,7 +59,7 @@ public class EqualizeHistogram<T extends RealType<T>> implements
 
 		assert (in.iterationOrder().equals(r.iterationOrder()));
 
-		int[] histo = new MakeHistogram<T>().compute(in).hist();
+		int[] histo = Operations.compute(new MakeHistogram<T>(), in).hist();
 
 		T val = r.firstElement().createVariable();
 
