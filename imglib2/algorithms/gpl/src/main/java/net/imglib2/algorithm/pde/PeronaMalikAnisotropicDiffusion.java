@@ -166,6 +166,29 @@ public class PeronaMalikAnisotropicDiffusion <T extends RealType<T>> extends Mul
 		this.minVal = (float) tmp.getMinValue();
 		this.maxVal = (float) tmp.getMaxValue();
 	}
+	
+	/**
+	 * Instantiate the Perona & Malik anisotropic diffusion process, with a custom diffusion function.
+	 *  
+	 * @param image  the target image, will be modified in place
+	 * @param deltat  the integration constant for the numerical integration scheme. Typically less that 1.
+	 * @param function  the custom diffusion function.
+	 * @throws IncompatibleTypeException 
+	 * 
+	 * @see DiffusionFunction
+	 */
+	public PeronaMalikAnisotropicDiffusion(RandomAccessibleInterval<T> image, Img< FloatType> res, double deltat, DiffusionFunction function) {
+		this.image = image;
+		this.deltat = deltat;
+		this.fun = function;
+		this.processingTime = 0;
+		this.increment = res;
+		
+		// Protection against under/overflow
+		final T tmp = Views.iterable( image ).firstElement();
+		this.minVal = (float) tmp.getMinValue();
+		this.maxVal = (float) tmp.getMaxValue();
+	}
 
 
 	/**
