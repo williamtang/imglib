@@ -41,28 +41,26 @@ import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 
 /**
- * Implementation of {@link Cells} that uses {@link DefaultCell}s and keeps them
- * all in memory all the time.
- * 
- * 
+ * Implementation of {@link Cells} that keeps array of {@link AbstractCell}s as an {@link Img}.
+ *
  * @author ImgLib2 developers
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
 public abstract class AbstractImgCells< A, C extends AbstractCell< A > > implements Cells< A, C >
 {
-	private final int entitiesPerPixel;
+	protected final int entitiesPerPixel;
 
-	private final int n;
+	protected final int n;
 
-	private final long[] dimensions;
+	protected final long[] dimensions;
 
 	protected final int[] cellDimensions;
 
 	protected Img< C > cells = null;
 
-	private final long[] numCells;
+	protected final long[] numCells;
 
-	private int[] borderSize;
+	protected final int[] borderSize;
 
 	public AbstractImgCells( final int entitiesPerPixel, final long[] dimensions, final int[] cellDimensions )
 	{
@@ -90,7 +88,7 @@ public abstract class AbstractImgCells< A, C extends AbstractCell< A > > impleme
 	 */
 	protected abstract Img< C > getCellsImg( long[] numCells );
 
-	protected void getCellDimensions( long[] currentCellOffset, int[] currentCellDims )
+	protected void getCellDimensions( final long[] currentCellOffset, final int[] currentCellDims )
 	{
 		for ( int d = 0; d < n; ++d )
 		{

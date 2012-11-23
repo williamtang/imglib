@@ -44,37 +44,32 @@ import net.imglib2.img.list.ListLocalizingCursor;
 
 /**
  * Implementation of {@link Cells} that uses {@link DefaultCell}s and keeps them
- * all in memory all the time.
- * 
- * 
+ * all in memory all the time in a {@link ListImg}.
+ *
+ *
  * @author ImgLib2 developers
- * @author Tobias Pietzsch
  * @author Tobias Pietzsch <tobias.pietzsch@gmail.com>
  */
 public class ListImgCells< A extends ArrayDataAccess< A > > extends AbstractImgCells< A, DefaultCell< A > >
 {
-
-	private int entitiesPerPixel;
-
-	private A creator;
+	private final A creator;
 
 	public ListImgCells( final A creator, final int entitiesPerPixel, final long[] dimensions, final int[] cellDimensions )
 	{
 		super( entitiesPerPixel, dimensions, cellDimensions );
-		this.entitiesPerPixel = entitiesPerPixel;
 		this.creator = creator;
-
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected Img< DefaultCell< A >> getCellsImg( long[] numCells )
+	@Override
+	protected Img< DefaultCell< A >> getCellsImg( final long[] numCells )
 	{
-		ListImg< DefaultCell< A >> cells = new ListImgFactory< DefaultCell< A > >().create( numCells, new DefaultCell< A >( creator, new int[ 1 ], new long[ 1 ], entitiesPerPixel ) );
+		final ListImg< DefaultCell< A >> cells = new ListImgFactory< DefaultCell< A > >().create( numCells, new DefaultCell< A >( creator, new int[ 1 ], new long[ 1 ], entitiesPerPixel ) );
 		final ListLocalizingCursor< DefaultCell< A > > cellCursor = cells.localizingCursor();
-		long[] currentCellOffset = new long[ numCells.length ];
-		int[] currentCellDims = new int[ numCells.length ];
+		final long[] currentCellOffset = new long[ numCells.length ];
+		final int[] currentCellDims = new int[ numCells.length ];
 		while ( cellCursor.hasNext() )
 		{
 			cellCursor.fwd();
