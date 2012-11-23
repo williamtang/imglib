@@ -56,22 +56,21 @@ import net.imglib2.view.Views;
  * 
  * @author hornm, dietzc, University of Konstanz
  */
-public class ImgConvert< I extends RealType< I >, O extends RealType< O > & NativeType< O >> implements UnaryOutputOperation< Img< I >, Img< O >>
-{
+public class ImgConvert<I extends RealType<I>, O extends RealType<O> & NativeType<O>>
+		implements UnaryOutputOperation<Img<I>, Img<O>> {
 
-	public enum ImgConversionTypes
-	{
-		DIRECT( "Copy" ), DIRECTCLIP( "Clip" ), SCALE( "Scale" ), NORMALIZESCALE( "Normalize and scale" ), NORMALIZEDIRECT( "Normalize" ), NORMALIZEDIRECTCLIP( "Normalize (clipped)" );
+	public enum ImgConversionTypes {
+		DIRECT("Copy"), DIRECTCLIP("Clip"), SCALE("Scale"), NORMALIZESCALE(
+				"Normalize and scale"), NORMALIZEDIRECT("Normalize"), NORMALIZEDIRECTCLIP(
+				"Normalize (clipped)");
 
 		private final String m_label;
 
-		public static String[] labelsAsStringArray()
-		{
+		public static String[] labelsAsStringArray() {
 			ImgConversionTypes[] types = ImgConversionTypes.values();
-			String[] res = new String[ types.length ];
-			for ( int i = 0; i < res.length; i++ )
-			{
-				res[ i ] = types[ i ].getLabel();
+			String[] res = new String[types.length];
+			for (int i = 0; i < res.length; i++) {
+				res[i] = types[i].getLabel();
 			}
 
 			return res;
@@ -82,22 +81,20 @@ public class ImgConvert< I extends RealType< I >, O extends RealType< O > & Nati
 		 * @param label
 		 * @return the conversion type for the label, null, if doesn't match any
 		 */
-		public static ImgConversionTypes getByLabel( String label )
-		{
-			for ( ImgConversionTypes t : ImgConversionTypes.values() )
-			{
-				if ( t.getLabel().equals( label ) ) { return t; }
+		public static ImgConversionTypes getByLabel(String label) {
+			for (ImgConversionTypes t : ImgConversionTypes.values()) {
+				if (t.getLabel().equals(label)) {
+					return t;
+				}
 			}
 			return null;
 		}
 
-		private ImgConversionTypes( String label )
-		{
+		private ImgConversionTypes(String label) {
 			m_label = label;
 		}
 
-		public String getLabel()
-		{
+		public String getLabel() {
 			return m_label;
 		}
 
@@ -119,8 +116,7 @@ public class ImgConvert< I extends RealType< I >, O extends RealType< O > & Nati
 	 * @param imgFac
 	 *            the image factory to produce the image
 	 */
-	public ImgConvert( final I inType, final O outType, ImgConversionTypes type )
-	{
+	public ImgConvert(final I inType, final O outType, ImgConversionTypes type) {
 		m_outType = outType;
 		m_conversionType = type;
 		m_inType = inType;
@@ -131,22 +127,17 @@ public class ImgConvert< I extends RealType< I >, O extends RealType< O > & Nati
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UnaryObjectFactory< Img< I >, Img< O > > bufferFactory()
-	{
-		return new UnaryObjectFactory< Img< I >, Img< O > >()
-		{
+	public UnaryObjectFactory<Img<I>, Img<O>> bufferFactory() {
+		return new UnaryObjectFactory<Img<I>, Img<O>>() {
 			@Override
-			public Img< O > instantiate( Img< I > a )
-			{
-				try
-				{
-					long[] dims = new long[ a.numDimensions() ];
-					a.dimensions( dims );
-					return a.factory().imgFactory( m_outType ).create( dims, m_outType.createVariable() );
-				}
-				catch ( IncompatibleTypeException e )
-				{
-					throw new RuntimeException( e );
+			public Img<O> instantiate(Img<I> a) {
+				try {
+					long[] dims = new long[a.numDimensions()];
+					a.dimensions(dims);
+					return a.factory().imgFactory(m_outType)
+							.create(dims, m_outType.createVariable());
+				} catch (IncompatibleTypeException e) {
+					throw new RuntimeException(e);
 				}
 			}
 
@@ -157,63 +148,77 @@ public class ImgConvert< I extends RealType< I >, O extends RealType< O > & Nati
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Img< O > compute( Img< I > img, Img< O > r )
-	{
+	public Img<O> compute(Img<I> img, Img<O> r) {
 
 		double factor;
-		Pair< I, I > oldMinMax;
-		Convert< I, O > convertOp = null;
+		Pair<I, I> oldMinMax;
+		Convert<I, O> convertOp = null;
 
-		switch ( m_conversionType )
-		{
+		switch (m_conversionType) {
 		case DIRECT:
-			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.DIRECT );
+			convertOp = new Convert<I, O>(m_inType, m_outType,
+					TypeConversionTypes.DIRECT);
 			break;
 		case DIRECTCLIP:
-			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.DIRECTCLIP );
+			convertOp = new Convert<I, O>(m_inType, m_outType,
+					TypeConversionTypes.DIRECTCLIP);
 			break;
 		case NORMALIZEDIRECT:
-			 oldMinMax = Operations.compute(new MinMax< I >( 0, img.firstElement() ), img );
-			factor = Normalize.normalizationFactor( oldMinMax.a.getRealDouble(), oldMinMax.b.getRealDouble(), m_inType.getMinValue(), m_inType.getMaxValue() );
+			oldMinMax = Operations.compute(
+					new MinMax<I>(0, img.firstElement()), img);
+			factor = Normalize.normalizationFactor(oldMinMax.a.getRealDouble(),
+					oldMinMax.b.getRealDouble(), m_inType.getMinValue(),
+					m_inType.getMaxValue());
 
-			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.SCALE );
+			convertOp = new Convert<I, O>(m_inType, m_outType,
+					TypeConversionTypes.SCALE);
 
-			convertOp.setFactor( convertOp.getFactor() / factor );
-			convertOp.setInMin( 0 );
-			convertOp.setOutMin( 0 );
+			convertOp.setFactor(convertOp.getFactor() / factor);
+			convertOp.setInMin(0);
+			convertOp.setOutMin(0);
 			break;
 		case NORMALIZESCALE:
-			 oldMinMax = Operations.compute(new MinMax< I >( 0, img.firstElement() ), img );
-			factor = Normalize.normalizationFactor( oldMinMax.a.getRealDouble(), oldMinMax.b.getRealDouble(), m_inType.getMinValue(), m_inType.getMaxValue() );
+			oldMinMax = Operations.compute(
+					new MinMax<I>(0, img.firstElement()), img);
+			factor = Normalize.normalizationFactor(oldMinMax.a.getRealDouble(),
+					oldMinMax.b.getRealDouble(), m_inType.getMinValue(),
+					m_inType.getMaxValue());
 
-			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.SCALE );
-			convertOp.setFactor( convertOp.getFactor() / factor );
-			convertOp.setInMin( oldMinMax.a.getRealDouble() );
+			convertOp = new Convert<I, O>(m_inType, m_outType,
+					TypeConversionTypes.SCALE);
+			convertOp.setFactor(convertOp.getFactor() / factor);
+			convertOp.setInMin(oldMinMax.a.getRealDouble());
 			break;
 		case NORMALIZEDIRECTCLIP:
-			 oldMinMax = Operations.compute(new MinMax< I >( 0, img.firstElement() ), img );
-			factor = Normalize.normalizationFactor( oldMinMax.a.getRealDouble(), oldMinMax.b.getRealDouble(), m_inType.getMinValue(), m_inType.getMaxValue() );
+			oldMinMax = Operations.compute(
+					new MinMax<I>(0, img.firstElement()), img);
+			factor = Normalize.normalizationFactor(oldMinMax.a.getRealDouble(),
+					oldMinMax.b.getRealDouble(), m_inType.getMinValue(),
+					m_inType.getMaxValue());
 
-			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.SCALECLIP );
-			convertOp.setFactor( convertOp.getFactor() / factor );
-			convertOp.setInMin( oldMinMax.a.getRealDouble() );
+			convertOp = new Convert<I, O>(m_inType, m_outType,
+					TypeConversionTypes.SCALECLIP);
+			convertOp.setFactor(convertOp.getFactor() / factor);
+			convertOp.setInMin(oldMinMax.a.getRealDouble());
 			break;
 		case SCALE:
-			convertOp = new Convert< I, O >( m_inType, m_outType, TypeConversionTypes.SCALE );
+			convertOp = new Convert<I, O>(m_inType, m_outType,
+					TypeConversionTypes.SCALE);
 			break;
 
 		default:
-			throw new IllegalArgumentException( "Normalization type unknown" );
+			throw new IllegalArgumentException("Normalization type unknown");
 		}
 
-		UnaryOperationAssignment< I, O > map = new UnaryOperationAssignment< I, O >( convertOp );
-		map.compute( Views.flatIterable( img ), Views.flatIterable( r ) );
+		UnaryOperationAssignment<I, O> map = new UnaryOperationAssignment<I, O>(
+				convertOp);
+		map.compute(Views.flatIterable(img), Views.flatIterable(r));
 		return r;
 	}
 
 	@Override
-	public UnaryOutputOperation< Img< I >, Img< O >> copy()
-	{
-		return new ImgConvert< I, O >( m_inType.copy(), m_outType.copy(), m_conversionType );
+	public UnaryOutputOperation<Img<I>, Img<O>> copy() {
+		return new ImgConvert<I, O>(m_inType.copy(), m_outType.copy(),
+				m_conversionType);
 	}
 }
