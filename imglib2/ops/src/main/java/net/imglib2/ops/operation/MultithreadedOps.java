@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-
 public class MultithreadedOps {
 
 	public static synchronized <A, B, C> void run(
@@ -103,7 +102,7 @@ public class MultithreadedOps {
 				final B out) {
 			m_in = in;
 			m_out = out;
-			m_op = op.copy();
+			m_op = op;
 		}
 
 		@Override
@@ -127,7 +126,7 @@ public class MultithreadedOps {
 			m_in1 = in1;
 			m_in2 = in2;
 			m_out = out;
-			m_op = op.copy();
+			m_op = op;
 		}
 
 		@Override
