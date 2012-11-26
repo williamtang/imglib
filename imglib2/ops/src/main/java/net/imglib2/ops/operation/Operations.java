@@ -134,30 +134,9 @@ public class Operations
 
 	public static < A, B, C extends IterableInterval< A >, D extends IterableInterval< B >> UnaryOutputOperation< C, D > map( final UnaryOperation< A, B > op, final UnaryObjectFactory< C, D > fac )
 	{
-		final UnaryOperationAssignment< A, B > map = new UnaryOperationAssignment< A, B >( op );
-
-		return new UnaryOutputOperation< C, D >()
-		{
-
-			@Override
-			public D compute( C input, D output )
-			{
-				map.compute( input, output );
-				return output;
-			}
-
-			@Override
-			public UnaryObjectFactory< C, D > bufferFactory()
-			{
-				return fac;
-			}
-
-			@Override
-			public UnaryOutputOperation< C, D > copy()
-			{
-				return Operations.map( op, fac );
-			}
-		};
+		UnaryOperation< C, D > map = Operations.map( op );
+		
+		return Operations.wrap( map, fac );
 	}
 
 	public static < A, B, C extends IterableInterval< A >, D extends IterableInterval< B >> UnaryOperation< C, D > map( final UnaryOperation< A, B > op )
