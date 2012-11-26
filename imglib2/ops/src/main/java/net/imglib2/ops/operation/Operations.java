@@ -49,14 +49,6 @@ public class Operations
 	}
 
 	/*
-	 * Mapper
-	 */
-	public static < A, B > UnaryOperation< IterableInterval< A >, IterableInterval< B >> map( UnaryOperation< A, B > op )
-	{
-		return new UnaryOperationAssignment< A, B >( op );
-	}
-
-	/*
 	 * Compute
 	 */
 	public static < A, B > B compute( B input, B output, UnaryOutputOperation< B, B >[] ops )
@@ -138,6 +130,56 @@ public class Operations
 			ops[ i ] = op;
 
 		return concat( ops );
+	}
+
+	public static < A, B, C extends IterableInterval< A >, D extends IterableInterval< B >> UnaryOutputOperation< C, D > map( final UnaryOperation< A, B > op, final UnaryObjectFactory< C, D > fac )
+	{
+		final UnaryOperationAssignment< A, B > map = new UnaryOperationAssignment< A, B >( op );
+
+		return new UnaryOutputOperation< C, D >()
+		{
+
+			@Override
+			public D compute( C input, D output )
+			{
+				map.compute( input, output );
+				return output;
+			}
+
+			@Override
+			public UnaryObjectFactory< C, D > bufferFactory()
+			{
+				return fac;
+			}
+
+			@Override
+			public UnaryOutputOperation< C, D > copy()
+			{
+				return Operations.map( op, fac );
+			}
+		};
+	}
+
+	public static < A, B, C extends IterableInterval< A >, D extends IterableInterval< B >> UnaryOperation< C, D > map( final UnaryOperation< A, B > op )
+	{
+		final UnaryOperationAssignment< A, B > map = new UnaryOperationAssignment< A, B >( op );
+
+		return new UnaryOperation< C, D >()
+		{
+
+			@Override
+			public D compute( C input, D output )
+			{
+				map.compute( input, output );
+				return output;
+			}
+
+			@Override
+			public UnaryOperation< C, D > copy()
+			{
+				return Operations.map( op );
+			}
+		};
 	}
 
 }
