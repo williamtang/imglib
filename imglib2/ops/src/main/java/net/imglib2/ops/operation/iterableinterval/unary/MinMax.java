@@ -43,6 +43,7 @@ import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.integer.LongType;
 import net.imglib2.util.Pair;
 
 /**
@@ -68,7 +69,7 @@ public final class MinMax< T extends RealType< T >> implements UnaryOutputOperat
 		{
 
 			int bins;
-			if ( !( type instanceof IntegerType ) )
+			if ( !( type instanceof IntegerType ) || type instanceof LongType )
 			{
 				bins = Short.MAX_VALUE * 2;
 			}
