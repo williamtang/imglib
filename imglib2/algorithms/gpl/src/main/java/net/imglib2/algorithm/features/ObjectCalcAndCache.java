@@ -63,10 +63,8 @@ import net.imglib2.ops.data.CooccurrenceMatrix.MatrixOrientation;
 import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeCooccurrenceMatrix;
 import net.imglib2.ops.operation.subset.views.ImgView;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.Views;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 

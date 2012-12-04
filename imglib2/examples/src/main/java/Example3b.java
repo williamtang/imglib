@@ -19,7 +19,7 @@ public class Example3b
 		ImgIOException, IncompatibleTypeException
 	{
 		// open with ImgOpener using an ArrayImgFactory
-		Img< T > img = new ImgOpener().openImg( "DrosophilaWing.tif" );
+		Img< T > img = (Img<T>) new ImgOpener().openImg( "DrosophilaWing.tif" );
 
 		// compute average of the image
 		double avg = computeAverage( img );
