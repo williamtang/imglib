@@ -4,15 +4,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+
 public class MultithreadedOps {
 
-	public static synchronized <A, B, C> void run(
+	public static <A, B, C> void run(
 			final BinaryOperation<A, B, C> op, final A[] in1, final B[] in2,
 			final C[] out) {
 		run(op, in1, in2, out, null);
 	}
 
-	public static synchronized <A, B, C> void run(
+	public static <A, B, C> void run(
 			final BinaryOperation<A, B, C> op, final A[] in1, final B[] in2,
 			final C[] out, ExecutorService service) {
 		compute(new TaskProvider() {
@@ -30,12 +31,12 @@ public class MultithreadedOps {
 		}, service);
 	}
 
-	public synchronized static <A, B> void run(final UnaryOperation<A, B> op,
+	public static <A, B> void run(final UnaryOperation<A, B> op,
 			final A[] in, final B[] out) {
 		run(op, in, out, null);
 	}
 
-	public static synchronized <A, B> void run(final UnaryOperation<A, B> op,
+	public static <A, B> void run(final UnaryOperation<A, B> op,
 			final A[] in, final B[] out, ExecutorService service) {
 		compute(new TaskProvider() {
 
@@ -51,7 +52,7 @@ public class MultithreadedOps {
 		}, service);
 	}
 
-	private synchronized static void compute(TaskProvider tasks,
+	private static void compute(TaskProvider tasks,
 			ExecutorService service) {
 
 		Future<?>[] futures = new Future<?>[tasks.numTasks()];
@@ -102,7 +103,7 @@ public class MultithreadedOps {
 				final B out) {
 			m_in = in;
 			m_out = out;
-			m_op = op;
+			m_op = op.copy();
 		}
 
 		@Override
@@ -126,7 +127,7 @@ public class MultithreadedOps {
 			m_in1 = in1;
 			m_in2 = in2;
 			m_out = out;
-			m_op = op;
+			m_op = op.copy();
 		}
 
 		@Override
