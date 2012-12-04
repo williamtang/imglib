@@ -24,9 +24,6 @@
  */
 package net.imglib2.algorithm.fft2;
 
-import edu.mines.jtk.dsp.FftComplex;
-import edu.mines.jtk.dsp.FftReal;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.imglib2.Dimensions;
@@ -38,6 +35,8 @@ import net.imglib2.iterator.LocalizingZeroMinIntervalIterator;
 import net.imglib2.multithreading.SimpleMultiThreading;
 import net.imglib2.type.numeric.ComplexType;
 import net.imglib2.type.numeric.RealType;
+import edu.mines.jtk.dsp.FftComplex;
+import edu.mines.jtk.dsp.FftReal;
 
 /**
  * Compute a FFT transform, either real-to-complex or complex-to-complex, or
