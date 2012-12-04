@@ -269,8 +269,8 @@ public class PlanarImg< T extends NativeType< T >, A extends ArrayDataAccess< A 
 	{
 		if ( n == 1 )
 			return new PlanarRandomAccess1D< T >( this );
-		else
-			return new PlanarRandomAccess< T >( this );
+
+		return new PlanarRandomAccess< T >( this );
 	}
 
 	@Override
@@ -311,7 +311,6 @@ public class PlanarImg< T extends NativeType< T >, A extends ArrayDataAccess< A 
 		return copy;
 	}
 
-
 	@Override
 	public boolean supportsOptimizedCursor( final Interval interval )
 	{
@@ -333,17 +332,20 @@ public class PlanarImg< T extends NativeType< T >, A extends ArrayDataAccess< A 
 	}
 
 	@Override
-	public Object subIntervalIterationOrder(Interval interval) {
+	public Object subIntervalIterationOrder( Interval interval )
+	{
 		return new FlatIterationOrder( interval );
 	}
 
 	@Override
-	public Cursor<T> cursor(Interval interval) {
-		return new PlanarSubsetCursor<T>(this, interval);
+	public Cursor< T > cursor( Interval interval )
+	{
+		return new PlanarSubsetCursor< T >( this, interval );
 	}
 
 	@Override
-	public Cursor<T> localizingCursor(Interval interval) {
-		return new PlanarSubsetLocalizingCursor<T>(this, interval);
+	public Cursor< T > localizingCursor( Interval interval )
+	{
+		return new PlanarSubsetLocalizingCursor< T >( this, interval );
 	}
 }
