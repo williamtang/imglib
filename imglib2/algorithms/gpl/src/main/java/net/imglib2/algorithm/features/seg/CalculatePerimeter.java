@@ -7,6 +7,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.basictypeaccess.array.ShortArray;
+import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.ops.operation.img.unary.ImgConvert;
 import net.imglib2.ops.operation.img.unary.ImgConvert.ImgConversionTypes;
@@ -127,4 +128,5 @@ public class CalculatePerimeter implements
 	public DoubleType compute(final Img<BitType> in) {
 		return compute(in, createEmptyOutput(in));
 	}
+
 }

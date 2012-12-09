@@ -52,7 +52,11 @@ public abstract class ConcatenatedUnaryOperation<T> implements
 	}
 
 	@Override
-	public T compute(T input, T output) {
+	public T compute( T input, T output )
+	{
+		// Check wether there exists only one solution
+		if ( operations.length == 1 )
+			return operations[ 0 ].compute( input, output );
 
 		if (operations.length == 1)
 			return operations[0].compute(input, output);
@@ -84,8 +88,6 @@ public abstract class ConcatenatedUnaryOperation<T> implements
 
 	/**
 	 * Method to retrieve the Buffer
-	 * 
-	 * @return
 	 */
 	protected abstract T getBuffer();
 

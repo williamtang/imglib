@@ -69,5 +69,6 @@ public interface UnaryOutputOperation< A, OUTPUT_TYPE > extends UnaryOperation< 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	UnaryOutputOperation< A, OUTPUT_TYPE > copy();
 }
