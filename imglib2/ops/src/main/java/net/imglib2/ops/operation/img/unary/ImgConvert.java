@@ -48,7 +48,7 @@ import net.imglib2.ops.operation.real.unary.Convert.TypeConversionTypes;
 import net.imglib2.ops.operation.real.unary.Normalize;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 
 /**
@@ -151,8 +151,8 @@ public class ImgConvert<I extends RealType<I>, O extends RealType<O> & NativeTyp
 	public Img<O> compute(Img<I> img, Img<O> r) {
 
 		double factor;
-		Pair<I, I> oldMinMax;
-		Convert<I, O> convertOp = null;
+		ValuePair< I, I > oldMinMax;
+		Convert< I, O > convertOp = null;
 
 		switch (m_conversionType) {
 		case DIRECT:
