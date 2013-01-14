@@ -5,6 +5,8 @@ import net.imglib2.FinalInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.algorithm.convolver.Convolver;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
@@ -12,84 +14,103 @@ import net.imglib2.view.Views;
  * @author Martin Horn (University of Konstanz)
  * @author Christian Dietz (University of Konstanz)
  */
-public class DirectConvolver< T extends RealType< T >, K extends RealType< K >, O extends RealType< O >> implements Convolver< T, K, O >
-{
+public class DirectConvolver<T extends RealType<T>, K extends RealType<K> & NativeType<K>, O extends RealType<O> & NativeType<O>>
+                implements Convolver<T, K, O> {
 
-	public DirectConvolver()
-	{}
+        private RandomAccessibleInterval<K> m_kernel;
 
-	@Override
-	public RandomAccessibleInterval< O > compute( RandomAccessible< T > input, RandomAccessibleInterval< K > kernel, RandomAccessibleInterval< O > output )
-	{
+        private RandomAccessibleInterval<K>[] m_kernels;
 
-		// TODO: Workaround until fix in imglib2 (outofbounds gets lost
-		// during optimization of transformation)
-		long[] min = new long[ input.numDimensions() ];
-		long[] max = new long[ input.numDimensions() ];
+        public DirectConvolver() {
+        }
 
-		for ( int d = 0; d < kernel.numDimensions(); d++ )
-		{
-			min[ d ] = -kernel.dimension( d );
-			max[ d ] = kernel.dimension( d ) + output.dimension( d );
-		}
+        @Override
+        public RandomAccessibleInterval<O> compute(RandomAccessible<T> input,
+                        RandomAccessibleInterval<K> kernel,
+                        RandomAccessibleInterval<O> output) {
 
-		final RandomAccess< T > srcRA = input.randomAccess( new FinalInterval( min, max ) );
+                if (kernel != m_kernel) {
+                        m_kernels = KernelTools.decomposeKernel(kernel);
+                }
 
-		final Cursor< K > kernelC = Views.iterable( kernel ).localizingCursor();
+                if (m_kernels.length > 1) {
+                        System.out.println("decomposed");
+                        return new DirectIterativeConvolver<T, K, O>().compute(
+                                        input, m_kernels, output);
+                } else {
+                        long[] min = new long[input.numDimensions()];
+                        long[] max = new long[input.numDimensions()];
 
-		final Cursor< O > resC = Views.iterable( output ).localizingCursor();
+                        for (int d = 0; d < kernel.numDimensions(); d++) {
+                                min[d] = -kernel.dimension(d);
+                                max[d] = kernel.dimension(d)
+                                                + output.dimension(d);
+                        }
 
-		final long[] pos = new long[ input.numDimensions() ];
-		final long[] kernelRadius = new long[ kernel.numDimensions() ];
-		for ( int i = 0; i < kernelRadius.length; i++ )
-		{
-			kernelRadius[ i ] = kernel.dimension( i ) / 2;
-		}
+                        final RandomAccess<T> srcRA = input
+                                        .randomAccess(new FinalInterval(min,
+                                                        max));
 
-		float val;
+                        final Cursor<K> kernelC = Views.iterable(kernel)
+                                        .localizingCursor();
 
-		while ( resC.hasNext() )
-		{
-			// image
-			resC.fwd();
-			resC.localize( pos );
+                        final Cursor<O> resC = Views.iterable(output)
+                                        .localizingCursor();
 
-			// kernel inlined version of the method convolve
-			val = 0;
-			srcRA.setPosition( pos );
+                        final long[] pos = new long[input.numDimensions()];
+                        final long[] kernelRadius = new long[kernel
+                                        .numDimensions()];
+                        for (int i = 0; i < kernelRadius.length; i++) {
+                                kernelRadius[i] = kernel.dimension(i) / 2;
+                        }
 
-			kernelC.reset();
-			while ( kernelC.hasNext() )
-			{
-				kernelC.fwd();
+                        float val;
 
-				for ( int i = 0; i < kernelRadius.length; i++ )
-				{
-					if ( kernelRadius[ i ] > 0 )
-					{ // dimension
-						// can have
-						// zero
-						// extension
-						// e.g.
-						// vertical
-						// 1d kernel
-						srcRA.setPosition( pos[ i ] + kernelC.getLongPosition( i ) - kernelRadius[ i ], i );
-					}
-				}
+                        while (resC.hasNext()) {
+                                // image
+                                resC.fwd();
+                                resC.localize(pos);
 
-				val += srcRA.get().getRealDouble() * kernelC.get().getRealDouble();
-			}
+                                // kernel inlined version of the method convolve
+                                val = 0;
+                                srcRA.setPosition(pos);
 
-			resC.get().setReal( val );
-		}
+                                kernelC.reset();
+                                while (kernelC.hasNext()) {
+                                        kernelC.fwd();
 
-		return output;
-	}
+                                        for (int i = 0; i < kernelRadius.length; i++) {
+                                                if (kernelRadius[i] > 0) { // dimension
+                                                                           // can
+                                                                           // have
+                                                                           // zero
+                                                                           // extension
+                                                                           // e.g.
+                                                                           // vertical
+                                                                           // 1d
+                                                                           // kernel
+                                                        srcRA.setPosition(
+                                                                        pos[i]
+                                                                                        + kernelC.getLongPosition(i)
+                                                                                        - kernelRadius[i],
+                                                                        i);
+                                                }
+                                        }
 
-	@Override
-	public DirectConvolver< T, K, O > copy()
-	{
-		return new DirectConvolver< T, K, O >();
-	}
+                                        val += srcRA.get().getRealDouble()
+                                                        * kernelC.get()
+                                                                        .getRealDouble();
+                                }
+
+                                resC.get().setReal(val);
+                        }
+                }
+                return output;
+        }
+
+        @Override
+        public DirectConvolver<T, K, O> copy() {
+                return new DirectConvolver<T, K, O>();
+        }
 
 }

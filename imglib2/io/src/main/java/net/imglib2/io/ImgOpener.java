@@ -80,7 +80,7 @@ import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.IntervalIndexer;
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 import ome.scifio.common.DataTools;
 import ome.scifio.common.StatusEvent;
 import ome.scifio.common.StatusListener;
@@ -534,7 +534,7 @@ public class ImgOpener implements StatusReporter {
 			final boolean computeMinMax, final int... includedPlanes)
 			throws ImgIOException {
 
-		Pair<long[], int[]> info = dimLengths(r, includedPlanes);
+		ValuePair<long[], int[]> info = dimLengths(r, includedPlanes);
 		final Img<T> img = imgFactory.create(info.a, type);
 		final ImgPlus<T> imgPlus = makeImgPlus(img, r, info.b);
 
@@ -563,13 +563,13 @@ public class ImgOpener implements StatusReporter {
 	 * Calculate dimensionality of resulting img and returns the resulting
 	 * dimensionality and the invalid dimensions (which are size one)
 	 */
-	private Pair<long[], int[]> dimLengths(final IFormatReader r,
+	private ValuePair<long[], int[]> dimLengths(final IFormatReader r,
 			final int... includedPlanes) {
 
 		long[] srcDimLengths = getDimLengths(r);
 
 		if (includedPlanes.length == 0) {
-			return new Pair<long[], int[]>(srcDimLengths, new int[0]);
+			return new ValuePair<long[], int[]>(srcDimLengths, new int[0]);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -614,7 +614,7 @@ public class ImgOpener implements StatusReporter {
 			resDims[d + 2] = resDimensionsList.get(d);
 		}
 
-		return new Pair<long[], int[]>(resDims, invalidDims);
+		return new ValuePair<long[], int[]>(resDims, invalidDims);
 	}
 
 	// -- StatusReporter methods --
