@@ -55,34 +55,35 @@ public class Normalize< T extends RealType< T >> implements UnaryOperation< T, T
 
 	private final double m_oldMin;
 
+	private final double m_newMax;
+
+	private final double m_oldMax;
+
 	public Normalize( T oldMin, T oldMax, T newMin, T newMax )
 	{
 		this( oldMin.getRealDouble(), oldMax.getRealDouble(), newMin.getRealDouble(), newMax.getRealDouble() );
 	}
 
-	protected Normalize( double factor, double oldMin, double newMin )
-	{
-		m_oldMin = oldMin;
-		m_newMin = newMin;
-		m_factor = factor;
-	}
-
 	public Normalize( double oldMin, double oldMax, double newMin, double newMax )
 	{
-		this( normalizationFactor( oldMin, oldMax, newMin, newMax ), oldMin, newMin );
+		m_factor = normalizationFactor( oldMin, oldMax, newMin, newMax );
+		m_oldMin = oldMin;
+		m_oldMax = oldMax;
+		m_newMin = newMin;
+		m_newMax = newMax;
 	}
 
 	@Override
 	public T compute( T input, T output )
 	{
-		output.setReal( ( input.getRealDouble() - m_oldMin ) * m_factor + m_newMin );
+		output.setReal( Math.min( Math.max( ( input.getRealDouble() - m_oldMin ) * m_factor + m_newMin, m_newMin ), m_newMax ) );
 		return output;
 	}
 
 	@Override
 	public UnaryOperation< T, T > copy()
 	{
-		return new Normalize< T >( m_factor, m_oldMin, m_newMin );
+		return new Normalize< T >( m_oldMin, m_oldMax, m_oldMin, m_newMin );
 	}
 
 	@Override
