@@ -39,7 +39,7 @@ package net.imglib2.ops.function.general;
 
 import java.util.Arrays;
 
-import net.imglib2.ops.function.Function;
+import net.imglib2.function.Function;
 import net.imglib2.ops.util.DataCopier;
 
 

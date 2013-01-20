@@ -37,7 +37,7 @@
 
 package net.imglib2.ops.function.general;
 
-import net.imglib2.ops.function.Function;
+import net.imglib2.function.Function;
 
 
 /**

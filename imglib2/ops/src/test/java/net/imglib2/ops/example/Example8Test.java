@@ -45,9 +45,9 @@ import java.util.Collections;
 
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
+import net.imglib2.function.Function;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.ops.function.Function;
 import net.imglib2.ops.function.real.RealArithmeticMeanFunction;
 import net.imglib2.ops.function.real.RealImageFunction;
 import net.imglib2.ops.function.real.RealMedianFunction;

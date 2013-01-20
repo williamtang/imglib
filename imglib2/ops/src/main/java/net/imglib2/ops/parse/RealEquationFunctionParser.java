@@ -41,8 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.imglib2.function.Function;
 import net.imglib2.img.Img;
-import net.imglib2.ops.function.Function;
 import net.imglib2.ops.parse.token.CloseRange;
 import net.imglib2.ops.parse.token.Comma;
 import net.imglib2.ops.parse.token.OpenRange;

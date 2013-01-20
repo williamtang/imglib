@@ -36,7 +36,7 @@
 
 package net.imglib2.ops.function.general;
 
-import net.imglib2.ops.function.Function;
+import net.imglib2.function.Function;
 
 /**
  * This class allows one to pass double[] input coordinates to a

@@ -39,7 +39,7 @@ package net.imglib2.ops.function.real;
 
 import java.util.Arrays;
 
-import net.imglib2.ops.function.Function;
+import net.imglib2.function.Function;
 import net.imglib2.ops.pointset.PointSet;
 import net.imglib2.ops.util.Tuple2;
 import net.imglib2.type.numeric.RealType;

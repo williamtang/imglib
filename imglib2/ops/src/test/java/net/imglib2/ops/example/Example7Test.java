@@ -39,11 +39,11 @@ package net.imglib2.ops.example;
 
 import static org.junit.Assert.assertTrue;
 import net.imglib2.RandomAccess;
+import net.imglib2.function.Function;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.ops.condition.AndCondition;
 import net.imglib2.ops.condition.Condition;
-import net.imglib2.ops.function.Function;
 import net.imglib2.ops.function.general.ConditionalFunction;
 import net.imglib2.ops.img.ImageAssignment;
 import net.imglib2.ops.input.InputIteratorFactory;

@@ -39,8 +39,8 @@ package net.imglib2.ops.parse;
 
 import java.util.List;
 
+import net.imglib2.function.Function;
 import net.imglib2.ops.condition.Condition;
-import net.imglib2.ops.function.Function;
 import net.imglib2.ops.parse.token.Token;
 import net.imglib2.ops.pointset.PointSet;
 import net.imglib2.ops.relation.BinaryRelation;

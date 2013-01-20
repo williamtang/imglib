@@ -43,9 +43,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import net.imglib2.RandomAccess;
+import net.imglib2.function.Function;
 import net.imglib2.img.Img;
 import net.imglib2.ops.condition.Condition;
-import net.imglib2.ops.function.Function;
 import net.imglib2.ops.input.InputIterator;
 import net.imglib2.ops.input.InputIteratorFactory;
 import net.imglib2.ops.pointset.HyperVolumePointSet;

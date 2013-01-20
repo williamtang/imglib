@@ -36,9 +36,9 @@
 
 package net.imglib2.ops.example;
 
+import net.imglib2.function.Function;
 import net.imglib2.img.Img;
 import net.imglib2.ops.condition.Condition;
-import net.imglib2.ops.function.Function;
 import net.imglib2.ops.function.complex.ComplexImageFunction;
 import net.imglib2.ops.function.general.GeneralUnaryFunction;
 import net.imglib2.ops.img.ImageAssignment;

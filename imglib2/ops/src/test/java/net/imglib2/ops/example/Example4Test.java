@@ -41,9 +41,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 
 import net.imglib2.RandomAccess;
+import net.imglib2.function.Function;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.ops.function.Function;
 import net.imglib2.ops.function.real.RealImageFunction;
 import net.imglib2.ops.function.real.RealProductFunction;
 import net.imglib2.ops.input.PointSetInputIterator;

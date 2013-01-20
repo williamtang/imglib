@@ -39,7 +39,7 @@ package net.imglib2.ops.function.general;
 
 import java.util.ArrayList;
 
-import net.imglib2.ops.function.Function;
+import net.imglib2.function.Function;
 import net.imglib2.ops.pointset.PointSet;
 
 // TODO - this is a simple implementation. It only works from a fixed point

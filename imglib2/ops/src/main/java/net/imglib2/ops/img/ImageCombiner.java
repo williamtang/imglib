@@ -39,10 +39,10 @@ package net.imglib2.ops.img;
 import java.util.Random;
 
 import net.imglib2.Cursor;
+import net.imglib2.function.Function;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.ops.function.Function;
 import net.imglib2.ops.function.general.GeneralBinaryFunction;
 import net.imglib2.ops.function.general.GeneralUnaryFunction;
 import net.imglib2.ops.function.real.RealImageFunction;

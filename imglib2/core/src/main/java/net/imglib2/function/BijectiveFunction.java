@@ -35,7 +35,7 @@
  */
 
 
-package net.imglib2.ops.function;
+package net.imglib2.function;
 
 
 /**

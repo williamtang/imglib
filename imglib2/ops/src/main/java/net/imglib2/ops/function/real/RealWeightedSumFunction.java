@@ -37,7 +37,7 @@
 
 package net.imglib2.ops.function.real;
 
-import net.imglib2.ops.function.Function;
+import net.imglib2.function.Function;
 import net.imglib2.type.numeric.RealType;
 
 // TODO - this class suffers from the weakness that one needs to
