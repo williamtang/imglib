@@ -37,6 +37,7 @@
 package net.imglib2;
 
 import net.imglib2.function.BijectiveFunction;
+import net.imglib2.meta.AxisType;
 import net.imglib2.type.numeric.real.DoubleType;
 
 /**
@@ -56,4 +57,10 @@ public interface Axis<T extends BijectiveFunction<DoubleType, DoubleType>> {
 	void setUnit(String unit);
 
 	String getUnit();
+	
+	void setLabel(String label);
+	
+	String getLabel();
+	
+	AxisType getType();
 }

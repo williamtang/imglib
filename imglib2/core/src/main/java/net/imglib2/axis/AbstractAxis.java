@@ -38,6 +38,8 @@ package net.imglib2.axis;
 
 import net.imglib2.Axis;
 import net.imglib2.function.BijectiveFunction;
+import net.imglib2.meta.Axes;
+import net.imglib2.meta.AxisType;
 import net.imglib2.type.numeric.real.DoubleType;
 
 /**
@@ -52,8 +54,10 @@ public abstract class AbstractAxis
 {
 	private final T function;
 	private String unitName = null;
+	private String label = null;
 	private final DoubleType abs = new DoubleType();
 	private final DoubleType rel = new DoubleType();
+	private AxisType type = Axes.UNKNOWN;
 	
 	public AbstractAxis(T func) {
 		this.function = func;
@@ -86,5 +90,21 @@ public abstract class AbstractAxis
 	@Override
 	public void setUnit(String unit) {
 		unitName = unit;
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
+	}
+	
+	@Override
+	public void setLabel(String label) {
+		this.label = label;
+		this.type = Axes.get(label);
+	}
+	
+	@Override
+	public AxisType getType() {
+		return type;
 	}
 }

@@ -37,6 +37,7 @@
 
 package net.imglib2.meta;
 
+import net.imglib2.Axis;
 import net.imglib2.EuclideanSpace;
 import net.imglib2.img.Img;
 
@@ -47,6 +48,7 @@ import net.imglib2.img.Img;
  * @author Stephan Preibisch
  * @author Stephan Saalfeld
  * @author Lee Kamentsky
+ * @author Barry DeZonia
  */
 public interface CalibratedSpace extends EuclideanSpace {
 
@@ -54,29 +56,12 @@ public interface CalibratedSpace extends EuclideanSpace {
 	int getAxisIndex(final AxisType axis);
 
 	/** Gets the associated {@link Img}'s axis at the given dimension. */
-	AxisType axis(int d);
+	Axis<?> axis(int d);
 
 	/** Copies the {@link Img}'s axes into the given array. */
-	void axes(AxisType[] axes);
+	void axes(Axis<?>[] axes);
 
 	/** Sets the dimensional axis for the given dimension. */
-	void setAxis(AxisType axis, int d);
+	void setAxis(Axis<?> axis, int d);
 
-	/** Gets the associated {@link Img}'s calibration at the given dimension. */
-	double calibration(int d);
-
-	/** Copies the {@link Img}'s calibration into the given array. */
-	void calibration(double[] cal);
-
-	/** Copies the {@link Img}'s calibration into the given array. */
-	void calibration(float[] cal);
-
-	/** Sets the image calibration for the given dimension. */
-	void setCalibration(double cal, int d);
-
-	/** Sets the image calibration for all dimensions. */
-	void setCalibration(double[] cal);
-
-	/** Sets the image calibration for all dimensions. */
-	void setCalibration(float[] cal);
 }
