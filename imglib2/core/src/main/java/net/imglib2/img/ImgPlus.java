@@ -411,13 +411,13 @@ public class ImgPlus<T> implements Img<T>, Metadata {
 				Axis<?> axis = new LinearAxis(0, 1);
 				switch (i) {
 					case 0:
-						axis.setLabel(Axes.X.toString());
+						axis.setLabel(Axes.X.getLabel());
 						break;
 					case 1:
-						axis.setLabel(Axes.Y.toString());
+						axis.setLabel(Axes.Y.getLabel());
 						break;
 					default:
-						axis.setLabel(Axes.UNKNOWN.toString());
+						axis.setLabel(Axes.UNKNOWN.getLabel());
 				}
 				validAxes[i] = axis;
 			}
