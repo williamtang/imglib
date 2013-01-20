@@ -58,10 +58,7 @@ public class ImgPlusCopy< T extends Type< T >> implements UnaryOperation< ImgPlu
 		r.setSource( op.getSource() );
 		for ( int d = 0; d < op.numDimensions(); d++ )
 		{
-
-			r.setAxis( op.axis( d ), d );
-			r.setCalibration( op.calibration( d ), d );
-
+			r.setAxis( op.axis( d ).copy(), d );
 		}
 		new ImgCopyOperation< T >().compute( op, r );
 		return r;

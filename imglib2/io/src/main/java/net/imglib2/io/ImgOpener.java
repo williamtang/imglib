@@ -54,7 +54,9 @@ import loci.formats.MinMaxCalculator;
 import loci.formats.ReaderWrapper;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+import net.imglib2.Axis;
 import net.imglib2.RandomAccess;
+import net.imglib2.axis.LinearAxis;
 import net.imglib2.display.ColorTable16;
 import net.imglib2.display.ColorTable8;
 import net.imglib2.exception.IncompatibleTypeException;
@@ -682,7 +684,7 @@ public class ImgOpener implements StatusReporter {
 		final int rgbChannelCount = base.getRGBChannelCount();
 		final int validBits = r.getBitsPerPixel();
 
-		final ImgPlus<T> imgPlus = new ImgPlus<T>(img, name, dimTypes, cal);
+		final ImgPlus<T> imgPlus = new ImgPlus<T>(img, name, axes(dimTypes, cal));
 		imgPlus.setValidBits(validBits);
 
 		int compositeChannelCount = rgbChannelCount;
@@ -918,4 +920,11 @@ public class ImgOpener implements StatusReporter {
 		return value;
 	}
 
+	private Axis<?>[] axes(final AxisType[] dimTypes, final double[] cal) {
+		Axis<?>[] axes = new Axis<?>[dimTypes.length];
+		for (int i = 0; i < dimTypes.length; i++) {
+			axes[i] = new LinearAxis(0, cal[i]);
+		}
+		return axes;
+	}
 }

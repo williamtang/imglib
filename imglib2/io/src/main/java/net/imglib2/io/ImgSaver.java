@@ -51,6 +51,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
+import net.imglib2.Axis;
 import net.imglib2.exception.ImgLibException;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
@@ -111,8 +112,7 @@ public class ImgSaver implements StatusReporter {
 	public <T extends RealType<T> & NativeType<T>> boolean isCompressible(
 		final ImgPlus<T> img)
 	{
-
-		final AxisType[] axes = new AxisType[img.numDimensions()];
+		final Axis<?>[] axes = new Axis<?>[img.numDimensions()];
 		img.axes(axes);
 
 		final long[] axisLengths = new long[5];
@@ -124,7 +124,7 @@ public class ImgSaver implements StatusReporter {
 		boolean foundUnknown = false;
 
 		for (int i = 0; i < axes.length; i++) {
-			final AxisType axis = axes[i];
+			final AxisType axis = axes[i].getType();
 
 			switch (axis.getLabel().toUpperCase().charAt(0)) {
 				case 'X':
@@ -230,7 +230,7 @@ public class ImgSaver implements StatusReporter {
 	 * 
 	 * @param newLengths - updated to hold the lengths of the newly ordered axes
 	 */
-	public static String guessDimOrder(final AxisType[] axes,
+	public static String guessDimOrder(final Axis<?>[] axes,
 		final long[] dimLengths, final long[] newLengths)
 	{
 		String oldOrder = "";
@@ -475,7 +475,7 @@ public class ImgSaver implements StatusReporter {
 
 		int sliceCount = 1;
 		for (int i = 0; i < img.numDimensions(); i++) {
-			if (!(img.axis(i).equals(Axes.X) || img.axis(i).equals(Axes.Y))) {
+			if (!(img.axis(i).getType().equals(Axes.X) || img.axis(i).getType().equals(Axes.Y))) {
 				sliceCount *= img.dimension(i);
 			}
 		}
@@ -631,7 +631,7 @@ public class ImgSaver implements StatusReporter {
 
 			// TODO is there some way to consolidate this with the isCompressible
 			// method?
-			final AxisType[] axes = new AxisType[img.numDimensions()];
+			final Axis<?>[] axes = new Axis<?>[img.numDimensions()];
 			img.axes(axes);
 
 			String dimOrder = "";

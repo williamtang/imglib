@@ -39,10 +39,12 @@ package net.imglib2.ops.operation.subset.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.imglib2.Axis;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.axis.LinearAxis;
 import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
@@ -151,7 +153,7 @@ public class SubsetViews {
 				}
 			}
 
-			resSpace.setAxis(srcSpace.axis(d), i++);
+			resSpace.setAxis(srcSpace.axis(d), i++); // TODO - axis().copy() here?
 		}
 
 		// 2. Add Axis which are available in target but not in source
@@ -162,7 +164,9 @@ public class SubsetViews {
 		for (final AxisType type : missing) {
 			final int idx = targetSpace.getAxisIndex(type);
 			res = Views.addDimension(res, target.min(idx), target.max(idx));
-			resSpace.setAxis(type, i++);
+			Axis<?> axis = new LinearAxis(0, 1);
+			axis.setLabel(type.getLabel());
+			resSpace.setAxis(axis, i++);
 		}
 
 		// res should have the same size, but with different metadata
@@ -171,13 +175,13 @@ public class SubsetViews {
 		// 3. Permutate axis if necessary
 		RandomAccessible<T> resRndAccessible = res;
 		for (int d = 0; d < res.numDimensions(); d++) {
-			int srcIdx = resSpace.getAxisIndex(targetSpace.axis(d));
+			int srcIdx = resSpace.getAxisIndex(targetSpace.axis(d).getType());
 
 			if (srcIdx != d) {
 				resRndAccessible = Views.permute(resRndAccessible, srcIdx, d);
 
 				// also permutate calibrated space
-				AxisType tmp = resSpace.axis(d);
+				Axis<?> tmp = resSpace.axis(d);
 				resSpace.setAxis(targetSpace.axis(d), d);
 				resSpace.setAxis(tmp, srcIdx);
 			}
@@ -244,7 +248,7 @@ public class SubsetViews {
 
 		List<AxisType> delta = new ArrayList<AxisType>();
 		for (int d = 0; d < targetSpace.numDimensions(); d++) {
-			AxisType axisType = targetSpace.axis(d);
+			AxisType axisType = targetSpace.axis(d).getType();
 			if (sourceSpace.getAxisIndex(axisType) == -1) {
 				delta.add(axisType);
 			}

@@ -72,8 +72,7 @@ public class CopyCalibratedSpace< CS extends CalibratedSpace > implements UnaryO
 			}
 			else
 			{
-				output.setAxis( input.axis( d ), d - offset );
-				output.setCalibration( input.calibration( d ), d - offset );
+				output.setAxis( input.axis( d ).copy(), d - offset );
 			}
 		}
 

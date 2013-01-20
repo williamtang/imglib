@@ -65,7 +65,7 @@ public class InteractiveImageViewerExample
 			if ( interval instanceof CalibratedSpace )
 			{
 				final CalibratedSpace cs = ( CalibratedSpace ) interval;
-				yScale = cs.calibration( 1 ) / cs.calibration( 0 );
+				yScale = cs.axis( 1 ).getScale() / cs.axis( 0 ).getScale();
 				if ( Double.isNaN( yScale ) || Double.isInfinite( yScale ) )
 					yScale = 1;
 			}
@@ -93,8 +93,8 @@ public class InteractiveImageViewerExample
 			if ( interval instanceof CalibratedSpace )
 			{
 				final CalibratedSpace cs = ( CalibratedSpace ) interval;
-				yScale = cs.calibration( 1 ) / cs.calibration( 0 );
-				zScale = cs.calibration( 2 ) / cs.calibration( 0 );
+				yScale = cs.axis( 1 ).getScale() / cs.axis( 0 ).getScale();
+				zScale = cs.axis( 2 ).getScale() / cs.axis( 0 ).getScale();
 				if ( Double.isNaN( yScale ) || Double.isInfinite( yScale ) )
 					yScale = 1;
 				if ( Double.isNaN( zScale ) || Double.isInfinite( zScale ) )

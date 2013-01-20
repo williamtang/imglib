@@ -1,6 +1,8 @@
 package net.imglib2.algorithm.region.localneighborhood;
 
+import net.imglib2.Axis;
 import net.imglib2.meta.Axes;
+import net.imglib2.meta.AxisType;
 import net.imglib2.meta.Metadata;
 import net.imglib2.util.Util;
 
@@ -19,12 +21,14 @@ public class Utils {
 	public static final double[] getSpatialCalibration(final Metadata img) {
 		final double[] calibration = Util.getArrayFromValue(1d, 3);
 		for (int d = 0; d < img.numDimensions(); d++) {
-			if (img.axis(d).equals(Axes.X)) {
-				calibration[0] = img.calibration(d);
-			} else if (img.axis(d).equals(Axes.Y)) {
-				calibration[1] = img.calibration(d);
-			} else if (img.axis(d).equals(Axes.Z)) {
-				calibration[2] = img.calibration(d);
+			Axis<?> axis = img.axis(d);
+			AxisType type = axis.getType();
+			if (type.equals(Axes.X)) {
+				calibration[0] = axis.getScale();
+			} else if (type.equals(Axes.Y)) {
+				calibration[1] = axis.getScale();
+			} else if (type.equals(Axes.Z)) {
+				calibration[2] = axis.getScale();
 			}
 		}
 		return calibration;
