@@ -34,8 +34,9 @@
  * #L%
  */
 
-package net.imglib2;
+package net.imglib2.axis;
 
+import net.imglib2.Axis;
 import net.imglib2.function.BijectiveFunction;
 import net.imglib2.type.numeric.real.DoubleType;
 
@@ -45,15 +46,45 @@ import net.imglib2.type.numeric.real.DoubleType;
  *
  * @param <T>
  */
-public interface Axis<T extends BijectiveFunction<DoubleType, DoubleType>> {
-
-	T getFunction();
-
-	double getRelativeMeasure(double absoluteMeasure);
-
-	double getAbsoluteMeasure(double relativeMeasure);
-
-	void setUnit(String unit);
-
-	String getUnit();
+public abstract class AbstractAxis
+	<T extends BijectiveFunction<DoubleType, DoubleType>>
+	implements Axis<T>
+{
+	private final T function;
+	private String unitName = null;
+	private final DoubleType abs = new DoubleType();
+	private final DoubleType rel = new DoubleType();
+	
+	public AbstractAxis(T func) {
+		this.function = func;
+	}
+	
+	@Override
+	public T getFunction() {
+		return function;
+	}
+	
+	@Override
+	synchronized public double getRelativeMeasure(double absoluteMeasure) {
+		abs.setReal(absoluteMeasure);
+		getFunction().computeInverse(abs, rel);
+		return rel.get();
+	}
+	
+	@Override
+	synchronized public double getAbsoluteMeasure(double relativeMeasure) {
+		rel.setReal(relativeMeasure);
+		getFunction().compute(rel, abs);
+		return abs.get();
+	}
+	
+	@Override
+	public String getUnit() {
+		return unitName;
+	}
+	
+	@Override
+	public void setUnit(String unit) {
+		unitName = unit;
+	}
 }

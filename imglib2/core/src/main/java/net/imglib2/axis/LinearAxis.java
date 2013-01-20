@@ -34,26 +34,20 @@
  * #L%
  */
 
-package net.imglib2;
 
-import net.imglib2.function.BijectiveFunction;
-import net.imglib2.type.numeric.real.DoubleType;
+package net.imglib2.axis;
+
+import net.imglib2.function.scaling.LinearScalingFunction;
 
 /**
  * 
  * @author Barry DeZonia
  *
- * @param <T>
  */
-public interface Axis<T extends BijectiveFunction<DoubleType, DoubleType>> {
+public class LinearAxis extends AbstractAxis<LinearScalingFunction> {
 
-	T getFunction();
+	public LinearAxis(double offset, double scale) {
+		super(new LinearScalingFunction(offset, scale));
+	}
 
-	double getRelativeMeasure(double absoluteMeasure);
-
-	double getAbsoluteMeasure(double relativeMeasure);
-
-	void setUnit(String unit);
-
-	String getUnit();
 }

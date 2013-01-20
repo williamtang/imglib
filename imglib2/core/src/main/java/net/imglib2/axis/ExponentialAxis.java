@@ -34,26 +34,19 @@
  * #L%
  */
 
-package net.imglib2;
 
-import net.imglib2.function.BijectiveFunction;
-import net.imglib2.type.numeric.real.DoubleType;
+package net.imglib2.axis;
+
+import net.imglib2.function.scaling.ExponentialScalingFunction;
 
 /**
  * 
  * @author Barry DeZonia
  *
- * @param <T>
  */
-public interface Axis<T extends BijectiveFunction<DoubleType, DoubleType>> {
-
-	T getFunction();
-
-	double getRelativeMeasure(double absoluteMeasure);
-
-	double getAbsoluteMeasure(double relativeMeasure);
-
-	void setUnit(String unit);
-
-	String getUnit();
+public class ExponentialAxis extends AbstractAxis<ExponentialScalingFunction>
+{
+	public ExponentialAxis(double offset, double scale, double base) {
+		super(new ExponentialScalingFunction(offset, scale, base));
+	}
 }
