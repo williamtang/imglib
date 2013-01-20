@@ -100,16 +100,17 @@ public class  ImagePlusAdapterTest <T extends NumericType<T> & NativeType<T>> {
 			skipDim = 0;
 			for (int d = 0; d < calibration[i].length; d++) {
 				if (dim[i][d] > 1 ) {
+					System.out.println("i="+i+" d="+d+" skipDim="+skipDim);
+					System.out.println("axis = "+img.axis(skipDim).getLabel());
 					// Is it the channel axis?
-					if (d < expectedNumDimensions && img.axis(d).equals(Axes.CHANNEL)) {
+					if (img.axis(skipDim).getType().equals(Axes.CHANNEL)) {
 						
 						// Then the calibration should be 1,
-						assertEquals( 1f, img.calibration(skipDim), Float.MIN_VALUE);
+						assertEquals( 1f, img.axis(skipDim).getScale(), Float.MIN_VALUE);
 						
 					} else {
-						
 						// otherwise it should be what we set.
-						assertEquals( calibration[i][d], img.calibration(skipDim), Float.MIN_VALUE);
+						assertEquals( calibration[i][d], img.axis(skipDim).getScale(), Float.MIN_VALUE);
 					}
 					skipDim++;
 					

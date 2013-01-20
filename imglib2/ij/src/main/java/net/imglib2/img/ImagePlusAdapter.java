@@ -36,9 +36,11 @@
 
 package net.imglib2.img;
 
+
 import ij.ImagePlus;
 import ij.measure.Calibration;
 import net.imglib2.Cursor;
+import net.imglib2.axis.LinearAxis;
 import net.imglib2.converter.Converter;
 import net.imglib2.img.imageplus.ByteImagePlus;
 import net.imglib2.img.imageplus.FloatImagePlus;
@@ -86,9 +88,6 @@ public class ImagePlusAdapter
 	{
 		Img< T > img = wrap( imp );
 		ImgPlus< T > image = new ImgPlus< T >( img );
-
-		// set calibration
-		setCalibrationFromImagePlus1( image, imp );
 
 		// set title
 		image.setName( imp.getTitle() );
@@ -151,67 +150,56 @@ public class ImagePlusAdapter
 
 	protected static < T extends NumericType< T > & NativeType< T > > void setAxesFromImagePlus( final ImgPlus<T> image, final ImagePlus imp ) 
 	{
-
+		Calibration cal = imp.getCalibration();
+		LinearAxis axis;
+		
+		axis = new LinearAxis(0, 1);
+		axis.setLabel(Axes.X.getLabel());
+		if (cal != null) {
+			axis.setScale(cal.pixelWidth);
+			axis.setUnit(cal.getXUnit());
+		}
+		image.setAxis(axis, 0);
+		
+		axis = new LinearAxis(0, 1);
+		axis.setLabel(Axes.Y.getLabel());
+		if (cal != null) {
+			axis.setScale(cal.pixelHeight);
+			axis.setUnit(cal.getYUnit());
+		}
+		image.setAxis(axis, 1);
+		
 		int currentDim = 2;
-
+		
 		if (imp.getNChannels() > 1) {
-			image.setAxis(Axes.CHANNEL, currentDim);
+			axis = new LinearAxis(0, 1);
+			axis.setLabel(Axes.CHANNEL.getLabel());
+			axis.setScale(1);
+			image.setAxis(axis, currentDim);
 			currentDim++;
 		}
 
 		if (imp.getNSlices() > 1) {
-			image.setAxis(Axes.Z, currentDim);
+			axis = new LinearAxis(0, 1);
+			axis.setLabel(Axes.Z.getLabel());
+			if (cal != null) {
+				axis.setScale(cal.pixelDepth);
+				axis.setUnit(cal.getZUnit());
+			}
+			image.setAxis(axis, currentDim);
 			currentDim++;
 		}
 
 		if (imp.getNFrames() > 1) {
-			image.setAxis(Axes.TIME, currentDim);
+			axis = new LinearAxis(0, 1);
+			axis.setLabel(Axes.TIME.getLabel());
+			if (cal != null) {
+				axis.setScale(cal.frameInterval);
+				axis.setUnit(cal.getTimeUnit());
+			}
+			image.setAxis(axis, currentDim);
 		}
 
-	}
-
-
-	protected static < T extends NumericType< T > & NativeType< T > > void setCalibrationFromImagePlus1( final ImgPlus<T> image, final ImagePlus imp ) 
-	{
-		final int d = image.numDimensions();
-		final float [] spacing = new float[d];
-
-		for( int i = 0; i < d; ++i )
-			spacing[i] = 1f;
-
-		final Calibration c = imp.getCalibration();
-
-		/* Fill out calibration array. We must make sure that the element
-		 * matches the dimension; the resulting ImgPlus skips singleton dimensions. */
-		if( c != null ) 
-		{
-			if( d >= 1 )
-				spacing[0] = (float)c.pixelWidth;
-
-			if( d >= 2 )
-				spacing[1] = (float)c.pixelHeight;
-
-			/* Extra dimensions. We must take  care of the dimensions order and
-			 * of singleton dimensions. */
-			int currentDim = 2;
-
-			if (imp.getNChannels() > 1) {
-				spacing[currentDim] = 1;
-				currentDim++;
-			}
-
-			if (imp.getNSlices() > 1) {
-				spacing[currentDim] = (float) c.pixelDepth;
-				currentDim++;
-			}
-
-			if (imp.getNFrames() > 1) {
-				spacing[currentDim] = (float) c.frameInterval;
-			}
-
-		}
-
-		image.setCalibration( spacing );
 	}
 
 	public static ByteImagePlus<UnsignedByteType> wrapByte( final ImagePlus imp )
@@ -341,5 +329,5 @@ public class ImagePlusAdapter
 		}
 
 		return output;
-			}
+	}
 }
