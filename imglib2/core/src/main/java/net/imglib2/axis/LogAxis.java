@@ -62,8 +62,8 @@ public class LogAxis extends AbstractAxis<LogScalingFunction> {
 	public boolean sameAs(Axis<?> otherAxis) {
 		if (otherAxis instanceof LogAxis) {
 			LogAxis axis = (LogAxis) otherAxis;
-			if (getOffset() != axis.getOffset()) return false;
-			if (getScale() != axis.getScale()) return false;
+			if (!same(getOffset(), axis.getOffset())) return false;
+			if (!same(getScale(), axis.getScale())) return false;
 			return true;
 		}
 		return false;

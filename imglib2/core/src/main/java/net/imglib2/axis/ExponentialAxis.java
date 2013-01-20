@@ -63,9 +63,9 @@ public class ExponentialAxis extends AbstractAxis<ExponentialScalingFunction>
 	public boolean sameAs(Axis<?> otherAxis) {
 		if (otherAxis instanceof ExponentialAxis) {
 			ExponentialAxis axis = (ExponentialAxis) otherAxis;
-			if (getOffset() != axis.getOffset()) return false;
-			if (getScale() != axis.getScale()) return false;
-			if (getBase() != axis.getBase()) return false;
+			if (!same(getOffset(), axis.getOffset())) return false;
+			if (!same(getScale(), axis.getScale())) return false;
+			if (!same(getBase(), axis.getBase())) return false;
 			return true;
 		}
 		return false;

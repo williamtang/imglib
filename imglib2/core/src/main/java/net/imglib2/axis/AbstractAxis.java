@@ -121,4 +121,9 @@ public abstract class AbstractAxis<T extends ScalingFunction> implements Axis<T>
 	public void setScale(double scale) {
 		function.setScale(scale);
 	}
+	
+	protected boolean same(double d1, double d2) {
+		if (Double.isNaN(d1)) return Double.isNaN(d2);
+		return d1 == d2;
+	}
 }

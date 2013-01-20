@@ -63,9 +63,9 @@ public class PowerAxis extends AbstractAxis<PowerScalingFunction> {
 	public boolean sameAs(Axis<?> otherAxis) {
 		if (otherAxis instanceof PowerAxis) {
 			PowerAxis axis = (PowerAxis) otherAxis;
-			if (getOffset() != axis.getOffset()) return false;
-			if (getScale() != axis.getScale()) return false;
-			if (getPower() != axis.getPower()) return false;
+			if (!same(getOffset(), axis.getOffset())) return false;
+			if (!same(getScale(), axis.getScale())) return false;
+			if (!same(getPower(), axis.getPower())) return false;
 			return true;
 		}
 		return false;
