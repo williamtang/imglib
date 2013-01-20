@@ -37,7 +37,7 @@
 
 package net.imglib2.function.scaling;
 
-import net.imglib2.function.BijectiveFunction;
+import net.imglib2.ScalingFunction;
 import net.imglib2.type.numeric.real.DoubleType;
 
 /**
@@ -46,10 +46,10 @@ import net.imglib2.type.numeric.real.DoubleType;
  *
  */
 public class PowerScalingFunction extends AbstractScalingInfo
-	implements BijectiveFunction<DoubleType, DoubleType>
+	implements ScalingFunction
 {
 	
-	private final double power;
+	private double power;
 	
 	public PowerScalingFunction(double offset, double scale, double power) {
 		super(offset, scale);
@@ -87,4 +87,7 @@ public class PowerScalingFunction extends AbstractScalingInfo
 		return power;
 	}
 
+	public void setPower(double power) {
+		this.power = power;
+	}
 }

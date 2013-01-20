@@ -37,7 +37,7 @@
 package net.imglib2.axis;
 
 import net.imglib2.Axis;
-import net.imglib2.function.BijectiveFunction;
+import net.imglib2.ScalingFunction;
 import net.imglib2.meta.Axes;
 import net.imglib2.meta.AxisType;
 import net.imglib2.type.numeric.real.DoubleType;
@@ -48,9 +48,7 @@ import net.imglib2.type.numeric.real.DoubleType;
  *
  * @param <T>
  */
-public abstract class AbstractAxis
-	<T extends BijectiveFunction<DoubleType, DoubleType>>
-	implements Axis<T>
+public abstract class AbstractAxis<T extends ScalingFunction> implements Axis<T>
 {
 	private final T function;
 	private String unitName = null;
@@ -106,5 +104,21 @@ public abstract class AbstractAxis
 	@Override
 	public AxisType getType() {
 		return type;
+	}
+	
+	public double getOffset() {
+		return function.getOffset();
+	}
+	
+	public double getScale() {
+		return function.getScale();
+	}
+	
+	public void setOffset(double offset) {
+		function.setOffset(offset);
+	}
+	
+	public void setScale(double scale) {
+		function.setScale(scale);
 	}
 }

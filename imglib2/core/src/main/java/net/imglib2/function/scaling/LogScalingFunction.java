@@ -37,7 +37,7 @@
 
 package net.imglib2.function.scaling;
 
-import net.imglib2.function.BijectiveFunction;
+import net.imglib2.ScalingFunction;
 import net.imglib2.type.numeric.real.DoubleType;
 
 /**
@@ -46,7 +46,7 @@ import net.imglib2.type.numeric.real.DoubleType;
  *
  */
 public class LogScalingFunction extends AbstractScalingInfo
-	implements BijectiveFunction<DoubleType, DoubleType>
+	implements ScalingFunction
 {
 
 	public LogScalingFunction(double offset, double scale) {

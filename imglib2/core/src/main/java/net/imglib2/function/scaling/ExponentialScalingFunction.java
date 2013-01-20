@@ -37,7 +37,7 @@
 
 package net.imglib2.function.scaling;
 
-import net.imglib2.function.BijectiveFunction;
+import net.imglib2.ScalingFunction;
 import net.imglib2.type.numeric.real.DoubleType;
 
 /**
@@ -46,11 +46,10 @@ import net.imglib2.type.numeric.real.DoubleType;
  *
  */
 public class ExponentialScalingFunction extends AbstractScalingInfo
-	implements
-	BijectiveFunction<DoubleType, DoubleType>
+	implements ScalingFunction
 {
 
-	private final double base;
+	private double base;
 
 	// NB - can match Math.exp() behavior by passing Math.E as base.
 	
@@ -89,6 +88,10 @@ public class ExponentialScalingFunction extends AbstractScalingInfo
 
 	public double getBase() {
 		return base;
+	}
+
+	public void setBase(double base) {
+		this.base = base;
 	}
 
 	// i.e. do a 6-based log via log(6, val);

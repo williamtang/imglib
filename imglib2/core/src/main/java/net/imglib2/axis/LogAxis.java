@@ -37,6 +37,7 @@
 
 package net.imglib2.axis;
 
+import net.imglib2.Axis;
 import net.imglib2.function.scaling.LogScalingFunction;
 
 /**
@@ -48,5 +49,23 @@ public class LogAxis extends AbstractAxis<LogScalingFunction> {
 
 	public LogAxis(double offset, double scale) {
 		super(new LogScalingFunction(offset, scale));
+	}
+	
+	@Override
+	public LogAxis copy() {
+		double offset = getFunction().getOffset();
+		double scale = getFunction().getScale();
+		return new LogAxis(offset, scale);
+	}
+
+	@Override
+	public boolean sameAs(Axis<?> otherAxis) {
+		if (otherAxis instanceof LogAxis) {
+			LogAxis axis = (LogAxis) otherAxis;
+			if (getOffset() != axis.getOffset()) return false;
+			if (getScale() != axis.getScale()) return false;
+			return true;
+		}
+		return false;
 	}
 }

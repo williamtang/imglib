@@ -37,6 +37,7 @@
 
 package net.imglib2.axis;
 
+import net.imglib2.Axis;
 import net.imglib2.function.scaling.PowerScalingFunction;
 
 /**
@@ -49,5 +50,28 @@ public class PowerAxis extends AbstractAxis<PowerScalingFunction> {
 	public PowerAxis(double offset, double scale, double power) {
 		super(new PowerScalingFunction(offset, scale, power));
 	}
+	
+	@Override
+	public PowerAxis copy() {
+		double offset = getFunction().getOffset();
+		double scale = getFunction().getScale();
+		double power = getFunction().getPower();
+		return new PowerAxis(offset, scale, power);
+	}
 
+	@Override
+	public boolean sameAs(Axis<?> otherAxis) {
+		if (otherAxis instanceof PowerAxis) {
+			PowerAxis axis = (PowerAxis) otherAxis;
+			if (getOffset() != axis.getOffset()) return false;
+			if (getScale() != axis.getScale()) return false;
+			if (getPower() != axis.getPower()) return false;
+			return true;
+		}
+		return false;
+	}
+
+	public double getPower() { return getFunction().getPower(); }
+	
+	public void setPower(double power) { getFunction().setPower(power); }
 }

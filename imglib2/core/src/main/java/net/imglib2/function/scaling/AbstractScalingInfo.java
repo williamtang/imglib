@@ -58,4 +58,12 @@ public abstract class AbstractScalingInfo {
 	public double getScale() {
 		return scale;
 	}
+
+	public void setOffset(double offset) {
+		this.offset = offset;
+	}
+
+	public void setScale(double scale) {
+		this.scale = scale;
+	}
 }

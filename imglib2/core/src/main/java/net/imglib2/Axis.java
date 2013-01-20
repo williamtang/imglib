@@ -36,9 +36,7 @@
 
 package net.imglib2;
 
-import net.imglib2.function.BijectiveFunction;
 import net.imglib2.meta.AxisType;
-import net.imglib2.type.numeric.real.DoubleType;
 
 /**
  * 
@@ -46,7 +44,7 @@ import net.imglib2.type.numeric.real.DoubleType;
  *
  * @param <T>
  */
-public interface Axis<T extends BijectiveFunction<DoubleType, DoubleType>> {
+public interface Axis<T extends ScalingFunction> {
 
 	T getFunction();
 
@@ -63,4 +61,16 @@ public interface Axis<T extends BijectiveFunction<DoubleType, DoubleType>> {
 	String getLabel();
 	
 	AxisType getType();
+	
+	Axis<T> copy();
+	
+	boolean sameAs(Axis<?> otherAxis);
+	
+	double getOffset();
+	
+	double getScale();
+	
+	void setOffset(double offset);
+	
+	void setScale(double scale);
 }
