@@ -380,11 +380,13 @@ public class HyperSliceImgPlus <T> extends ImgPlus<T> {
 	 * <p>
 	 * If the axis type is not found in the source image, then the source image is returned.
 	 */
-	public static final <T> ImgPlus<T> fixAxis(final ImgPlus<T> source, final AxisType axis, final long pos) {
+	public static final <T> ImgPlus<T> fixAxis(final ImgPlus<T> source,
+		final AxisType axisType, final long pos)
+	{
 		// Determine target axis dimension
 		int targetDim = -1;
 		for (int d = 0; d < source.numDimensions(); d++) {
-			if (source.axis(d).equals(axis)) {
+			if (source.axis(d).getType().equals(axisType)) {
 				targetDim = d;
 				break;
 			}

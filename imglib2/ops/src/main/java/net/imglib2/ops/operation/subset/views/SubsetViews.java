@@ -233,7 +233,7 @@ public class SubsetViews {
 			return false;
 
 		for (int d = 0; d < srcSpace.numDimensions(); d++) {
-			if (!srcSpace.axis(d).equals(targetSpace.axis(d)))
+			if (!srcSpace.axis(d).getType().equals(targetSpace.axis(d).getType()))
 				return false;
 		}
 		return true;
