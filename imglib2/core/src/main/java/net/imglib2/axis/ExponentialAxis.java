@@ -56,7 +56,10 @@ public class ExponentialAxis extends AbstractAxis<ExponentialScalingFunction>
 		double offset = getFunction().getOffset();
 		double scale = getFunction().getScale();
 		double base = getFunction().getBase();
-		return new ExponentialAxis(offset, scale, base);
+		ExponentialAxis axis = new ExponentialAxis(offset, scale, base);
+		axis.setLabel(getLabel());
+		axis.setUnit(getUnit());
+		return axis;
 	}
 
 	@Override
@@ -66,6 +69,8 @@ public class ExponentialAxis extends AbstractAxis<ExponentialScalingFunction>
 			if (!same(getOffset(), axis.getOffset())) return false;
 			if (!same(getScale(), axis.getScale())) return false;
 			if (!same(getBase(), axis.getBase())) return false;
+			if (!(getLabel() != axis.getLabel())) return false;
+			if (!(getUnit() != axis.getUnit())) return false;
 			return true;
 		}
 		return false;

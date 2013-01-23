@@ -55,7 +55,10 @@ public class LogAxis extends AbstractAxis<LogScalingFunction> {
 	public LogAxis copy() {
 		double offset = getFunction().getOffset();
 		double scale = getFunction().getScale();
-		return new LogAxis(offset, scale);
+		LogAxis axis = new LogAxis(offset, scale);
+		axis.setLabel(getLabel());
+		axis.setUnit(getUnit());
+		return axis;
 	}
 
 	@Override
@@ -64,6 +67,8 @@ public class LogAxis extends AbstractAxis<LogScalingFunction> {
 			LogAxis axis = (LogAxis) otherAxis;
 			if (!same(getOffset(), axis.getOffset())) return false;
 			if (!same(getScale(), axis.getScale())) return false;
+			if (!(getLabel() != axis.getLabel())) return false;
+			if (!(getUnit() != axis.getUnit())) return false;
 			return true;
 		}
 		return false;

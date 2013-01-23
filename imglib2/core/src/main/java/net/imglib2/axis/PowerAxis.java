@@ -56,7 +56,10 @@ public class PowerAxis extends AbstractAxis<PowerScalingFunction> {
 		double offset = getFunction().getOffset();
 		double scale = getFunction().getScale();
 		double power = getFunction().getPower();
-		return new PowerAxis(offset, scale, power);
+		PowerAxis axis = new PowerAxis(offset, scale, power);
+		axis.setLabel(getLabel());
+		axis.setUnit(getUnit());
+		return axis;
 	}
 
 	@Override
@@ -66,6 +69,8 @@ public class PowerAxis extends AbstractAxis<PowerScalingFunction> {
 			if (!same(getOffset(), axis.getOffset())) return false;
 			if (!same(getScale(), axis.getScale())) return false;
 			if (!same(getPower(), axis.getPower())) return false;
+			if (!(getLabel() != axis.getLabel())) return false;
+			if (!(getUnit() != axis.getUnit())) return false;
 			return true;
 		}
 		return false;

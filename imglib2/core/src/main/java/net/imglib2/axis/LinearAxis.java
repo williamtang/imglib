@@ -55,7 +55,10 @@ public class LinearAxis extends AbstractAxis<LinearScalingFunction> {
 	public LinearAxis copy() {
 		double offset = getFunction().getOffset();
 		double scale = getFunction().getScale();
-		return new LinearAxis(offset, scale);
+		LinearAxis axis = new LinearAxis(offset, scale);
+		axis.setLabel(getLabel());
+		axis.setUnit(getUnit());
+		return axis;
 	}
 
 	@Override
@@ -64,6 +67,8 @@ public class LinearAxis extends AbstractAxis<LinearScalingFunction> {
 			LinearAxis axis = (LinearAxis) otherAxis;
 			if (!same(getOffset(), axis.getOffset())) return false;
 			if (!same(getScale(), axis.getScale())) return false;
+			if (!(getLabel() != axis.getLabel())) return false;
+			if (!(getUnit() != axis.getUnit())) return false;
 			return true;
 		}
 		return false;
