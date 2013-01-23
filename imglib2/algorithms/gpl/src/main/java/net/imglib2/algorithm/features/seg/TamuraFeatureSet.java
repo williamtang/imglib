@@ -62,6 +62,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.ValuePair;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.util.Pair;
 
 /**
  * 
