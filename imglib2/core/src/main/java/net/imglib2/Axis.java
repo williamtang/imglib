@@ -48,9 +48,9 @@ public interface Axis<T extends ScalingFunction> {
 
 	T getFunction();
 
-	double getPositionalMeasure(double absoluteMeasure);
+	double getPositionalMeasure(double calibratedMeasure);
 
-	double getCalibratedMeasure(double relativeMeasure);
+	double getCalibratedMeasure(double positionalMeasure);
 
 	void setUnit(String unit);
 
