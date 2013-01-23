@@ -67,15 +67,15 @@ public abstract class AbstractAxis<T extends ScalingFunction> implements Axis<T>
 	}
 	
 	@Override
-	synchronized public double getRelativeMeasure(double absoluteMeasure) {
-		abs.setReal(absoluteMeasure);
+	synchronized public double getPositionalMeasure(double calibratedMeasure) {
+		abs.setReal(calibratedMeasure);
 		getFunction().computeInverse(abs, rel);
 		return rel.get();
 	}
 	
 	@Override
-	synchronized public double getAbsoluteMeasure(double relativeMeasure) {
-		rel.setReal(relativeMeasure);
+	synchronized public double getCalibratedMeasure(double positionalMeasure) {
+		rel.setReal(positionalMeasure);
 		getFunction().compute(rel, abs);
 		return abs.get();
 	}
@@ -106,18 +106,22 @@ public abstract class AbstractAxis<T extends ScalingFunction> implements Axis<T>
 		return type;
 	}
 	
+	@Override
 	public double getOffset() {
 		return function.getOffset();
 	}
 	
+	@Override
 	public double getScale() {
 		return function.getScale();
 	}
 	
+	@Override
 	public void setOffset(double offset) {
 		function.setOffset(offset);
 	}
 	
+	@Override
 	public void setScale(double scale) {
 		function.setScale(scale);
 	}
