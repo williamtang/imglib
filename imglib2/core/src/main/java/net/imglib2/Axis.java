@@ -46,8 +46,6 @@ import net.imglib2.meta.AxisType;
  */
 public interface Axis<T extends ScalingFunction> {
 
-	T getFunction();
-
 	double getPositionalMeasure(double calibratedMeasure);
 
 	double getCalibratedMeasure(double positionalMeasure);
@@ -73,4 +71,6 @@ public interface Axis<T extends ScalingFunction> {
 	void setOffset(double offset);
 	
 	void setScale(double scale);
+
+	T getFunction();
 }
