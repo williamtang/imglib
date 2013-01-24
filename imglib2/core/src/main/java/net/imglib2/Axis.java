@@ -62,7 +62,7 @@ public interface Axis<T extends ScalingFunction> {
 	
 	Axis<T> copy();
 	
-	boolean sameAs(Axis<?> otherAxis);
+	boolean sameAs(Axis<?> otherAxis); // TODO - override equals instead
 	
 	double getOffset();
 	
