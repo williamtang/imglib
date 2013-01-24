@@ -266,7 +266,7 @@ public class ImgPlus<T> implements Img<T>, Metadata {
 	@Override
 	public int getAxisIndex(final AxisType axis) {
 		for (int i = 0; i < axes.length; i++) {
-			if (axes[i] == axis) return i;
+			if (axes[i].getType() == axis) return i;
 		}
 		return -1;
 	}
@@ -441,7 +441,7 @@ public class ImgPlus<T> implements Img<T>, Metadata {
 	private static Axis<?>[] getAxes(final Img<?> img, final Metadata metadata) {
 		final Axis<?>[] axes = new Axis<?>[img.numDimensions()];
 		for (int i = 0; i < axes.length; i++) {
-			axes[i] = metadata.axis(i);
+			axes[i] = metadata.axis(i); // TODO .axis(i).copy(); instead?
 		}
 		return axes;
 	}
