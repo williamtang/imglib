@@ -21,7 +21,7 @@ public class Utils {
 	public static final double[] getSpatialCalibration(final Metadata img) {
 		final double[] calibration = Util.getArrayFromValue(1d, 3);
 		for (int d = 0; d < img.numDimensions(); d++) {
-			Axis<?> axis = img.axis(d);
+			Axis axis = img.axis(d);
 			AxisType type = axis.getType();
 			if (type.equals(Axes.X)) {
 				calibration[0] = axis.getScale();

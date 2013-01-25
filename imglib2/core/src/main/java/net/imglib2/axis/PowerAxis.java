@@ -45,17 +45,20 @@ import net.imglib2.function.scaling.PowerScalingFunction;
  * @author Barry DeZonia
  *
  */
-public class PowerAxis extends AbstractAxis<PowerScalingFunction> {
+public class PowerAxis extends AbstractAxis {
+
+	private final PowerScalingFunction function;
 
 	public PowerAxis(double offset, double scale, double power) {
-		super(new PowerScalingFunction(offset, scale, power));
+		function = new PowerScalingFunction(offset, scale, power);
+		setFunction(function);
 	}
 	
 	@Override
 	public PowerAxis copy() {
-		double offset = getFunction().getOffset();
-		double scale = getFunction().getScale();
-		double power = getFunction().getPower();
+		double offset = function.getOffset();
+		double scale = function.getScale();
+		double power = function.getPower();
 		PowerAxis axis = new PowerAxis(offset, scale, power);
 		axis.setLabel(getLabel());
 		axis.setUnit(getUnit());
@@ -63,7 +66,7 @@ public class PowerAxis extends AbstractAxis<PowerScalingFunction> {
 	}
 
 	@Override
-	public boolean sameAs(Axis<?> otherAxis) {
+	public boolean sameAs(Axis otherAxis) {
 		if (otherAxis instanceof PowerAxis) {
 			PowerAxis axis = (PowerAxis) otherAxis;
 			if (!same(getOffset(), axis.getOffset())) return false;
@@ -76,7 +79,11 @@ public class PowerAxis extends AbstractAxis<PowerScalingFunction> {
 		return false;
 	}
 
-	public double getPower() { return getFunction().getPower(); }
+	public double getPower() {
+		return function.getPower();
+	}
 	
-	public void setPower(double power) { getFunction().setPower(power); }
+	public void setPower(double power) {
+		function.setPower(power);
+	}
 }

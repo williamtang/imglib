@@ -920,8 +920,8 @@ public class ImgOpener implements StatusReporter {
 		return value;
 	}
 
-	private Axis<?>[] axes(final AxisType[] dimTypes, final double[] cal) {
-		Axis<?>[] axes = new Axis<?>[dimTypes.length];
+	private Axis[] axes(final AxisType[] dimTypes, final double[] cal) {
+		Axis[] axes = new Axis[dimTypes.length];
 		for (int i = 0; i < dimTypes.length; i++) {
 			axes[i] = new LinearAxis(0, cal[i]);
 		}

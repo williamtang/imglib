@@ -112,7 +112,7 @@ public class ImgSaver implements StatusReporter {
 	public <T extends RealType<T> & NativeType<T>> boolean isCompressible(
 		final ImgPlus<T> img)
 	{
-		final Axis<?>[] axes = new Axis<?>[img.numDimensions()];
+		final Axis[] axes = new Axis[img.numDimensions()];
 		img.axes(axes);
 
 		final long[] axisLengths = new long[5];
@@ -230,7 +230,7 @@ public class ImgSaver implements StatusReporter {
 	 * 
 	 * @param newLengths - updated to hold the lengths of the newly ordered axes
 	 */
-	public static String guessDimOrder(final Axis<?>[] axes,
+	public static String guessDimOrder(final Axis[] axes,
 		final long[] dimLengths, final long[] newLengths)
 	{
 		String oldOrder = "";
@@ -631,7 +631,7 @@ public class ImgSaver implements StatusReporter {
 
 			// TODO is there some way to consolidate this with the isCompressible
 			// method?
-			final Axis<?>[] axes = new Axis<?>[img.numDimensions()];
+			final Axis[] axes = new Axis[img.numDimensions()];
 			img.axes(axes);
 
 			String dimOrder = "";

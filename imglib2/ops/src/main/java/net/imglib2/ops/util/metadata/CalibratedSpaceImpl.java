@@ -50,28 +50,28 @@ import net.imglib2.meta.CalibratedSpace;
  */
 public class CalibratedSpaceImpl implements CalibratedSpace {
 
-	private final Axis<?>[] m_axes;
+	private final Axis[] m_axes;
 
 	public CalibratedSpaceImpl(int numDims) {
-		m_axes = new Axis<?>[numDims];
+		m_axes = new Axis[numDims];
 		Arrays.fill(m_axes, Axes.UNKNOWN);
 	}
 
 	public CalibratedSpaceImpl(String... axisLabels) {
-		m_axes = new Axis<?>[axisLabels.length];
+		m_axes = new Axis[axisLabels.length];
 		for (int i = 0; i < m_axes.length; i++) {
-			Axis<?> axis = new LinearAxis(0, 1);
+			Axis axis = new LinearAxis(0, 1);
 			axis.setLabel(axisLabels[i]);
 			m_axes[i] = axis;
 		}
 	}
 
-	public CalibratedSpaceImpl(Axis<?>[] axes) {
+	public CalibratedSpaceImpl(Axis[] axes) {
 		m_axes = axes;
 	}
 
 	public CalibratedSpaceImpl(CalibratedSpace axes) {
-		m_axes = new Axis<?>[axes.numDimensions()];
+		m_axes = new Axis[axes.numDimensions()];
 		axes.axes(m_axes);
 	}
 
@@ -85,18 +85,18 @@ public class CalibratedSpaceImpl implements CalibratedSpace {
 	}
 
 	@Override
-	public Axis<?> axis(final int d) {
+	public Axis axis(final int d) {
 		return m_axes[d];
 	}
 
 	@Override
-	public void axes(final Axis<?>[] target) {
+	public void axes(final Axis[] target) {
 		for (int i = 0; i < m_axes.length; i++)
 			target[i] = m_axes[i];
 	}
 
 	@Override
-	public void setAxis(final Axis<?> axis, final int d) {
+	public void setAxis(final Axis axis, final int d) {
 		m_axes[d] = axis;
 	}
 

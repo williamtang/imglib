@@ -56,12 +56,12 @@ public interface CalibratedSpace extends EuclideanSpace {
 	int getAxisIndex(final AxisType axis);
 
 	/** Gets the associated {@link Img}'s axis at the given dimension. */
-	Axis<?> axis(int d);
+	Axis axis(int d);
 
 	/** Copies the {@link Img}'s axes into the given array. */
-	void axes(Axis<?>[] axes);
+	void axes(Axis[] axes);
 
 	/** Sets the dimensional axis for the given dimension. */
-	void setAxis(Axis<?> axis, int d);
+	void setAxis(Axis axis, int d);
 
 }

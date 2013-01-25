@@ -164,7 +164,7 @@ public class SubsetViews {
 		for (final AxisType type : missing) {
 			final int idx = targetSpace.getAxisIndex(type);
 			res = Views.addDimension(res, target.min(idx), target.max(idx));
-			Axis<?> axis = new LinearAxis(0, 1);
+			Axis axis = new LinearAxis(0, 1);
 			axis.setLabel(type.getLabel());
 			resSpace.setAxis(axis, i++);
 		}
@@ -181,7 +181,7 @@ public class SubsetViews {
 				resRndAccessible = Views.permute(resRndAccessible, srcIdx, d);
 
 				// also permutate calibrated space
-				Axis<?> tmp = resSpace.axis(d);
+				Axis tmp = resSpace.axis(d);
 				resSpace.setAxis(targetSpace.axis(d), d);
 				resSpace.setAxis(tmp, srcIdx);
 			}

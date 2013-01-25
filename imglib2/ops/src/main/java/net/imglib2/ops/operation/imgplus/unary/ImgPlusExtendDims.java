@@ -45,7 +45,6 @@ import net.imglib2.RandomAccess;
 import net.imglib2.axis.LinearAxis;
 import net.imglib2.img.ImgPlus;
 import net.imglib2.meta.Axes;
-import net.imglib2.meta.AxisType;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.type.Type;
 
@@ -81,7 +80,7 @@ public class ImgPlusExtendDims< T extends Type< T >> implements UnaryOutputOpera
 	public ImgPlus< T > createEmptyOutput( ImgPlus< T > op )
 	{
 
-		Axis<?>[] axes = new Axis<?>[ op.numDimensions() ];
+		Axis[] axes = new Axis[op.numDimensions()];
 		op.axes( axes );
 		m_isNewDim.clear();
 		for ( int d = 0; d < m_newDimensions.length; d++ )
@@ -125,7 +124,7 @@ public class ImgPlusExtendDims< T extends Type< T >> implements UnaryOutputOpera
 		{
 			if ( m_isNewDim.get( i ) )
 			{
-				Axis<?> newAxis = new LinearAxis(0, 1);
+				Axis newAxis = new LinearAxis(0, 1);
 				newAxis.setLabel(Axes.get(m_newDimensions[ i ]).toString() );
 				r.setAxis( newAxis , d );
 				d++;

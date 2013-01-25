@@ -45,17 +45,21 @@ import net.imglib2.function.scaling.ExponentialScalingFunction;
  * @author Barry DeZonia
  *
  */
-public class ExponentialAxis extends AbstractAxis<ExponentialScalingFunction>
+public class ExponentialAxis extends AbstractAxis
 {
+
+	private final ExponentialScalingFunction function;
+
 	public ExponentialAxis(double offset, double scale, double base) {
-		super(new ExponentialScalingFunction(offset, scale, base));
+		function = new ExponentialScalingFunction(offset, scale, base);
+		setFunction(function);
 	}
 	
 	@Override
 	public ExponentialAxis copy() {
-		double offset = getFunction().getOffset();
-		double scale = getFunction().getScale();
-		double base = getFunction().getBase();
+		double offset = function.getOffset();
+		double scale = function.getScale();
+		double base = function.getBase();
 		ExponentialAxis axis = new ExponentialAxis(offset, scale, base);
 		axis.setLabel(getLabel());
 		axis.setUnit(getUnit());
@@ -63,7 +67,7 @@ public class ExponentialAxis extends AbstractAxis<ExponentialScalingFunction>
 	}
 
 	@Override
-	public boolean sameAs(Axis<?> otherAxis) {
+	public boolean sameAs(Axis otherAxis) {
 		if (otherAxis instanceof ExponentialAxis) {
 			ExponentialAxis axis = (ExponentialAxis) otherAxis;
 			if (!same(getOffset(), axis.getOffset())) return false;
@@ -76,7 +80,11 @@ public class ExponentialAxis extends AbstractAxis<ExponentialScalingFunction>
 		return false;
 	}
 	
-	public double getBase() { return getFunction().getBase(); }
+	public double getBase() {
+		return function.getBase();
+	}
 	
-	public void setBase(double base) { getFunction().setBase(base); }
+	public void setBase(double base) {
+		function.setBase(base);
+	}
 }

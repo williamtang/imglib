@@ -45,16 +45,19 @@ import net.imglib2.function.scaling.LinearScalingFunction;
  * @author Barry DeZonia
  *
  */
-public class LinearAxis extends AbstractAxis<LinearScalingFunction> {
+public class LinearAxis extends AbstractAxis {
+
+	private final LinearScalingFunction function;
 
 	public LinearAxis(double offset, double scale) {
-		super(new LinearScalingFunction(offset, scale));
+		this.function = new LinearScalingFunction(offset, scale);
+		setFunction(function);
 	}
 	
 	@Override
 	public LinearAxis copy() {
-		double offset = getFunction().getOffset();
-		double scale = getFunction().getScale();
+		double offset = function.getOffset();
+		double scale = function.getScale();
 		LinearAxis axis = new LinearAxis(offset, scale);
 		axis.setLabel(getLabel());
 		axis.setUnit(getUnit());
@@ -62,7 +65,7 @@ public class LinearAxis extends AbstractAxis<LinearScalingFunction> {
 	}
 
 	@Override
-	public boolean sameAs(Axis<?> otherAxis) {
+	public boolean sameAs(Axis otherAxis) {
 		if (otherAxis instanceof LinearAxis) {
 			LinearAxis axis = (LinearAxis) otherAxis;
 			if (!same(getOffset(), axis.getOffset())) return false;

@@ -42,9 +42,8 @@ import net.imglib2.meta.AxisType;
  * 
  * @author Barry DeZonia
  *
- * @param <T>
  */
-public interface Axis<T extends ScalingFunction> {
+public interface Axis {
 
 	double getPositionalMeasure(double calibratedMeasure);
 
@@ -60,9 +59,9 @@ public interface Axis<T extends ScalingFunction> {
 	
 	AxisType getType();
 	
-	Axis<T> copy();
+	Axis copy();
 	
-	boolean sameAs(Axis<?> otherAxis); // TODO - override equals instead
+	boolean sameAs(Axis otherAxis); // TODO - override equals instead
 	
 	double getOffset();
 	
@@ -71,6 +70,4 @@ public interface Axis<T extends ScalingFunction> {
 	void setOffset(double offset);
 	
 	void setScale(double scale);
-
-	T getFunction();
 }

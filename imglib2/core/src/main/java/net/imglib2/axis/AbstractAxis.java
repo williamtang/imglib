@@ -46,26 +46,21 @@ import net.imglib2.type.numeric.real.DoubleType;
  * 
  * @author Barry DeZonia
  *
- * @param <T>
  */
-public abstract class AbstractAxis<T extends ScalingFunction> implements Axis<T>
+public abstract class AbstractAxis implements Axis
 {
-	private final T function;
+
+	private ScalingFunction function;
 	private String unitName = null;
 	private String label = null;
 	private final DoubleType abs = new DoubleType();
 	private final DoubleType rel = new DoubleType();
 	private AxisType type = Axes.UNKNOWN;
 	
-	public AbstractAxis(T func) {
+	protected void setFunction(ScalingFunction func) {
 		this.function = func;
 	}
 	
-	@Override
-	public T getFunction() {
-		return function;
-	}
-
 	@Override
 	synchronized public double getPositionalMeasure(double calibratedMeasure) {
 		abs.setReal(calibratedMeasure);

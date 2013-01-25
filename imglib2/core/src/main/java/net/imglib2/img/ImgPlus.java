@@ -71,7 +71,7 @@ public class ImgPlus<T> implements Img<T>, Metadata {
 
 	private String name;
 	private String source = "";
-	private final Axis<?>[] axes;
+	private final Axis[] axes;
 	private int validBits;
 
 	private ArrayList<Double> channelMin;
@@ -90,7 +90,7 @@ public class ImgPlus<T> implements Img<T>, Metadata {
 		this(img, name, null, null);
 	}
 
-	public ImgPlus(final Img<T> img, final String name, final Axis<?>[] axes) {
+	public ImgPlus(final Img<T> img, final String name, final Axis[] axes) {
 		this(img, name, axes, null);
 	}
 
@@ -104,7 +104,7 @@ public class ImgPlus<T> implements Img<T>, Metadata {
 		}
 	}
 
-	public ImgPlus(final Img<T> img, final String name, final Axis<?>[] axes,
+	public ImgPlus(final Img<T> img, final String name, final Axis[] axes,
 		final double[] cal)
 	{
 		this.img = img;
@@ -272,18 +272,18 @@ public class ImgPlus<T> implements Img<T>, Metadata {
 	}
 
 	@Override
-	public Axis<?> axis(final int d) {
+	public Axis axis(final int d) {
 		return axes[d];
 	}
 
 	@Override
-	public void axes(final Axis<?>[] target) {
+	public void axes(final Axis[] target) {
 		for (int i = 0; i < target.length; i++)
 			target[i] = axes[i];
 	}
 
 	@Override
-	public void setAxis(final Axis<?> axis, final int d) {
+	public void setAxis(final Axis axis, final int d) {
 		axes[d] = axis;
 	}
 
@@ -402,13 +402,13 @@ public class ImgPlus<T> implements Img<T>, Metadata {
 	}
 
 	/** Ensures the given axis labels are valid. */
-	private static Axis<?>[] validateAxes(final int numDims, final Axis<?>[] axes) {
+	private static Axis[] validateAxes(final int numDims, final Axis[] axes) {
 		if (axes != null && numDims == axes.length) return axes;
-		final Axis<?>[] validAxes = new Axis<?>[numDims];
+		final Axis[] validAxes = new Axis[numDims];
 		for (int i = 0; i < validAxes.length; i++) {
 			if (axes != null && axes.length > i) validAxes[i] = axes[i];
 			else {
-				Axis<?> axis = new LinearAxis(0, 1);
+				Axis axis = new LinearAxis(0, 1);
 				switch (i) {
 					case 0:
 						axis.setLabel(Axes.X.getLabel());
@@ -438,8 +438,8 @@ public class ImgPlus<T> implements Img<T>, Metadata {
 		return validCal;
 	}
 
-	private static Axis<?>[] getAxes(final Img<?> img, final Metadata metadata) {
-		final Axis<?>[] axes = new Axis<?>[img.numDimensions()];
+	private static Axis[] getAxes(final Img<?> img, final Metadata metadata) {
+		final Axis[] axes = new Axis[img.numDimensions()];
 		for (int i = 0; i < axes.length; i++) {
 			axes[i] = metadata.axis(i); // TODO .axis(i).copy(); instead?
 		}

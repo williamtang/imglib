@@ -45,16 +45,19 @@ import net.imglib2.function.scaling.LogScalingFunction;
  * @author Barry DeZonia
  *
  */
-public class LogAxis extends AbstractAxis<LogScalingFunction> {
+public class LogAxis extends AbstractAxis {
+
+	private final LogScalingFunction function;
 
 	public LogAxis(double offset, double scale) {
-		super(new LogScalingFunction(offset, scale));
+		function = new LogScalingFunction(offset, scale);
+		setFunction(function);
 	}
 	
 	@Override
 	public LogAxis copy() {
-		double offset = getFunction().getOffset();
-		double scale = getFunction().getScale();
+		double offset = function.getOffset();
+		double scale = function.getScale();
 		LogAxis axis = new LogAxis(offset, scale);
 		axis.setLabel(getLabel());
 		axis.setUnit(getUnit());
@@ -62,7 +65,7 @@ public class LogAxis extends AbstractAxis<LogScalingFunction> {
 	}
 
 	@Override
-	public boolean sameAs(Axis<?> otherAxis) {
+	public boolean sameAs(Axis otherAxis) {
 		if (otherAxis instanceof LogAxis) {
 			LogAxis axis = (LogAxis) otherAxis;
 			if (!same(getOffset(), axis.getOffset())) return false;
