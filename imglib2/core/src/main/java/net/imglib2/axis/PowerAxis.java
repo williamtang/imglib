@@ -37,7 +37,6 @@
 
 package net.imglib2.axis;
 
-import net.imglib2.Axis;
 import net.imglib2.function.scaling.PowerScalingFunction;
 
 /**
@@ -66,14 +65,14 @@ public class PowerAxis extends AbstractAxis {
 	}
 
 	@Override
-	public boolean sameAs(Axis otherAxis) {
-		if (otherAxis instanceof PowerAxis) {
-			PowerAxis axis = (PowerAxis) otherAxis;
+	public boolean equals(Object other) {
+		if (other instanceof PowerAxis) {
+			PowerAxis axis = (PowerAxis) other;
 			if (!same(getOffset(), axis.getOffset())) return false;
 			if (!same(getScale(), axis.getScale())) return false;
 			if (!same(getPower(), axis.getPower())) return false;
-			if (!(getLabel() != axis.getLabel())) return false;
-			if (!(getUnit() != axis.getUnit())) return false;
+			if (getLabel() != axis.getLabel()) return false;
+			if (getUnit() != axis.getUnit()) return false;
 			return true;
 		}
 		return false;

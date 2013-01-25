@@ -37,7 +37,6 @@
 
 package net.imglib2.axis;
 
-import net.imglib2.Axis;
 import net.imglib2.function.scaling.LinearScalingFunction;
 
 /**
@@ -65,13 +64,13 @@ public class LinearAxis extends AbstractAxis {
 	}
 
 	@Override
-	public boolean sameAs(Axis otherAxis) {
-		if (otherAxis instanceof LinearAxis) {
-			LinearAxis axis = (LinearAxis) otherAxis;
+	public boolean equals(Object other) {
+		if (other instanceof LinearAxis) {
+			LinearAxis axis = (LinearAxis) other;
 			if (!same(getOffset(), axis.getOffset())) return false;
 			if (!same(getScale(), axis.getScale())) return false;
-			if (!(getLabel() != axis.getLabel())) return false;
-			if (!(getUnit() != axis.getUnit())) return false;
+			if (getLabel() != axis.getLabel()) return false;
+			if (getUnit() != axis.getUnit()) return false;
 			return true;
 		}
 		return false;

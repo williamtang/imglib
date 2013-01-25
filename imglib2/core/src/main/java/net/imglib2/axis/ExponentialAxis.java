@@ -37,7 +37,6 @@
 
 package net.imglib2.axis;
 
-import net.imglib2.Axis;
 import net.imglib2.function.scaling.ExponentialScalingFunction;
 
 /**
@@ -67,14 +66,14 @@ public class ExponentialAxis extends AbstractAxis
 	}
 
 	@Override
-	public boolean sameAs(Axis otherAxis) {
-		if (otherAxis instanceof ExponentialAxis) {
-			ExponentialAxis axis = (ExponentialAxis) otherAxis;
+	public boolean equals(Object other) {
+		if (other instanceof ExponentialAxis) {
+			ExponentialAxis axis = (ExponentialAxis) other;
 			if (!same(getOffset(), axis.getOffset())) return false;
 			if (!same(getScale(), axis.getScale())) return false;
 			if (!same(getBase(), axis.getBase())) return false;
-			if (!(getLabel() != axis.getLabel())) return false;
-			if (!(getUnit() != axis.getUnit())) return false;
+			if (getLabel() != axis.getLabel()) return false;
+			if (getUnit() != axis.getUnit()) return false;
 			return true;
 		}
 		return false;

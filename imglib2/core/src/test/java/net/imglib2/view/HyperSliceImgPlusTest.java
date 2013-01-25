@@ -3,7 +3,9 @@
  */
 package net.imglib2.view;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import net.imglib2.Cursor;
 import net.imglib2.Localizable;
 import net.imglib2.RandomAccess;
@@ -81,7 +83,7 @@ public class HyperSliceImgPlusTest {
 		int index1 = 0;
 		for (int d = 0; d < dim.length; d++) {
 			if (d != REMOVED_DIM_1) {
-				assertTrue(source.axis(d).sameAs(imgplusZ.axis(index1)));
+				assertTrue(source.axis(d).equals(imgplusZ.axis(index1)));
 				index1++;
 			}
 		}
@@ -89,7 +91,7 @@ public class HyperSliceImgPlusTest {
 		int index2 = 0;
 		for (int d = 0; d < dim.length; d++) {
 			if (d != REMOVED_DIM_1 && d != (REMOVED_DIM_2+1)) {
-				assertTrue(source.axis(d).sameAs(imgplusZT.axis(index2)));
+				assertTrue(source.axis(d).equals(imgplusZT.axis(index2)));
 				index2++;
 			}
 		}

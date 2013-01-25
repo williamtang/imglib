@@ -61,8 +61,6 @@ public interface Axis {
 	
 	Axis copy();
 	
-	boolean sameAs(Axis otherAxis); // TODO - override equals instead
-	
 	double getOffset();
 	
 	double getScale();
