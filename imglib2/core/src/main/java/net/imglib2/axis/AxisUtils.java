@@ -104,7 +104,7 @@ public class AxisUtils {
 	 * 
 	 * @param axis
 	 */
-	public double getOffset(Axis axis) {
+	public static double getOffset(Axis axis) {
 		return axis.getCalibratedMeasure(0);
 	}
 
@@ -117,7 +117,7 @@ public class AxisUtils {
 	 * @param rangeStart
 	 * @param rangeEnd
 	 */
-	public double getScale(Axis axis, double rangeStart, double rangeEnd) {
+	public static double getScale(Axis axis, double rangeStart, double rangeEnd) {
 		double axisRange = rangeEnd - rangeStart;
 		double valueRange =
 			axis.getCalibratedMeasure(rangeEnd) -

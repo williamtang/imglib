@@ -75,6 +75,7 @@ public interface Axis {
 	// scale = (axis.calVal(rEnd) - axis.calVal(rStart)) / (rEnd - rStart);
 	// This would work for all axis types with varying amounts of error. For a
 	// LinearAxis there would be no error.
+	// Note there are such methods in AxisUtils
 
 	double getOffset();
 
