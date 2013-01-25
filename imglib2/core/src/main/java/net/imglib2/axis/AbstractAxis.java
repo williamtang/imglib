@@ -42,6 +42,10 @@ import net.imglib2.meta.Axes;
 import net.imglib2.meta.AxisType;
 import net.imglib2.type.numeric.real.DoubleType;
 
+// TODO - if we keep scale and offset concepts for an Axis then pull the
+// various implementations of get/set offset/scale into here from implementers
+// of Axis.
+
 /**
  * 
  * @author Barry DeZonia
@@ -100,29 +104,16 @@ public abstract class AbstractAxis implements Axis
 	public AxisType getType() {
 		return type;
 	}
-	
-	@Override
-	public double getOffset() {
-		return function.getOffset();
-	}
-	
-	@Override
-	public double getScale() {
-		return function.getScale();
-	}
-	
-	@Override
-	public void setOffset(double offset) {
-		function.setOffset(offset);
-	}
-	
-	@Override
-	public void setScale(double scale) {
-		function.setScale(scale);
-	}
-	
+
+	// -- helpers --
+
 	protected boolean same(double d1, double d2) {
 		if (Double.isNaN(d1)) return Double.isNaN(d2);
 		return d1 == d2;
+	}
+
+	protected boolean same(String s1, String s2) {
+		if (s1 == null) return s2 == null;
+		return s1.equals(s2);
 	}
 }

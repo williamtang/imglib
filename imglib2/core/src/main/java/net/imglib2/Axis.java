@@ -45,6 +45,10 @@ import net.imglib2.meta.AxisType;
  */
 public interface Axis {
 
+	// TODO - this next method is nice but is it necessary? Again do we just
+	// support one direction and eliminate the reliance on BijectiveFunction or
+	// not?
+
 	double getPositionalMeasure(double calibratedMeasure);
 
 	double getCalibratedMeasure(double positionalMeasure);
@@ -60,12 +64,23 @@ public interface Axis {
 	AxisType getType();
 	
 	Axis copy();
-	
+
+	// NOTE: as currently implemented most or all Axes have a scale and an offset.
+	// However I don't think that belongs in this interface because it makes
+	// impossible the definition of nonlinear axes.
+
+	// TODO eliminate these methods before finalization. What should
+	// happen is api user can estimate linearity over a range.
+	// offset = axis.calVal(rStart);
+	// scale = (axis.calVal(rEnd) - axis.calVal(rStart)) / (rEnd - rStart);
+	// This would work for all axis types with varying amounts of error. For a
+	// LinearAxis there would be no error.
+
 	double getOffset();
-	
+
+	void setOffset(double val);
+
 	double getScale();
-	
-	void setOffset(double offset);
-	
-	void setScale(double scale);
+
+	void setScale(double val);
 }

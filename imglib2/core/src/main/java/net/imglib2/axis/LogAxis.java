@@ -69,10 +69,27 @@ public class LogAxis extends AbstractAxis {
 			LogAxis axis = (LogAxis) other;
 			if (!same(getOffset(), axis.getOffset())) return false;
 			if (!same(getScale(), axis.getScale())) return false;
-			if (getLabel() != axis.getLabel()) return false;
-			if (getUnit() != axis.getUnit()) return false;
+			if (!same(getLabel(), axis.getLabel())) return false;
+			if (!same(getUnit(), axis.getUnit())) return false;
 			return true;
 		}
 		return false;
 	}
+
+	public double getOffset() {
+		return function.getOffset();
+	}
+
+	public void setOffset(double offset) {
+		function.setOffset(offset);
+	}
+
+	public double getScale() {
+		return function.getScale();
+	}
+
+	public void setScale(double scale) {
+		function.setScale(scale);
+	}
+
 }
