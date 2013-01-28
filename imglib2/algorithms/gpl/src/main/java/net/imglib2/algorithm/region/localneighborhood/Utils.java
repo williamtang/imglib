@@ -24,11 +24,11 @@ public class Utils {
 			Axis axis = img.axis(d);
 			AxisType type = axis.getType();
 			if (type.equals(Axes.X)) {
-				calibration[0] = axis.getScale();
+				calibration[0] = axis.getScale(0, 1);
 			} else if (type.equals(Axes.Y)) {
-				calibration[1] = axis.getScale();
+				calibration[1] = axis.getScale(0, 1);
 			} else if (type.equals(Axes.Z)) {
-				calibration[2] = axis.getScale();
+				calibration[2] = axis.getScale(0, 1);
 			}
 		}
 		return calibration;

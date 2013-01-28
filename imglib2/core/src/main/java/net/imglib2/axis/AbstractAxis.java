@@ -105,6 +105,16 @@ public abstract class AbstractAxis implements Axis
 		return type;
 	}
 
+	@Override
+	public double getOrigin() {
+		return getCalibratedMeasure(0);
+	}
+
+	@Override
+	public double getScale(double p1, double p2) {
+		return (getCalibratedMeasure(p2) - getCalibratedMeasure(p1)) / (p2 - p1);
+	}
+
 	// -- helpers --
 
 	protected boolean same(double d1, double d2) {

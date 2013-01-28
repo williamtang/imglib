@@ -75,7 +75,8 @@ public class DistanceMap< T extends RealType< T >, K extends RandomAccessibleInt
 				if ( a < MAX_DIMS )
 				{
 					if ( src instanceof CalibratedSpace )
-						dim_unit[ a ] = ( ( CalibratedSpace ) src ).axis( i ).getScale();
+ dim_unit[a] =
+						((CalibratedSpace) src).axis(i).getScale(0, 1);
 					else
 						dim_unit[ a ] = 1;
 

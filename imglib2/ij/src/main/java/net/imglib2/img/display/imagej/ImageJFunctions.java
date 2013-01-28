@@ -174,22 +174,22 @@ public class ImageJFunctions
 			
 			int xaxis = imgplus.getAxisIndex(Axes.X);
 			if (xaxis >= 0) {
-				impcal.pixelWidth = imgplus.axis(xaxis).getScale();
+				impcal.pixelWidth = imgplus.axis(xaxis).getScale(0, 1);
 			}
 
 			int yaxis = imgplus.getAxisIndex(Axes.Y);
 			if (yaxis >= 0) {
-				impcal.pixelHeight = imgplus.axis(yaxis).getScale();
+				impcal.pixelHeight = imgplus.axis(yaxis).getScale(0, 1);
 			}
 			
 			int zaxis = imgplus.getAxisIndex(Axes.Z);
 			if (zaxis >= 0) {
-				impcal.pixelDepth = imgplus.axis(zaxis).getScale();
+				impcal.pixelDepth = imgplus.axis(zaxis).getScale(0, 1);
 			}
 			
 			int taxis = imgplus.getAxisIndex(Axes.TIME);
 			if (taxis >= 0) {
-				impcal.frameInterval = imgplus.axis(taxis).getScale();
+				impcal.frameInterval = imgplus.axis(taxis).getScale(0, 1);
 			}
 			target.setTitle( imgplus.getName() );
 		}

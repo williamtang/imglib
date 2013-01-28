@@ -65,6 +65,7 @@ public interface Axis {
 	
 	Axis copy();
 
+	/*
 	// NOTE: as currently implemented most or all Axes have a scale and an offset.
 	// However I don't think that belongs in this interface because it makes
 	// impossible the definition of nonlinear axes.
@@ -84,4 +85,19 @@ public interface Axis {
 	double getScale();
 
 	void setScale(double val);
+	 */
+
+	/**
+	 * Get the data space value for position 0 along this axis.
+	 */
+	double getOrigin();
+
+	/**
+	 * Gets the linear scale (slope of the line) between two coordinates along an
+	 * axis. The input values are relative positions along the axis (i.e. 0, 1, 2,
+	 * etc.). The slope is calculated between CALIBRATED values. Thus the relative
+	 * positions along the axis are transformed into data space before the
+	 * measurement of the slope between them is returned.
+	 */
+	double getScale(double p1, double p2);
 }
