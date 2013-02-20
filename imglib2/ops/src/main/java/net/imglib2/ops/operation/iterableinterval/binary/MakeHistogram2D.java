@@ -46,42 +46,41 @@ import net.imglib2.type.numeric.RealType;
 /**
  * Felix Schoenenberger (University of Konstanz)
  */
-public final class MakeHistogram2D<T extends RealType<T>>
-		implements
-		BinaryOutputOperation<IterableInterval<T>, IterableInterval<T>, Histogram2D> {
+public final class MakeHistogram2D< T extends RealType< T >> implements BinaryOutputOperation< IterableInterval< T >, IterableInterval< T >, Histogram2D >
+{
 
 	@Override
-	public final Histogram2D compute(final IterableInterval<T> op0,
-			final IterableInterval<T> op1, final Histogram2D r) {
-		if (!op0.iterationOrder().equals(op1.iterationOrder())) {
-			throw new IllegalStateException(
-					"IterationOrders are not compatible in Histogram2D");
-		}
-		Cursor<T> opc0 = op0.cursor();
-		Cursor<T> opc1 = op1.cursor();
+	public final Histogram2D compute( final IterableInterval< T > op0, final IterableInterval< T > op1, final Histogram2D r )
+	{
+		if ( !op0.iterationOrder().equals( op1.iterationOrder() ) ) { throw new IllegalStateException( "IterationOrders are not compatible in Histogram2D" ); }
+		Cursor< T > opc0 = op0.cursor();
+		Cursor< T > opc1 = op1.cursor();
 		r.clear();
-		while (opc0.hasNext()) {
+		while ( opc0.hasNext() )
+		{
 			opc0.next();
 			opc1.next();
-			r.incByValue(opc0.get().getRealDouble(), opc1.get().getRealDouble());
+			r.incByValue( opc0.get().getRealDouble(), opc1.get().getRealDouble() );
 		}
 		return r;
 	}
 
 	@Override
-	public BinaryOutputOperation<IterableInterval<T>, IterableInterval<T>, Histogram2D> copy() {
-		return new MakeHistogram2D<T>();
+	public BinaryOutputOperation< IterableInterval< T >, IterableInterval< T >, Histogram2D > copy()
+	{
+		return new MakeHistogram2D< T >();
 	}
 
 	@Override
-	public BinaryObjectFactory<IterableInterval<T>, IterableInterval<T>, Histogram2D> bufferFactory() {
-		return new BinaryObjectFactory<IterableInterval<T>, IterableInterval<T>, Histogram2D>() {
+	public BinaryObjectFactory< IterableInterval< T >, IterableInterval< T >, Histogram2D > bufferFactory()
+	{
+		return new BinaryObjectFactory< IterableInterval< T >, IterableInterval< T >, Histogram2D >()
+		{
 
 			@Override
-			public Histogram2D instantiate(IterableInterval<T> inputA,
-					IterableInterval<T> inputB) {
-				return new Histogram2D(inputA.iterator().next()
-						.createVariable());
+			public Histogram2D instantiate( IterableInterval< T > inputA, IterableInterval< T > inputB )
+			{
+				return new Histogram2D( inputA.iterator().next().createVariable() );
 			}
 		};
 	}

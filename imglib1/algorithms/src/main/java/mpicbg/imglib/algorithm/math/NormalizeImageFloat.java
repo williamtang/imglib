@@ -2,10 +2,11 @@
  * #%L
  * ImgLib: a general-purpose, multidimensional image processing library.
  * %%
- * Copyright (C) 2009 - 2012 Stephan Preibisch, Stephan Saalfeld, Tobias
- * Pietzsch, Albert Cardona, Barry DeZonia, Curtis Rueden, Lee Kamentsky, Larry
- * Lindsey, Johannes Schindelin, Christian Dietz, Grant Harris, Jean-Yves
- * Tinevez, Steffen Jaensch, Mark Longair, Nick Perry, and Jan Funke.
+ * Copyright (C) 2009 - 2013 Stephan Preibisch, Tobias Pietzsch, Barry DeZonia,
+ * Stephan Saalfeld, Albert Cardona, Curtis Rueden, Christian Dietz, Jean-Yves
+ * Tinevez, Johannes Schindelin, Lee Kamentsky, Larry Lindsey, Grant Harris,
+ * Mark Hiner, Aivar Grislis, Martin Horn, Nick Perry, Michael Zinsmaier,
+ * Steffen Jaensch, Jan Funke, Mark Longair, and Dimiter Prodanov.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -35,7 +36,6 @@ import mpicbg.imglib.image.ImageFactory;
 import mpicbg.imglib.type.numeric.RealType;
 import mpicbg.imglib.type.numeric.real.FloatType;
 import mpicbg.util.RealSum;
-
 
 /**
  * Normalizes a given {@link Image} so that the sum of all of its pixels is equal to one
@@ -126,7 +126,6 @@ public class NormalizeImageFloat <T extends RealType<T>> implements OutputAlgori
 	public String getErrorMessage() {
 		return errorMsg;
 	}
-
 
 	@Override
 	public long getProcessingTime() {		

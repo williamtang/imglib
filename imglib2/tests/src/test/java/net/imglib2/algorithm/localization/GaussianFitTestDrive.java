@@ -1,11 +1,12 @@
 /*
  * #%L
- * ImgLib: a general-purpose, multidimensional image processing library.
+ * ImgLib2: a general-purpose, multidimensional image processing library.
  * %%
- * Copyright (C) 2009 - 2012 Stephan Preibisch, Stephan Saalfeld, Tobias
- * Pietzsch, Albert Cardona, Barry DeZonia, Curtis Rueden, Lee Kamentsky, Larry
- * Lindsey, Johannes Schindelin, Christian Dietz, Grant Harris, Jean-Yves
- * Tinevez, Steffen Jaensch, Mark Longair, Nick Perry, and Jan Funke.
+ * Copyright (C) 2009 - 2013 Stephan Preibisch, Tobias Pietzsch, Barry DeZonia,
+ * Stephan Saalfeld, Albert Cardona, Curtis Rueden, Christian Dietz, Jean-Yves
+ * Tinevez, Johannes Schindelin, Lee Kamentsky, Larry Lindsey, Grant Harris,
+ * Mark Hiner, Aivar Grislis, Martin Horn, Nick Perry, Michael Zinsmaier,
+ * Steffen Jaensch, Jan Funke, Mark Longair, and Dimiter Prodanov.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -41,7 +42,6 @@ import net.imglib2.multithreading.SimpleMultiThreading;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 
 public class GaussianFitTestDrive {
-
 
 	public static void main(String[] args) {
 
@@ -151,13 +151,11 @@ public class GaussianFitTestDrive {
 			};
 		}	
 
-
 		long start = System.currentTimeMillis();
 		SimpleMultiThreading.startAndJoin(threads);
 		long end = System.currentTimeMillis();
 
 		System.out.println(String.format("Time for %d spots: %.2f s.", nspots, (end-start)/1e3f));
-
 
 	}
 }

@@ -97,5 +97,4 @@ public class MultilevelThresholderOp< T extends RealType< T >, IN extends Iterab
 		}
 		return out;
 	}
-
 }
