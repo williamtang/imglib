@@ -80,7 +80,7 @@ public class ImgView< T extends Type< T > > extends IterableRandomAccessibleInte
 	{
 		super( in );
 		factory = fac;
-		ii = Views.iterable( in );
+		ii = Views.flatIterable( in );
 	}
 
 	@Override
