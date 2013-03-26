@@ -36,6 +36,7 @@ import net.imglib2.iterator.LocalizingZeroMinIntervalIterator;
 import net.imglib2.multithreading.SimpleMultiThreading;
 import net.imglib2.type.numeric.ComplexType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.Views;
 import edu.mines.jtk.dsp.FftComplex;
 import edu.mines.jtk.dsp.FftReal;
 
@@ -1258,5 +1259,11 @@ public class FFTMethods
 		if ( FftComplex.nfftFast( inputSize ) == outputSize || FftComplex.nfftSmall( inputSize ) == outputSize )
 			return true;
 		return false;
+	}
+
+	final public static < T extends ComplexType< T > > void complexConjugate( RandomAccessibleInterval< T > complexData )
+	{
+		for ( final T type : Views.iterable( complexData ) )
+			type.complexConjugate();
 	}
 }

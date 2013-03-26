@@ -88,6 +88,10 @@ public class FFTConvolution< T extends RealType< T >, K extends RealType< K >, R
 
 	RandomAccessibleInterval< R > output;
 
+	// by default we use the complex conjugate of the kernel
+	boolean complexConjugate = true;
+
+	// by default we do not keep the image
 	boolean keepImgFFT = false;
 
 	/**
@@ -288,6 +292,17 @@ public class FFTConvolution< T extends RealType< T >, K extends RealType< K >, R
 		return fftKernel;
 	}
 
+	/**
+	 * @param complexConjugate
+	 *            - If the complex conjugate of the FFT of the kernel should be
+	 *            used.
+	 */
+	public void setComputeComplexConjugate( final boolean complexConjugate )
+	{
+		this.complexConjugate = complexConjugate;
+		this.fftKernel = null;
+	}
+
 	@Override
 	public void run()
 	{
@@ -335,9 +350,16 @@ public class FFTConvolution< T extends RealType< T >, K extends RealType< K >, R
 		// compute the FFT's if they do not exist yet
 		if ( fftImg == null )
 			fftImg = FFT.realToComplex( imgInput, fftFactory );
-
 		if ( fftKernel == null )
+		{
 			fftKernel = FFT.realToComplex( kernelInput, fftFactory );
+
+			// compute the complex conjugate of the FFT of the kernel (same as
+			// mirroring the input image)
+			// otherwise it corresponds to correlation and not convolution
+			if ( complexConjugate )
+				FFTMethods.complexConjugate( fftKernel );
+		}
 
 		final Img< ComplexFloatType > fftconvolved;
 
