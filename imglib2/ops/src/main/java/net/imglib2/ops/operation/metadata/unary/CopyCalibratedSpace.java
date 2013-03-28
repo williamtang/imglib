@@ -43,7 +43,7 @@ import net.imglib2.ops.operation.UnaryOperation;
 
 /**
  * @author Christian Dietz (University of Konstanz)
- *
+ * 
  * @param <CS>
  */
 public class CopyCalibratedSpace< CS extends CalibratedSpace > implements UnaryOperation< CS, CS >
@@ -55,6 +55,12 @@ public class CopyCalibratedSpace< CS extends CalibratedSpace > implements UnaryO
 		interval = null;
 	}
 
+	/**
+	 * Reference interval with same dimensionality as input. Dimensions of the
+	 * interval which have size one are ignored.
+	 * 
+	 * @param interval
+	 */
 	public CopyCalibratedSpace( Interval interval )
 	{
 		this.interval = interval;
@@ -64,10 +70,12 @@ public class CopyCalibratedSpace< CS extends CalibratedSpace > implements UnaryO
 	public CS compute( CS input, CS output )
 	{
 
+		assert ( interval.numDimensions() == input.numDimensions() );
+
 		int offset = 0;
 		for ( int d = 0; d < input.numDimensions(); d++ )
 		{
-			if ( interval != null && interval.dimension( d ) == 1 )
+			if ( interval != null && interval.numDimensions() > d && interval.dimension( d ) == 1 )
 			{
 				offset++;
 			}
