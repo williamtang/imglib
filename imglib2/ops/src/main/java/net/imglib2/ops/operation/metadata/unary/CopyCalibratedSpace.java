@@ -46,12 +46,11 @@ import net.imglib2.ops.operation.UnaryOperation;
  * 
  * @param <CS>
  */
-public class CopyCalibratedSpace< CS extends CalibratedSpace > implements UnaryOperation< CS, CS >
-{
+public class CopyCalibratedSpace<CS extends CalibratedSpace> implements
+		UnaryOperation<CS, CS> {
 	private Interval interval;
 
-	public CopyCalibratedSpace()
-	{
+	public CopyCalibratedSpace() {
 		interval = null;
 	}
 
@@ -61,28 +60,24 @@ public class CopyCalibratedSpace< CS extends CalibratedSpace > implements UnaryO
 	 * 
 	 * @param interval
 	 */
-	public CopyCalibratedSpace( Interval interval )
-	{
+	public CopyCalibratedSpace(Interval interval) {
 		this.interval = interval;
 	}
 
 	@Override
-	public CS compute( CS input, CS output )
-	{
+	public CS compute(CS input, CS output) {
 
-		assert ( interval.numDimensions() == input.numDimensions() );
+		assert (interval != null ? interval.numDimensions() == input
+				.numDimensions() : true);
 
 		int offset = 0;
-		for ( int d = 0; d < input.numDimensions(); d++ )
-		{
-			if ( interval != null && interval.numDimensions() > d && interval.dimension( d ) == 1 )
-			{
+		for (int d = 0; d < input.numDimensions(); d++) {
+			if (interval != null && interval.numDimensions() > d
+					&& interval.dimension(d) == 1) {
 				offset++;
-			}
-			else
-			{
-				output.setAxis( input.axis( d ), d - offset );
-				output.setCalibration( input.calibration( d ), d - offset );
+			} else {
+				output.setAxis(input.axis(d), d - offset);
+				output.setCalibration(input.calibration(d), d - offset);
 			}
 		}
 
@@ -90,9 +85,8 @@ public class CopyCalibratedSpace< CS extends CalibratedSpace > implements UnaryO
 	}
 
 	@Override
-	public UnaryOperation< CS, CS > copy()
-	{
-		return new CopyCalibratedSpace< CS >();
+	public UnaryOperation<CS, CS> copy() {
+		return new CopyCalibratedSpace<CS>();
 	}
 
 }
