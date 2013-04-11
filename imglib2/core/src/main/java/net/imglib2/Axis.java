@@ -97,7 +97,8 @@ public interface Axis {
 	 * axis. The input values are relative positions along the axis (i.e. 0, 1, 2,
 	 * etc.). The slope is calculated between CALIBRATED values. Thus the relative
 	 * positions along the axis are transformed into data space before the
-	 * measurement of the slope between them is returned.
+	 * measurement of the slope between them is returned. If this was done in the
+	 * limit it would be the derivative of the function at a point.
 	 */
 	double getScale(double p1, double p2);
 }
