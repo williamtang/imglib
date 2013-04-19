@@ -46,6 +46,7 @@ import net.imglib2.converter.Converter;
 import net.imglib2.display.XYRandomAccessibleProjector;
 import net.imglib2.interpolation.Interpolant;
 import net.imglib2.interpolation.InterpolatorFactory;
+import net.imglib2.interpolation.randomaccess.NLinearInterpolatorARGBFactory;
 import net.imglib2.interpolation.randomaccess.NLinearInterpolatorFactory;
 import net.imglib2.interpolation.randomaccess.NearestNeighborInterpolatorFactory;
 import net.imglib2.realtransform.AffineGet;
@@ -123,6 +124,7 @@ public class InteractiveViewer3D< T extends NumericType< T > > extends AbstractI
 		display.requestRepaint();
 	}
 
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
 	@Override
 	protected XYRandomAccessibleProjector< T, ARGBType > createProjector()
 	{
@@ -134,7 +136,10 @@ public class InteractiveViewer3D< T extends NumericType< T > > extends AbstractI
 			break;
 		case 1:
 		default:
-			interpolatorFactory = new NLinearInterpolatorFactory< T >();
+			if ( ARGBType.class.isInstance( source.randomAccess().get() ) )
+				interpolatorFactory = ( InterpolatorFactory )new NLinearInterpolatorARGBFactory();
+			else
+				interpolatorFactory = new NLinearInterpolatorFactory< T >();
 			break;
 		}
 		final Interpolant< T, RandomAccessible< T > > interpolant = new Interpolant< T, RandomAccessible< T > >( source, interpolatorFactory );
