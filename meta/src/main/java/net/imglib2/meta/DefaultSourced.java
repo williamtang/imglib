@@ -35,49 +35,36 @@
  * #L%
  */
 
-package net.imglib2.ops.util.metadata;
-
-import net.imglib2.meta.Named;
+package net.imglib2.meta;
 
 /**
+ * A simple, default implementation of {@link Sourced}.
  * 
- * @author Martin Horn (University of Konstanz)
+ * @author Christian Dietz (University of Konstanz)
  */
-public class NamedImpl implements Named {
+public class DefaultSourced implements Sourced {
 
-	private String m_name = "";
+	private String m_source = "";
 
-	public NamedImpl() {
-
+	public DefaultSourced() {
 	}
 
-	public NamedImpl(String name) {
-		m_name = name;
+	public DefaultSourced(String source) {
+		m_source = source;
 	}
 
-	/**
-	 * Copy constructor.
-	 * 
-	 * @param name
-	 */
-	public NamedImpl(Named name) {
-		m_name = name.getName();
+	public DefaultSourced(Sourced sourced) {
+		m_source = sourced.getSource();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public String getName() {
-		return m_name;
+	public void setSource(String source) {
+		m_source = source;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public void setName(String name) {
-		m_name = name;
+	public String getSource() {
+		return m_source;
 	}
 
 }
