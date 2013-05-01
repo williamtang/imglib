@@ -48,6 +48,7 @@ import net.imglib2.img.Img;
  * @author Stephan Saalfeld
  * @author Lee Kamentsky
  */
+@Deprecated
 public interface CalibratedSpace extends EuclideanSpace {
 
 	/** Gets the dimensional index of the axis with the given type. */

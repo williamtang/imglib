@@ -44,6 +44,7 @@ import java.util.Arrays;
  * 
  * @author Martin Horn (University of Konstanz)
  */
+@Deprecated
 public class DefaultCalibratedSpace implements CalibratedSpace {
 
 	private final AxisType[] m_axes;
